@@ -1,16 +1,16 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
-<title>Template Version</title>
+<title>We-Ko-PAW</title>
 <link rel="manifest" href="site.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Pirata+One&display=swap" rel="stylesheet">
 <style>
-/* Same clubhouse paper the leaderboard has always used, and admin.html now shares too —
+/* Same clubhouse paper the leaderboard has always used, and admin.html now shares too â€”
    cream stock, blackletter title, Georgia small-caps structure, so the whole product
    reads as one thing instead of a dark app with one cream tab bolted on. */
 :root{
@@ -84,8 +84,8 @@ button.link{background:none;border:none;color:var(--accent);cursor:pointer;font-
 .nav-holes button:disabled{opacity:.35;cursor:default;}
 .nav-holes button.primary{background:var(--accent);border-color:var(--accent);color:var(--surface);font-weight:700;}
 
-/* The scorecard reads as its own crisp white card on the page — the "fill this in"
-   surface — rather than a full palette swap now that the whole app is on the same
+/* The scorecard reads as its own crisp white card on the page â€” the "fill this in"
+   surface â€” rather than a full palette swap now that the whole app is on the same
    cream stock. Just a whiter surface and a firmer shadow, everything else inherited. */
 #tab-score .card{
   --surface:#ffffff; --surface2:#ffffff; --surface3:var(--accent-dim);
@@ -129,7 +129,7 @@ table.lboard td.mstatus{font-size:19px;white-space:nowrap;}
 .modal-x{position:absolute;top:6px;right:10px;background:none;border:none;font-size:28px;line-height:1;color:var(--dim);cursor:pointer;}
 .modal-edit{margin:0 0 10px;background:var(--navy);color:var(--surface);border:none;border-radius:6px;padding:8px 14px;font-size:13px;cursor:pointer;}
 .modal-status{font-size:12px;color:var(--accent);margin:-4px 0 8px;}
-/* commissioner mode — navy, like the title and the primary actions, so it reads as
+/* commissioner mode â€” navy, like the title and the primary actions, so it reads as
    "you're in a different mode" rather than a warning. */
 .adminbar{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;padding:8px 16px;background:var(--navy);
   border-bottom:1px solid var(--navy);color:#dfe6f2;font-size:13px;}
@@ -186,7 +186,7 @@ table.statgrid th.name,table.statgrid td.name{text-align:left;}
 table.statgrid td.rank{color:var(--dim);width:22px;}
 table.statgrid td.lead{font-weight:700;color:var(--accent);}
 
-/* Clubhouse leaderboard — a deliberate single look (hand-lettered board on cream stock),
+/* Clubhouse leaderboard â€” a deliberate single look (hand-lettered board on cream stock),
    so it does not follow the app's dark theme. */
 .board{background:#f4ecd8;color:#161616;border-radius:4px;padding:16px 10px 18px;
   background-image:radial-gradient(ellipse at 30% 15%, rgba(255,255,255,.6), rgba(255,255,255,0) 60%);
@@ -240,7 +240,7 @@ footer{text-align:center;color:var(--dim);font-size:11px;padding:16px;}
 
 <div id="loginGate">
   <div class="box">
-    <h1>Template Version</h1>
+    <h1>We-Ko-PAW</h1>
     <p style="margin-top:6px;">Enter your player code</p>
     <p style="margin:-6px 0 12px;font-size:12px;color:var(--dim);">Commissioner? Your console code works here too.</p>
     <input id="codeInput" placeholder="CODE" autocomplete="off" maxlength="8">
@@ -258,7 +258,7 @@ footer{text-align:center;color:var(--dim);font-size:11px;padding:16px;}
   <button id="adminExit">Exit</button>
 </div>
 <header>
-  <h1 id="eventName">Template Version</h1>
+  <h1 id="eventName">We-Ko-PAW</h1>
   <div class="sub" id="eventSub">Loading event details&hellip;</div>
 </header>
 
@@ -366,7 +366,7 @@ try {
 let loaded = false;
 
 // One debounce timer per field. A single shared timer used to cancel earlier holes'
-// pending writes before they reached Firebase — keep this keyed per field.
+// pending writes before they reached Firebase â€” keep this keyed per field.
 const writeTimers = new Map();
 
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -388,7 +388,7 @@ function contestHoles(on, text, holes){
 }
 
 // The competing entries for a round. Team formats use the teams the commissioner built;
-// individual formats have none — every roster player is his own entry, keyed "p-<id>".
+// individual formats have none â€” every roster player is his own entry, keyed "p-<id>".
 function unitsFor(roundId, round){
   if (FORMATS[round.format]?.unit === "player"){
     const out = {};
@@ -457,25 +457,25 @@ function fillRoundSelect(el, { includeOverall = false } = {}){
 /* ---------- home ---------- */
 
 function renderHome(){
-  document.getElementById("eventName").textContent = cfg.event?.name || "Template Version";
+  document.getElementById("eventName").textContent = cfg.event?.name || "We-Ko-PAW";
 
   const rounds = orderedRounds();
   document.getElementById("eventSub").textContent = rounds.length
-    ? `${rounds.length} round${rounds.length > 1 ? "s" : ""} · ${Object.keys(cfg.roster || {}).length} players`
+    ? `${rounds.length} round${rounds.length > 1 ? "s" : ""} Â· ${Object.keys(cfg.roster || {}).length} players`
     : "Event setup in progress";
 
   document.getElementById("roundsInfo").innerHTML = rounds.length ? rounds.map(([id, r], i) => {
     const course = courseFor(id);
     return `<div class="pairing">
       <b>${esc(r.name || `Round ${i + 1}`)}</b> &middot; ${esc(FORMATS[formatOf(r, cfg.event)]?.label || "")}${r.play === "match" ? " &middot; match play" : ""}
-      <div class="when">${course ? esc(course.name) + (course.location ? " · " + esc(course.location) : "") + " · par " + coursePar(course.holes) : "No course set"}</div>
+      <div class="when">${course ? esc(course.name) + (course.location ? " Â· " + esc(course.location) : "") + " Â· par " + coursePar(course.holes) : "No course set"}</div>
       ${(() => {
         const ctp = contestHoles(r.ctpOn, r.ctpHoles, course?.holes);
         const ld = contestHoles(r.ldOn, r.ldHoles, course?.holes);
         const parts = [];
         if (ctp.length) parts.push("Closest to the pin: " + ctp.join(", "));
         if (ld.length) parts.push("Long drive: " + ld.join(", "));
-        return parts.length ? `<div class="when">${parts.join(" · ")}</div>` : "";
+        return parts.length ? `<div class="when">${parts.join(" Â· ")}</div>` : "";
       })()}
     </div>`;
   }).join("") : `<p class="empty">Not set up yet.</p>`;
@@ -518,7 +518,7 @@ function myUnit(base){
   return Object.keys(base.units).find(u => (base.units[u].playerIds || []).includes(meId)) || null;
 }
 
-// The logged-in player's own card and nobody else's — other groups are for the leaderboard.
+// The logged-in player's own card and nobody else's â€” other groups are for the leaderboard.
 // It's his tee time when he has one, so a foursome of two teams is one card; otherwise just
 // his own team.
 function myCard(base){
@@ -567,9 +567,9 @@ function fillCardSelect(roundId){
   const current = adminCard(roundId, base);
   const mine = myUnit(base);
   sel.innerHTML = options.map(o => {
-    const label = (o.start ? o.start + " · " : "") + o.unitIds.map(u => unitLabel(base, u)).join(" / ") +
+    const label = (o.start ? o.start + " Â· " : "") + o.unitIds.map(u => unitLabel(base, u)).join(" / ") +
       (o.unitIds.includes(mine) ? " (you)" : "") +
-      (o.unitIds.every(u => attestOf(roundId, u)) ? " ✓ submitted" : "");
+      (o.unitIds.every(u => attestOf(roundId, u)) ? " âœ“ submitted" : "");
     return '<option value="' + esc(o.id) + '"' + (o.id === current?.id ? " selected" : "") + ">" + esc(label) + "</option>";
   }).join("");
 }
@@ -615,7 +615,7 @@ function writeAttest(roundId, unitId, value){
   return set(ref(db, `${ATTEST_PATH}/${roundId}/${unitId}`), value || null);
 }
 
-// The prompt to review and submit once every hole is in — or who submitted the card.
+// The prompt to review and submit once every hole is in â€” or who submitted the card.
 function attestBanner(c){
   if (c.teams.some(t => attestOf(c.roundId, t.unitId))){
     return '<div class="attest-banner done"><span>&#10003; ' + submittedLine(c) +
@@ -645,7 +645,7 @@ function wireBanner(scope, c){
 
 
 // Everything a scorecard needs for a set of teams: the round, the teams, their matches, and
-// every box — one per player, or one per team in scramble and alternate shot — each tagged
+// every box â€” one per player, or one per team in scramble and alternate shot â€” each tagged
 // with the team whose score it is. Used for your own card and for the leaderboard pop-up.
 function buildCard(roundId, base, card){
   const { round, course, units, playerPhs, teamPhs, holeCount, maxRule, maxPlus, contests } = base;
@@ -709,7 +709,7 @@ function markClass(gross, par){
   return "";
 }
 
-// Running totals, one line per team on the card — or, in match play, one line per match.
+// Running totals, one line per team on the card â€” or, in match play, one line per match.
 function totalsHtml(c){
   if (c.play === "match") return matchTotalsHtml(c);
   return '<div class="card-totals">' + c.teams.map(t => {
@@ -948,7 +948,7 @@ function renderHoleView(body, c){
       queueScoreWrite(c.roundId, f.unitId, hole.number, f.key, { v: n, x: false });
       refreshRunningTotal(c);
 
-      // Move to the next box once the number cannot get any more specific — a lone 1
+      // Move to the next box once the number cannot get any more specific â€” a lone 1
       // could still become 10 through 15, anything else could not.
       const raw = input.value;
       if (raw.length >= 2 || (raw.length === 1 && raw !== "1")) inputs[pos + 1]?.focus();
@@ -1010,7 +1010,7 @@ function renderFullCard(body, c){
   const back = c.holes.filter(h => h.number > 9);
   const sumPar = hs => hs.reduce((s, h) => s + (+h.par || 0), 0);
 
-  // The score that COUNTS in each cell, after the round's maximum — the same number the
+  // The score that COUNTS in each cell, after the round's maximum â€” the same number the
   // leaderboard uses, so the card and the leaderboard can never disagree.
   const countedFor = (f, h) => scoreCell(
     cellFor(c, f, h.number), h.par,
@@ -1159,7 +1159,7 @@ function rowsForRound(roundId){
   return rows;
 }
 
-// Overall rolls everything up to the player — a group's score counts for each of its
+// Overall rolls everything up to the player â€” a group's score counts for each of its
 // members, so rounds with different formats and group sizes can share one table.
 function rowsOverall(only){
   const totals = new Map();
@@ -1220,24 +1220,24 @@ function nameCell(playerIds, teamName, cls = ""){
 
 function boardShell(sub, inner){
   return '<div class="board">' +
-    '<div class="board-title">' + esc(cfg.event?.name || "Template Version") + "</div>" +
+    '<div class="board-title">' + esc(cfg.event?.name || "We-Ko-PAW") + "</div>" +
     (sub ? '<div class="board-sub">' + sub + "</div>" : "") +
     '<div class="board-scroll">' + inner + "</div></div>" +
     '<p class="board-tip">Tap a name to see the scorecard &middot; &#10003; card submitted</p>';
 }
 
-const fmtPts = p => (Math.floor(p) || (p % 1 ? "" : "0")) + (p % 1 ? "½" : "");
+const fmtPts = p => (Math.floor(p) || (p % 1 ? "" : "0")) + (p % 1 ? "Â½" : "");
 
-// The skins game runs across the WHOLE round, independent of stroke or match play — every
+// The skins game runs across the WHOLE round, independent of stroke or match play â€” every
 // unit needs a score on a hole before it can be settled. It also runs its own gross/net and
-// team/individual, independent of the round's own format — set in the console alongside the
+// team/individual, independent of the round's own format â€” set in the console alongside the
 // opt-in checkbox. Empty string once it's switched off or nobody's posted a score yet.
 function skinsSectionHtml(base, roundId){
   if (!base.round.skinsOn) return "";
   const holes = base.course.holes || [];
   const f = FORMATS[base.round.format];
   const canIndividual = f?.entry === "player";
-  // Defaults to gross and individual regardless of the round's own format — must match
+  // Defaults to gross and individual regardless of the round's own format â€” must match
   // admin.html's defaults exactly, since a round saved before these were ever touched has
   // neither field set.
   const skinsUnit = canIndividual ? (base.round.skinsUnit || "individual") : "team";
@@ -1249,9 +1249,9 @@ function skinsSectionHtml(base, roundId){
 
   if (skinsUnit === "individual"){
     // Individual skins still needs each player's own entry, which is stored under his
-    // actual team's unit id (the round itself may not be individual format) — so map every
+    // actual team's unit id (the round itself may not be individual format) â€” so map every
     // rostered player back to that unit before pulling his cell out of it. The same mapping
-    // is what tapping a row should open — his real card, not a unit id that may not exist.
+    // is what tapping a row should open â€” his real card, not a unit id that may not exist.
     const groupOfPlayer = {};
     Object.entries(base.units).forEach(([gid, g]) => (g.playerIds || []).forEach(pid => { groupOfPlayer[pid] = gid; }));
     unitIds = Object.keys(groupOfPlayer);
@@ -1306,7 +1306,7 @@ function skinsSectionHtml(base, roundId){
 
 // Rolling best ball's own team standings, alongside the round's normal (per-player)
 // leaderboard above. Teams here are scoring buckets only (state.groups, same UI as any
-// other team format) — they never appear in a tee time, since each player has his own card
+// other team format) â€” they never appear in a tee time, since each player has his own card
 // and can be in a different foursome than his own teammates. Empty string until at least
 // one team has a score posted.
 function rollingBestBallSectionHtml(base, roundId){
@@ -1335,7 +1335,7 @@ function rollingBestBallSectionHtml(base, roundId){
 
   standing.sort((a, b) => a.total - b.total || b.thru - a.thru);
 
-  // Not tappable like the other leaderboard rows above — a rolling best ball "team" is a
+  // Not tappable like the other leaderboard rows above â€” a rolling best ball "team" is a
   // scoring bucket with no card or tee time of its own (its players each have their own,
   // scattered across whatever foursomes they're in), so there's no single card to open.
   const rows = '<table class="lboard"><tr class="head"><th class="nm">Team</th><th>Total</th><th>Thru</th></tr>' +
@@ -1433,7 +1433,7 @@ function renderMatchBoard(el, roundId, base){
         "</tr>").join("") +
     "</table>";
 
-  // Points: a win is 1, a halved match ½ each. Only finished matches score.
+  // Points: a win is 1, a halved match Â½ each. Only finished matches score.
   const tally = new Map();
   played.forEach(({ m, s }) => m.unitIds.forEach((u, i) => {
     const row = tally.get(u) || { u, played: 0, w: 0, h: 0, l: 0, pts: 0 };
@@ -1544,7 +1544,7 @@ function renderLeaderboard(){
 
 function closeModal(){ document.getElementById("cardModal").classList.add("hidden"); }
 
-// A read-only full card for some teams in a round — the pop-up is for looking, not scoring.
+// A read-only full card for some teams in a round â€” the pop-up is for looking, not scoring.
 function cardSection(roundId, unitIds, heading){
   const base = roundContext(roundId);
   if (!base) return null;
@@ -1589,7 +1589,7 @@ document.getElementById("leaderboardList").addEventListener("click", e => {
     openCards(orderedRounds().map(([roundId, r], i) => {
       const base = roundContext(roundId);
       const u = base && Object.keys(base.units).find(k => (base.units[k].playerIds || []).includes(pid));
-      return u ? cardSection(roundId, [u], (r.name || "Round " + (i + 1)) + " — " + unitLabel(base, u)) : null;
+      return u ? cardSection(roundId, [u], (r.name || "Round " + (i + 1)) + " â€” " + unitLabel(base, u)) : null;
     }));
   } else {
     openCards([cardSection(row.dataset.openRound, row.dataset.openUnits.split(","))]);
@@ -1619,7 +1619,7 @@ const STAT_COLUMNS = [
   { key: "holes",   label: "Holes",   best: "high" }
 ];
 
-// The rounds a stats view covers — one round, or all of them for Overall.
+// The rounds a stats view covers â€” one round, or all of them for Overall.
 const statRounds = which => which === "__all" ? orderedRounds().map(([id]) => id) : [which];
 
 // What the formats in view allow: net only means something if some round is played net,
@@ -1841,7 +1841,7 @@ function trySavedLogin(){
   const saved = localStorage.getItem(ME_KEY);
   if (saved && cfg.roster?.[saved]) meId = saved;
   // Covers a player who was flagged as commissioner in the roster after his phone had
-  // already saved a plain player login — not just the first-time login path above.
+  // already saved a plain player login â€” not just the first-time login path above.
   if (meId && !isAdmin && cfg.roster?.[meId]?.commissioner) unlockAdmin();
   if (meId || isAdmin){ enterApp(); return true; }
   return false;
@@ -1884,7 +1884,7 @@ document.getElementById("codeSubmit").addEventListener("click", () => {
   if (!id){ document.getElementById("codeError").style.display = "block"; return; }
   meId = id;
   localStorage.setItem(ME_KEY, id);
-  // A player flagged as the commissioner in the roster gets both from his own one code —
+  // A player flagged as the commissioner in the roster gets both from his own one code â€”
   // no separate console PIN to remember. `unlockAdmin` persists the same as any other
   // commissioner login, so this only has to run once.
   if (cfg.roster?.[id]?.commissioner) unlockAdmin();
@@ -1938,7 +1938,7 @@ function afterData(){
   if (!loaded){
     loaded = true;
     document.getElementById("codeWait").textContent =
-      Object.keys(cfg.roster || {}).length ? "" : "Event isn't set up yet — check back shortly.";
+      Object.keys(cfg.roster || {}).length ? "" : "Event isn't set up yet â€” check back shortly.";
     trySavedLogin();
   }
   if (!document.getElementById("app").classList.contains("hidden")){

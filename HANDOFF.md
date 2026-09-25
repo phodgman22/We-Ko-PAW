@@ -1,15 +1,28 @@
-# Golf event scoring template — handoff notes
+# We-Ko-PAW — handoff notes
 
 Context for whoever (or whichever Claude) picks this up next. Read this before making
 changes — a couple of the design choices below aren't obvious from the code alone.
 
-**This repo is a template**, not a live event. It was Covid Cup 2026 — a real 2026-09-26
-outing — through its full build and use; once that event finished, the live database was
-wiped, the roster was kept as sample data with fresh (non-working) codes, and the event
-was renamed "Template Version" so this repo can be forked for the next event without
-carrying over anyone's real names, scores, or login codes. [HANDOFF-FOR-PAT.md](HANDOFF-FOR-PAT.md)
-is kept as-is as a historical record of that build — it describes the real event, not this
-template's current state.
+**This repo is We-Ko-PAW's own copy**, created from
+[golf-event-template](https://github.com/phodgman22/golf-event-template) — GitHub's "Use
+this template" — not a fork, so it shares no git history with that repo and pushes here
+never touch it. That template repo was Covid Cup 2026 through its full build and use;
+once that event finished, its database was wiped, the roster kept as sample data with
+reset codes, and it was renamed "Template Version" to become the reusable base. This copy
+was made from that clean state and then rebranded to We-Ko-PAW — see the setup checklist
+below for what's still outstanding before it's ready for real players.
+[HANDOFF-FOR-PAT.md](HANDOFF-FOR-PAT.md) is kept as-is, inherited from the template — it's
+a historical record of the *original* Covid Cup 2026 build, not this event.
+
+**Not done yet — before this is live for real players:**
+1. **Firebase.** `firebase-config.js` still points at the template's `covid-cup-2026`
+   project. Create a fresh Firebase Realtime Database project for We-Ko-PAW, paste its
+   config in, and deploy `database.rules.json` to it — **do this before entering any real
+   roster or course data**, since right now anything saved here would write into the
+   template's shared database instead.
+2. **`ADMIN_PIN`** in `admin-pins.js` still reads `CUP2026`, inherited from the template.
+   Set a real one for this event before handing out access.
+3. Set the event up from the commissioner console — event name, courses, roster, rounds.
 
 ## What this is
 
@@ -27,8 +40,8 @@ to avoid going forward.
 
 ## Live URLs
 
-- Player view: https://phodgman22.github.io/golf-event-template/
-- Commissioner console: https://phodgman22.github.io/golf-event-template/admin.html
+- Player view: https://phodgman22.github.io/We-Ko-PAW/
+- Commissioner console: https://phodgman22.github.io/We-Ko-PAW/admin.html
   (the code is `ADMIN_PIN` in `admin-pins.js`. It's plain text in public source, so this is
   a "keep casual players out" gate, not real security — set a fresh one per event)
 

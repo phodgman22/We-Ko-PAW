@@ -1,14 +1,14 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
-<title>Template Version &middot; Commissioner</title>
+<title>We-Ko-PAW &middot; Commissioner</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Pirata+One&display=swap" rel="stylesheet">
 <style>
-/* Same clubhouse paper the player app's leaderboard uses — cream stock, blackletter
+/* Same clubhouse paper the player app's leaderboard uses â€” cream stock, blackletter
    title, Georgia small-caps for structure, so the console reads like the rest of one
    product instead of a plain utility screen bolted onto it. */
 :root{
@@ -132,7 +132,7 @@ table.grid .empty-row{color:var(--dim);text-align:center;padding:10px;}
 header .sub,.status,#loadStatus{font-family:"Kalam","Segoe Print","Bradley Hand",cursive;}
 #pinGate p{font-family:"Kalam","Segoe Print","Bradley Hand",cursive;color:var(--muted);}
 
-/* A default value nobody's actually chosen yet this session — a loud amber alert ring that
+/* A default value nobody's actually chosen yet this session â€” a loud amber alert ring that
    pulses, settling to the normal parchment tone only once a different value is picked
    (merely clicking the already-active option does NOT clear it). */
 @keyframes reviewPulse{
@@ -154,7 +154,7 @@ select.needs-review,input.needs-review{border-radius:6px;}
 
 <div id="pinGate">
   <div class="box">
-    <h1>Template Version</h1>
+    <h1>We-Ko-PAW</h1>
     <p>Commissioner console &middot; enter PIN</p>
     <input id="pinInput" type="text" placeholder="Code" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false">
     <button class="primary" id="pinSubmit" style="width:100%">Enter</button>
@@ -164,7 +164,7 @@ select.needs-review,input.needs-review{border-radius:6px;}
 
 <div id="app" class="hidden">
 <header>
-  <h1>Template Version &middot; Commissioner</h1>
+  <h1>We-Ko-PAW &middot; Commissioner</h1>
   <span style="display:flex;gap:14px;align-items:center;">
     <span class="status" id="loadStatus">loading&hellip;</span>
     <a href="index.html" class="hdr-link">Player app &rarr;</a>
@@ -172,7 +172,7 @@ select.needs-review,input.needs-review{border-radius:6px;}
 </header>
 <main>
   <div id="configWarn" class="warn hidden">
-    Firebase isn't connected yet (placeholder config in firebase-config.js). You can still fill this out —
+    Firebase isn't connected yet (placeholder config in firebase-config.js). You can still fill this out â€”
     it'll save to your browser only until it's wired up, then nothing will be lost.
   </div>
 
@@ -307,19 +307,19 @@ if (FIREBASE_CONFIGURED) {
 }
 
 const state = {
-  event:   { name: "Template Version", allowancePct: 90, allowanceMode: "full", teamHcpMode: "formula" },
+  event:   { name: "We-Ko-PAW", allowancePct: 90, allowanceMode: "full", teamHcpMode: "formula" },
   courses: {}, // id -> { name, location, holesCount, holes:[{number,par,si,yards}], tees:[{name,rating,slope,yards}] }
   roster:  {}, // id -> { name, index, tee, code, commissioner? }
   rounds:  {}, // id -> { name, courseId, format, order }
-  groups:  {},  // roundId -> { teamId: { name, playerIds:[...] } } — the teams that score together
+  groups:  {},  // roundId -> { teamId: { name, playerIds:[...] } } â€” the teams that score together
   teeTimes: {}, // roundId -> { teeTimeId: { start, unitIds:[teamId or "p-<playerId>"] } }
-  matches: {}   // roundId -> { matchId: { unitIds:[sideA, sideB] } } — match play only
+  matches: {}   // roundId -> { matchId: { unitIds:[sideA, sideB] } } â€” match play only
 };
 
 const uid = () => Math.random().toString(36).slice(2, 9);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
-// Player login codes are name tags, not passwords — the whole roster ships to every
+// Player login codes are name tags, not passwords â€” the whole roster ships to every
 // phone, so anyone can read them. Ambiguous characters are left out so they're easy
 // to read off a screen and retype.
 const CODE_ALPHABET = "ACDEFHJKLMNPQRTUVWXY34679";
@@ -548,13 +548,13 @@ function renderRoster(){
     }));
   });
 
-  // A static page can't send mail itself — that needs a server and a mail service.
+  // A static page can't send mail itself â€” that needs a server and a mail service.
   // This opens the commissioner's own mail client with everything filled in, so the
   // message comes from him and costs nothing.
   list.querySelectorAll("[data-mail]").forEach(btn => btn.addEventListener("click", () => {
     const p = state.roster[btn.dataset.mail];
     if (!p?.email) return;
-    const event = state.event.name || "Template Version";
+    const event = state.event.name || "We-Ko-PAW";
     const link = location.href.replace(/admin\.html.*$/, "");
     const body =
       `${p.name},\n\n` +
@@ -564,7 +564,7 @@ function renderRoster(){
       `Open the link, enter the code, and you're in. Any hole you play, ` +
       `you or anyone in your group can enter the score.\n`;
     location.href = `mailto:${encodeURIComponent(p.email)}` +
-      `?subject=${encodeURIComponent(`${event} — your player code`)}` +
+      `?subject=${encodeURIComponent(`${event} â€” your player code`)}` +
       `&body=${encodeURIComponent(body)}`;
   }));
 
@@ -715,11 +715,11 @@ function renderRounds(){
       </div>
       ${r.skinsOn ? (() => {
         // Skins runs its own gross/net and team/individual, independent of the round's own
-        // format — a net best ball round can still play its skins gross, or as individuals.
+        // format â€” a net best ball round can still play its skins gross, or as individuals.
         // Individual skins only makes sense where individual scores actually exist (every
         // format except scramble and alternate shot, which only ever have a team score).
         const canIndividual = f.entry === "player";
-        // Skins defaults to gross and individual regardless of the round's own format —
+        // Skins defaults to gross and individual regardless of the round's own format â€”
         // a deliberate choice, not just "whatever the round already is".
         const skinsGross = r.skinsGross ?? true;
         const skinsUnit = canIndividual ? (r.skinsUnit || "individual") : "team";
@@ -740,7 +740,7 @@ function renderRounds(){
         </div>
         <p class="hint" style="margin-top:6px;">Low score on a hole wins the skin${skinsCarry
           ? "; a tie carries it (and everything riding on it) to the next hole"
-          : "; a tie just voids the hole — nobody wins it and nothing carries forward"}. A hole only
+          : "; a tie just voids the hole â€” nobody wins it and nothing carries forward"}. A hole only
           counts once every ${skinsUnit === "individual" ? "player" : "team"} in the round has a
           score on it, so skins can lag behind the leaderboard until the whole field is through a hole.</p>`;
       })() : ""}
@@ -765,7 +765,7 @@ function renderRounds(){
       }
       if (rf === "rollingBestCount"){
         inp.classList.remove("needs-review");
-        // Patch just the hint's number in place — a full re-render would drop focus
+        // Patch just the hint's number in place â€” a full re-render would drop focus
         // mid-keystroke, same reason maxPlus/ctpHoles/ldHoles skip it above.
         const hint = box.querySelector(".rolling-best-hint b");
         if (hint) hint.textContent = (+inp.value > 0 ? inp.value : 4);
@@ -775,7 +775,7 @@ function renderRounds(){
       if (rf === "courseId") renderRoster();
     }));
     // A click into the maxScore select counts as "looked at it" even if the commissioner
-    // backs out and keeps the default — same as clicking an already-active toggle button.
+    // backs out and keeps the default â€” same as clicking an already-active toggle button.
     box.querySelectorAll('select[data-rf="maxScore"]').forEach(sel => sel.addEventListener("click", () => {
       confirmField("maxScore", id);
       sel.classList.remove("needs-review");
@@ -838,7 +838,7 @@ function renderRounds(){
 
 /* ---------- teams, tee times and matches (inside each round) ---------- */
 
-// The competing entries for a round. Team formats use the teams built below — a team with no
+// The competing entries for a round. Team formats use the teams built below â€” a team with no
 // players yet doesn't count. Individual formats have no teams: every roster player is his own
 // entry, keyed "p-<id>".
 function unitsForAdmin(roundId){
@@ -872,7 +872,7 @@ function roundHandicaps(roundId){
   });
 }
 
-// The handicap a player actually plays off in a round, or null while it isn't settled —
+// The handicap a player actually plays off in a round, or null while it isn't settled â€”
 // no course yet, not on a team in a team-ball game, or not in a match in match play.
 function receivedHcp(roundId, pid){
   const r = state.rounds[roundId];
@@ -904,7 +904,7 @@ function renderRoundSetup(roundId, wrap){
   const f = FORMATS[formatOf(round, state.event)] || FORMATS[DEFAULT_FORMAT];
   const individual = f.unit === "player";
   // Rolling best ball scores per-player (like Individual) but still buckets players into
-  // teams for standings — the team grid stays available even though it's not the scoring
+  // teams for standings â€” the team grid stays available even though it's not the scoring
   // unit and never appears in a tee time.
   const showTeams = !individual || f.bigTeams;
   const match = round.play === "match";
@@ -1131,7 +1131,7 @@ function renderRoundSetup(roundId, wrap){
 const WEIGHT_SIZES = [2, 3, 4];
 const RANK_LABELS = ["Lowest", "2nd", "3rd", "Highest"];
 
-// The label depends on group size — in a twosome the second man IS the highest.
+// The label depends on group size â€” in a twosome the second man IS the highest.
 function rankLabel(i, size){
   if (i === size - 1) return "Highest";
   return RANK_LABELS[i] || `#${i + 1}`;
@@ -1139,7 +1139,7 @@ function rankLabel(i, size){
 
 // Markup for one format's weight editor, embedded in that format's round card(s). The
 // underlying data (state.event.teamWeights[fmt]) is still shared at the event level, so two
-// rounds both playing scramble edit and see the same table — only where it's shown moved.
+// rounds both playing scramble edit and see the same table â€” only where it's shown moved.
 function weightsSectionHtml(fmt){
   return `<h3 class="step">Team handicap weighting <span class="hint">&mdash; ${esc(FORMATS[fmt]?.label || fmt)}</span></h3>
     <div class="sub-card" data-wfmt="${fmt}">
@@ -1200,7 +1200,7 @@ const TEAM_SIZE_HINT = {
   "scramble": "Scramble is usually played in teams of 2 to 4.",
   "alternate-shot": "Alternate shot is played in 2-man teams.",
   "total": "Every player's score is added up, so any team size works.",
-  "rolling-best-ball": "Built for big teams split across several foursomes — put the whole team here, then place its players into whatever tee times fit."
+  "rolling-best-ball": "Built for big teams split across several foursomes â€” put the whole team here, then place its players into whatever tee times fit."
 };
 
 // Every format being played across the rounds.
@@ -1209,7 +1209,7 @@ function usedFormats(){
 }
 
 // Format and play belong to each round. Older saves kept a format on the event and left
-// rounds empty to follow it — give those rounds the event's format explicitly, then drop it.
+// rounds empty to follow it â€” give those rounds the event's format explicitly, then drop it.
 function normaliseFormats(){
   const legacy = FORMATS[state.event.format] ? state.event.format : DEFAULT_FORMAT;
   Object.values(state.rounds).forEach(r => {
@@ -1230,7 +1230,7 @@ function renderHandicapSections(){
   document.getElementById("teamHcpField").classList.toggle("hidden", !anyTeamBall);
 }
 
-// A default value nobody's confirmed yet THIS session — resets on every load, on purpose,
+// A default value nobody's confirmed yet THIS session â€” resets on every load, on purpose,
 // the same way a paper form gets re-initialed each time it's picked up rather than only
 // once ever. Any interaction with the field (even re-picking the same value) confirms it.
 // Session-only: never written to Firebase, so it says nothing about whether a setting was
@@ -1249,13 +1249,13 @@ function seedPendingReview(){
 }
 
 // A high-level label for the whole event, set once. It doesn't hide or restrict any format
-// or team-size choice elsewhere in the console — every round still picks its own format
-// freely — it's a hint for the commissioner and a foundation for Ryder Cup's two-sided
+// or team-size choice elsewhere in the console â€” every round still picks its own format
+// freely â€” it's a hint for the commissioner and a foundation for Ryder Cup's two-sided
 // structure (side names here; team assignment and the cross-round points race are separate,
 // not-yet-built features layered on top of this selection).
 const EVENT_STYLES = {
-  "ryder-cup":     { label: "Ryder Cup", hint: "Two rival teams face off across every round, with points totaled for an overall winner — think USA vs. Europe." },
-  "two-man-teams": { label: "2-Man Teams", hint: "Teams of two play together, scored against the whole field each round — the most common outing format." },
+  "ryder-cup":     { label: "Ryder Cup", hint: "Two rival teams face off across every round, with points totaled for an overall winner â€” think USA vs. Europe." },
+  "two-man-teams": { label: "2-Man Teams", hint: "Teams of two play together, scored against the whole field each round â€” the most common outing format." },
   "singles":       { label: "Singles", hint: "Every player scores on his own, no teams involved." }
 };
 
@@ -1290,7 +1290,7 @@ function renderAll(){
 
 document.getElementById("eventName").addEventListener("input", e => state.event.name = e.target.value);
 // A click into the field counts as "looked at it" even if the commissioner backs out and
-// keeps the default — same as clicking a toggle button that's already the active choice.
+// keeps the default â€” same as clicking a toggle button that's already the active choice.
 document.getElementById("allowancePct").addEventListener("click", e => {
   confirmField("allowancePct"); e.target.classList.remove("needs-review");
 });
@@ -1356,7 +1356,7 @@ document.getElementById("addPlayerBtn").addEventListener("click", () => {
 
 /* ---------- spreadsheet import / export ---------- */
 
-// Sheet layouts are flat on purpose — one row per thing, course name repeated — so the
+// Sheet layouts are flat on purpose â€” one row per thing, course name repeated â€” so the
 // file stays obvious to someone who has never seen it and is editing it in Excel.
 const SHEET_READ_ME = "Read me first";
 const SHEET_COURSES = "Courses";
@@ -1369,7 +1369,7 @@ const PLAYER_HEADERS = ["Player", "Handicap index", "Tee", "Email", "Commissione
 
 // An obviously-fake course/player name, so a row left in by accident is easy to spot and
 // remove in the console afterward rather than quietly becoming a real entry.
-const EXAMPLE = "EXAMPLE — delete this row";
+const EXAMPLE = "EXAMPLE â€” delete this row";
 
 function setImportStatus(msg, cls){
   const el = document.getElementById("importStatus");
@@ -1379,42 +1379,42 @@ function setImportStatus(msg, cls){
 
 // Plain sentences, one per row, on the sheet that opens first. Example rows on the other
 // three sheets show the shape; this explains the two things that aren't obvious from
-// column headers alone — how the sheets link up, and the one silent-failure mode.
+// column headers alone â€” how the sheets link up, and the one silent-failure mode.
 function buildReadMeRows(){
   return [
     ["Spreadsheet setup"],
     [""],
     ["Three sheets do the real work: Courses, Holes, Players. Fill them in, save the file, and"],
-    ["upload it back in the console — Download template / Upload filled template."],
+    ["upload it back in the console â€” Download template / Upload filled template."],
     [""],
     ["Each of those three sheets has one EXAMPLE row already in it, showing the format. Delete"],
-    ["the example rows before you upload — otherwise you'll get a fake course and a fake player"],
+    ["the example rows before you upload â€” otherwise you'll get a fake course and a fake player"],
     ["alongside your real ones (harmless, but easy to forget to clean up)."],
     [""],
-    ["COURSES — one row per TEE, not one row per course. A course with four tees (Black, Blue,"],
+    ["COURSES â€” one row per TEE, not one row per course. A course with four tees (Black, Blue,"],
     ["White, Gold) needs four rows, all with the same Course name. Location and Holes only need"],
     ["to be filled in on one of those rows; leave the rest blank."],
     [""],
-    ["HOLES — one row per hole. An 18-hole course needs 18 rows, all with the same Course name"],
+    ["HOLES â€” one row per hole. An 18-hole course needs 18 rows, all with the same Course name"],
     ["as on the Courses sheet."],
     [""],
-    ["PLAYERS — one row per player. Tee must be spelled exactly as it is on the Courses sheet"],
-    ["— same capitalization too (\"White\", not \"white\"). This one matters: a Tee that doesn't"],
+    ["PLAYERS â€” one row per player. Tee must be spelled exactly as it is on the Courses sheet"],
+    ["â€” same capitalization too (\"White\", not \"white\"). This one matters: a Tee that doesn't"],
     ["match anything on the Courses sheet doesn't raise an error, it just quietly gives that"],
     ["player a handicap of zero. If someone's handicap looks wrong after you upload, this is the"],
     ["first thing to check."],
     [""],
     ["Course names on the Courses and Holes sheets need to match each other exactly too, for the"],
-    ["same reason — that's how the app knows which holes belong to which course."],
+    ["same reason â€” that's how the app knows which holes belong to which course."],
     [""],
-    ["Commissioner (Y/N) — if you're playing and running the event, put Y on your own row. You'll"],
-    ["then get commissioner access just by logging into the player app with your own code — no"],
+    ["Commissioner (Y/N) â€” if you're playing and running the event, put Y on your own row. You'll"],
+    ["then get commissioner access just by logging into the player app with your own code â€” no"],
     ["separate console PIN to carry around on the course. Leave it blank (or N) for everyone else."],
     ["Leaving the column blank on an upload doesn't turn this off for anyone it's already on for."],
     [""],
     ["Uploading REPLACES every course and every player with what's in the file. Players are"],
     ["matched by name against who's already in the roster, so anyone already there keeps their"],
-    ["login code and any settings you've made for them — you're not starting over each time."]
+    ["login code and any settings you've made for them â€” you're not starting over each time."]
   ];
 }
 
@@ -1439,7 +1439,7 @@ function buildTemplateRows(){
 
 function downloadTemplate(){
   if (typeof XLSX === "undefined"){
-    setImportStatus("Spreadsheet library didn't load — check your connection.", "err");
+    setImportStatus("Spreadsheet library didn't load â€” check your connection.", "err");
     return;
   }
   const { readMeRows, courseRows, holeRows, playerRows } = buildTemplateRows();
@@ -1466,9 +1466,9 @@ function downloadTemplate(){
   setImportStatus("Template downloaded.", "ok");
 }
 
-// A quick reference sheet for handing out codes without clicking "Send" once per player —
+// A quick reference sheet for handing out codes without clicking "Send" once per player â€”
 // print it, paste it into a group text, whatever's fastest for the commissioner. Its own
-// status span, right next to the button — setImportStatus lives up in Spreadsheet setup,
+// status span, right next to the button â€” setImportStatus lives up in Spreadsheet setup,
 // which would put the confirmation off-screen from the button that triggered it.
 function setCodesStatus(msg, cls){
   const el = document.getElementById("codesStatus");
@@ -1477,7 +1477,7 @@ function setCodesStatus(msg, cls){
 }
 function downloadCodes(){
   if (typeof XLSX === "undefined"){
-    setCodesStatus("Spreadsheet library didn't load — check your connection.", "err");
+    setCodesStatus("Spreadsheet library didn't load â€” check your connection.", "err");
     return;
   }
   const players = Object.values(state.roster)
@@ -1496,7 +1496,7 @@ function downloadCodes(){
   setCodesStatus("Downloaded.", "ok");
 }
 
-// Header matching is loose — case and punctuation vary once a human has edited the file.
+// Header matching is loose â€” case and punctuation vary once a human has edited the file.
 const normalise = s => String(s ?? "").toLowerCase().replace(/[^a-z0-9]/g, "");
 
 function rowsOf(wb, sheetName){
@@ -1579,7 +1579,7 @@ function importWorkbook(wb){
     if (!c.holes.length) c.holes = defaultHoles(c.holesCount);
   });
 
-  // Blank means "leave it as it was" (like Email above); only Y/Yes/True/1 turns it on —
+  // Blank means "leave it as it was" (like Email above); only Y/Yes/True/1 turns it on â€”
   // anything else, including a blank cell on a brand new player, defaults to off.
   const YES = new Set(["y", "yes", "true", "1"]);
   const truthyYN = (v, fallback = false) => v === undefined ? fallback : YES.has(String(v).trim().toLowerCase());
@@ -1604,7 +1604,7 @@ function importWorkbook(wb){
   });
 
   if (!Object.keys(courses).length && !Object.keys(roster).length){
-    throw new Error("Nothing to import — the sheets had no rows filled in.");
+    throw new Error("Nothing to import â€” the sheets had no rows filled in.");
   }
 
   state.courses = courses;
@@ -1636,11 +1636,11 @@ document.getElementById("uploadInput").addEventListener("change", async e => {
   const file = e.target.files?.[0];
   if (!file) return;
   if (typeof XLSX === "undefined"){
-    setImportStatus("Spreadsheet library didn't load — check your connection.", "err");
+    setImportStatus("Spreadsheet library didn't load â€” check your connection.", "err");
     return;
   }
   try {
-    setImportStatus("Reading…");
+    setImportStatus("Readingâ€¦");
     const wb = XLSX.read(await file.arrayBuffer(), { type: "array" });
     const result = importWorkbook(wb);
     renderAll();
@@ -1648,7 +1648,7 @@ document.getElementById("uploadInput").addEventListener("change", async e => {
       `Imported ${result.courses} course${result.courses === 1 ? "" : "s"} and ` +
       `${result.players} player${result.players === 1 ? "" : "s"}` +
       (result.kept ? ` (${result.kept} kept their existing code)` : "") +
-      ` — press Save all to publish.`, "ok");
+      ` â€” press Save all to publish.`, "ok");
   } catch (err){
     console.error(err);
     setImportStatus("Couldn't read that file: " + err.message, "err");
@@ -1669,7 +1669,7 @@ async function saveAll(){
   localStorage.setItem(LS_KEY, JSON.stringify(state));
   if (!db){ setStatus("Saved locally (Firebase not connected)", "ok"); return; }
   try {
-    setStatus("Saving…");
+    setStatus("Savingâ€¦");
     await set(ref(db, DB_PATH), state);
     setStatus("Saved", "ok");
   } catch (err){

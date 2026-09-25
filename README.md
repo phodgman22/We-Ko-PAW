@@ -1,19 +1,20 @@
-# Golf Event Scoring Template
+# We-Ko-PAW
 
-A reusable template for live golf event scoring — a static web app on GitHub Pages, backed
-by a Firebase Realtime Database. Fork this repo for each new event, point it at a fresh
-Firebase project, and set the event up from the commissioner console; no other code changes
-needed.
+Live scoring for We-Ko-PAW — a static web app on GitHub Pages, backed by a Firebase Realtime
+Database. Forked from [golf-event-template](https://github.com/phodgman22/golf-event-template),
+the reusable base for future events — that repo, not this one, is where template-wide fixes
+and new formats belong.
 
-- Players: https://phodgman22.github.io/golf-event-template/
-- Commissioner console: https://phodgman22.github.io/golf-event-template/admin.html
+- Players: https://phodgman22.github.io/We-Ko-PAW/
+- Commissioner console: https://phodgman22.github.io/We-Ko-PAW/admin.html
 
 **Full technical reference:** [HANDOFF.md](HANDOFF.md) — architecture, data model, every
 format and setting, and the bugs already found and fixed (don't reintroduce them).
 
-To start a new event from this template:
-1. Create a new Firebase Realtime Database project and paste its config into
-   `firebase-config.js`; deploy `database.rules.json` to it.
+Still to finish before this is live for real players:
+1. Create a new Firebase Realtime Database project for We-Ko-PAW and paste its config into
+   `firebase-config.js`; deploy `database.rules.json` to it. (Still pointing at the template's
+   Firebase project right now — see the note in `HANDOFF.md`.)
 2. Set a real `ADMIN_PIN` in `admin-pins.js`.
 3. Set up the event from the commissioner console — event name, courses, roster, rounds.
 
