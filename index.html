@@ -146,6 +146,17 @@ table.lboard td.mstatus{font-size:19px;white-space:nowrap;}
   background:var(--accent-dim);border:1px solid var(--accent);border-radius:10px;padding:10px 12px;font-size:14px;color:var(--text);}
 .attest-banner.done{background:#e6f1e8;border-color:#2e6a3b;color:#1f4a29;}
 .attest-banner button{background:var(--navy);color:var(--surface);border:none;border-radius:6px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;}
+.hole-joke{margin:10px 0;padding:9px 12px;border-radius:8px;font-size:13px;font-weight:700;text-align:center;}
+.hole-joke.good{background:var(--accent-dim);border:1px solid var(--accent);color:var(--accent);}
+.hole-joke.bad{background:#f7e3e2;border:1px solid var(--danger);color:var(--danger);}
+/* weekend tab */
+.groom-photo{width:140px;height:140px;object-fit:cover;border-radius:50%;border:3px solid var(--accent);}
+.groom-bio{font-size:15px;line-height:1.6;text-align:left;margin-top:10px;}
+.weekend-videos{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+.weekend-videos video{width:calc(50% - 5px);min-width:150px;flex:1 1 150px;border-radius:8px;background:#000;}
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;}
+.gallery-grid figure{margin:0;cursor:pointer;border-radius:8px;overflow:hidden;background:var(--surface2);}
+.gallery-grid img{width:100%;height:130px;object-fit:cover;display:block;}
 .attest-banner button.ghost{background:none;color:inherit;border:1px solid currentColor;font-weight:400;}
 .attest-box{margin-top:16px;border-top:1px solid var(--line);padding-top:14px;}
 .attest-box label{display:flex;gap:10px;align-items:flex-start;font-size:15px;color:var(--text);cursor:pointer;margin-bottom:12px;}
@@ -267,6 +278,7 @@ footer{text-align:center;color:var(--dim);font-size:11px;padding:16px;}
   <button data-tab="score">Scorecard</button>
   <button data-tab="board">Leaderboard</button>
   <button data-tab="stats">Stats</button>
+  <button data-tab="weekend">Weekend</button>
 </nav>
 
 <main>
@@ -315,7 +327,73 @@ footer{text-align:center;color:var(--dim);font-size:11px;padding:16px;}
       <p id="statNote" style="font-size:12px;color:var(--dim);margin-top:12px;"></p>
     </div>
   </section>
+
+  <section id="tab-weekend" class="hidden">
+    <div class="card" style="text-align:center;">
+      <img src="assets/gallery/IMG_4177.jpg" alt="Ryan" class="groom-photo">
+      <h2 style="margin-top:12px;">Meet the Groom</h2>
+      <p class="groom-bio">
+        <b>Ryan</b> &mdash; better known around here as <b>Paw</b> or <b>Wildcat</b> &mdash; is the man of
+        the hour, and yes, he's playing this weekend too.<br><br>
+        Height: officially &ldquo;tall enough.&rdquo; Spelling: a lifelong work in progress. If you hear
+        someone yell <b>&ldquo;C&rsquo;monnnn!&rdquo;</b> from three fairways over, that's him.<br><br>
+        He's a Buckeye through and through, an eternally hopeful Cleveland Browns fan, and a Cubs fan who
+        knows a thing or two about waiting for good things. He played baseball at DePauw University,
+        which is either where he learned patience or where he definitely didn't.<br><br>
+        Rush is the only correct answer to &ldquo;favorite band,&rdquo; don't bother arguing.<br><br>
+        Standing next to him all weekend: his brothers and co-best men, <b>Hunter</b> and
+        <b>Cameron</b> &mdash; also both playing, so watch the leaderboard. Waiting at home: his dog
+        <b>Kai</b> (you already met him) and his fianc&eacute;e <b>Abby</b>, the actual best part of all
+        this.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>Hype reel</h2>
+      <div class="weekend-videos">
+        <video src="assets/gallery/ryan-dance.mp4" autoplay loop muted playsinline></video>
+        <video src="assets/gallery/sick-dood.mp4" autoplay loop muted playsinline></video>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Weekend gallery</h2>
+      <div class="gallery-grid" id="weekendGallery">
+        <figure data-cap="Cubs game night">
+          <img src="assets/gallery/IMG_4174.jpg" alt="">
+        </figure>
+        <figure data-cap="Somewhere on the trip, weapons were involved. Allegedly.">
+          <img src="assets/gallery/IMG_4175.jpg" alt="">
+        </figure>
+        <figure data-cap="Souvenir shopping, bachelor-party style.">
+          <img src="assets/gallery/IMG_4176.jpg" alt="">
+        </figure>
+        <figure data-cap="Browns #6. The dedication is real.">
+          <img src="assets/gallery/IMG_4177.jpg" alt="">
+        </figure>
+        <figure data-cap="Grill master, apron required.">
+          <img src="assets/gallery/IMG_4178.jpg" alt="">
+        </figure>
+        <figure data-cap="The guys, doing what the guys do.">
+          <img src="assets/gallery/IMG_4179.jpg" alt="">
+        </figure>
+        <figure data-cap="Bo&rsquo;Town breakfast of champions.">
+          <img src="assets/gallery/IMG_4183.jpg" alt="">
+        </figure>
+        <figure data-cap="Beer, a shark, and the Tigers on the wall.">
+          <img src="assets/gallery/IMG_4184.jpg" alt="">
+        </figure>
+      </div>
+    </div>
+  </section>
 </main>
+<div id="photoModal" class="modal hidden" role="dialog" aria-modal="true">
+  <div class="modal-box" style="max-width:520px;text-align:center;">
+    <button class="modal-x" id="photoModalClose" aria-label="Close">&times;</button>
+    <img id="photoModalImg" src="" alt="" style="width:100%;border-radius:8px;margin-top:4px;display:block;">
+    <p id="photoModalCap" style="font-size:14px;color:var(--muted);margin:10px 0 2px;"></p>
+  </div>
+</div>
 <div id="cardModal" class="modal hidden" role="dialog" aria-modal="true">
   <div class="modal-box">
     <button class="modal-x" id="cardModalClose" aria-label="Close">&times;</button>
@@ -367,6 +445,85 @@ const ADMIN_SESSION_KEY = "covidcup_admin_ok:" + NS;
 const ADMIN_DRAFT_KEY = "covidcup_admin_draft:" + NS;
 const SCORES_DRAFT_KEY = "covidcup_scores_draft:" + NS;
 const ATTEST_DRAFT_KEY = "covidcup_attest_draft:" + NS;
+
+/* ---------- hole jokes ---------- */
+// A one-liner pops up after a score goes in that's birdie-or-better or bogey-or-worse
+// (nothing for par — every hole would get noisy). Whoever's box it is gets a themed pool if
+// he's the groom, otherwise the general pool. Picked at random so the same hole doesn't
+// always say the same thing.
+const HOLE_JOKES_BIRDIE = [
+  "Birdie! Somebody's sandbagging their handicap.",
+  "That's a keeper — screenshot it before it disappears.",
+  "Certified golf swing detected.",
+  "Somebody skipped the beer cart this hole.",
+  "The golf gods are smiling. Briefly.",
+  "That'll buy a round at the clubhouse later.",
+  "Somebody's been watching swing tips on YouTube at 2am.",
+  "Put it on the highlight reel."
+];
+const HOLE_JOKES_BOGEY = [
+  "That hole is going in the vault, never to be spoken of again.",
+  "The beer cart is now mandatory.",
+  "Somebody owes the group a mulligan explanation.",
+  "That one's getting the ‘circle it on the scorecard’ treatment.",
+  "Time to blame the wind, the lie, or the driver — pick one.",
+  "Great time for a gimme... that doesn't exist.",
+  "Somebody's handicap just went up in real time.",
+  "The golf gods have officially stopped smiling."
+];
+const RYAN_HOLE_JOKES_BIRDIE = [
+  "Wildcat strikes! Rush is writing a concept album about this hole.",
+  "That's a DePauw-caliber swing right there, Paw.",
+  "Ohio State would be proud. Somewhere, Kai is doing a lap.",
+  "C'monnnn Ryan! That's the good stuff.",
+  "Browns fans wait a lifetime for a win like that — congrats, Paw.",
+  "Somewhere Abby just felt a disturbance in the Force. Nice one, Wildcat.",
+  "That swing had more rhythm than a Neil Peart drum solo.",
+  "Cubs fans know a rare good thing when they see it — nice birdie, Ryan."
+];
+const RYAN_HOLE_JOKES_BOGEY = [
+  "C'monnnn Ryan...",
+  "That hole was rough — almost as rough as your spelling, Paw.",
+  "Vintage Browns football right there, Wildcat.",
+  "Somewhere a DePauw baseball coach just shook his head.",
+  "Classic pre-2016 Cubs hole.",
+  "Tough to judge distance when you're this short, Paw.",
+  "Kai could've read that green better.",
+  "That's going to need a Rush song to process — make it a long one."
+];
+const pickJoke = pool => pool[Math.floor(Math.random() * pool.length)];
+function holeJokeFor(fieldKey, good){
+  const name = String(cfg.roster?.[fieldKey]?.name || "").trim();
+  const isRyan = /^ryan\b/i.test(name);
+  const pool = isRyan
+    ? (good ? RYAN_HOLE_JOKES_BIRDIE : RYAN_HOLE_JOKES_BOGEY)
+    : (good ? HOLE_JOKES_BIRDIE : HOLE_JOKES_BOGEY);
+  return pickJoke(pool);
+}
+// cell is the raw {v,x} just written for this box; f/hole/c give par, strokes and max rule
+// the same way the scorecard itself already works them out.
+function showHoleJoke(c, f, hole, cell){
+  const banner = document.getElementById("holeJoke");
+  if (!banner) return;
+  const shots = c.gross ? 0 : strokesOnHole(f.ph, hole.si, c.holeCount);
+  const res = scoreCell(cell, hole.par, shots, c.maxRule, c.maxPlus);
+  if (!res){ banner.classList.add("hidden"); return; }
+  const toPar = res.net - (+hole.par || 0);
+  if (toPar <= -1){
+    banner.textContent = holeJokeFor(f.key, true);
+    banner.className = "hole-joke good";
+  } else if (toPar >= 1){
+    banner.textContent = holeJokeFor(f.key, false);
+    banner.className = "hole-joke bad";
+  } else {
+    banner.classList.add("hidden");
+    return;
+  }
+  banner.classList.remove("hidden");
+}
+function hideHoleJoke(){
+  document.getElementById("holeJoke")?.classList.add("hidden");
+}
 
 let db = null;
 let cfg = { event: {}, courses: {}, roster: {}, rounds: {}, groups: {} };
@@ -928,6 +1085,7 @@ function renderHoleView(body, c){
       '<span class="meta">Par ' + hole.par + " &middot; stroke index " + hole.si + "</span></div>" +
     contestBadges(c, hole.number) +
     entries +
+    '<p id="holeJoke" class="hole-joke hidden"></p>' +
     totalsHtml(c) +
     (ahead
       ? '<p class="gate-hint">Looking ahead &mdash; finish hole ' + openHole + " before scoring this one.</p>"
@@ -958,13 +1116,16 @@ function renderHoleView(body, c){
       if (input.value === ""){
         queueScoreWrite(c.roundId, f.unitId, hole.number, f.key, { v: null, x: false });
         refreshRunningTotal(c);
+        hideHoleJoke();
         return;
       }
       const n = Math.max(1, Math.min(15, Math.floor(+input.value) || 1));
       // Cap rather than storing a number nobody actually made.
       if (+input.value > 15) input.value = String(n);
-      queueScoreWrite(c.roundId, f.unitId, hole.number, f.key, { v: n, x: false });
+      const cell = { v: n, x: false };
+      queueScoreWrite(c.roundId, f.unitId, hole.number, f.key, cell);
       refreshRunningTotal(c);
+      showHoleJoke(c, f, hole, cell);
 
       // Move to the next box once the number cannot get any more specific â€” a lone 1
       // could still become 10 through 15, anything else could not.
@@ -974,11 +1135,14 @@ function renderHoleView(body, c){
 
     row.querySelector("[data-pickup]")?.addEventListener("click", () => {
       const now = !!cellFor(c, f, hole.number)?.x;
-      queueScoreWrite(c.roundId, f.unitId, hole.number, f.key, now ? { v: null, x: false } : { v: null, x: true }, true);
+      const cell = now ? { v: null, x: false } : { v: null, x: true };
+      queueScoreWrite(c.roundId, f.unitId, hole.number, f.key, cell, true);
+      if (cell.x) showHoleJoke(c, f, hole, cell); else hideHoleJoke();
     });
     // Look-ahead holes have no scoring buttons at all.
     row.querySelector("[data-clear]")?.addEventListener("click", () => {
       queueScoreWrite(c.roundId, f.unitId, hole.number, f.key, { v: null, x: false }, true);
+      hideHoleJoke();
     });
   });
 
@@ -1802,12 +1966,23 @@ document.querySelectorAll("nav.tabs button").forEach(btn => {
   btn.addEventListener("click", () => {
     document.querySelectorAll("nav.tabs button").forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
-    ["home", "score", "board", "stats"].forEach(t =>
+    ["home", "score", "board", "stats", "weekend"].forEach(t =>
       document.getElementById("tab-" + t).classList.toggle("hidden", t !== btn.dataset.tab));
     if (btn.dataset.tab === "score") renderScoreTab();
     if (btn.dataset.tab === "board") renderLeaderboard();
     if (btn.dataset.tab === "stats") renderStatsTab();
   });
+});
+
+document.querySelectorAll("#weekendGallery figure").forEach(fig => fig.addEventListener("click", () => {
+  document.getElementById("photoModalImg").src = fig.querySelector("img").src;
+  document.getElementById("photoModalCap").textContent = fig.dataset.cap || "";
+  document.getElementById("photoModal").classList.remove("hidden");
+}));
+document.getElementById("photoModalClose").addEventListener("click", () =>
+  document.getElementById("photoModal").classList.add("hidden"));
+document.getElementById("photoModal").addEventListener("click", e => {
+  if (e.target.id === "photoModal") document.getElementById("photoModal").classList.add("hidden");
 });
 
 document.getElementById("homeRoundSelect").addEventListener("change", renderGroupsList);
