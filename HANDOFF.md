@@ -556,6 +556,23 @@ first-login path in the code-submit handler, and `trySavedLogin()` for a phone t
 had a plain player login saved before he was flagged. There's no way to un-flag yourself from
 inside the player app — that's deliberate, it's a console setting.
 
+## Resetting scores
+
+Each round card in admin.html has a **Reset scores** button next to Remove round. It erases every
+entered score and every submitted-card attestation for that round only, live on the server —
+`covidcup_scores/<roundId>` and `covidcup_attest/<roundId>`.
+
+- These two paths aren't part of `state` and aren't touched by Save all/Remove round at all — the
+  console never loads them, so this button talks to Firebase directly (`resetRoundScores()` in
+  admin.html), not through the usual save flow.
+- The security rules only grant `.write` at the exact leaf depth (`covidcup_scores/$roundId/$groupId/$hole`,
+  `covidcup_attest/$roundId/$unitId`) — there's no rule that allows wiping a whole round in one
+  write. So it `get()`s the round's current scores and attestations first to enumerate every leaf,
+  then nulls them all in one multi-path `update()` call.
+- Confirmed with a native `confirm()` before it runs — unlike "Update to player app", this
+  deletes real, live data and can't be undone, so the confirmation stays even though the reload
+  button's was removed on request.
+
 ## Submitting a card
 
 Once every hole on a card has a score or pickup, the card offers **Review & submit** — as a banner

@@ -289,7 +289,7 @@ select.needs-review,input.needs-review{border-radius:6px;}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+import { getDatabase, ref, get, set, update } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
 import { FIREBASE_CONFIG, FIREBASE_CONFIGURED } from "./firebase-config.js";
 import { FORMATS, coursePar, courseHandicap, playingHandicaps,
          DEFAULT_TEAM_WEIGHTS, weightsFor, MAX_SCORE_RULES, DEFAULT_MAX_RULE,
@@ -627,7 +627,8 @@ function renderRounds(){
             ${courseOpts.map(([cid, c]) => `<option value="${cid}" ${r.courseId === cid ? "selected" : ""}>${esc(c.name || "Untitled")}</option>`).join("")}
           </select>
         </div>
-        <div style="flex:0 0 auto;display:flex;align-items:flex-end;">
+        <div style="flex:0 0 auto;display:flex;align-items:flex-end;gap:8px;">
+          <button class="danger" data-reset-scores="${id}" type="button">Reset scores</button>
           <button class="danger" data-del-round="${id}">Remove round</button>
         </div>
       </div>
@@ -836,6 +837,8 @@ function renderRounds(){
       delete state.matches[id];
       renderRounds(); renderRoster(); renderHandicapSections();
     });
+
+    box.querySelector("[data-reset-scores]").addEventListener("click", () => resetRoundScores(id, r.name));
   });
 
   renderGroups();
@@ -1700,6 +1703,43 @@ async function saveAll(){
   } catch (err){
     console.error(err);
     setStatus("Save failed: " + err.message, "err");
+  }
+}
+
+async function resetRoundScores(roundId, roundName){
+  if (!db){ setStatus("Can't reset scores while offline (Firebase not connected)", "err"); return; }
+  const label = roundName ? `"${roundName}"` : "this round";
+  if (!confirm(`Erase every entered score and submitted card for ${label}?\n\nThis deletes live data from the server and can't be undone.`)) return;
+
+  try {
+    setStatus("Resetting scoresâ€¦");
+    const [scoresSnap, attestSnap] = await Promise.all([
+      get(ref(db, "covidcup_scores/" + roundId)),
+      get(ref(db, "covidcup_attest/" + roundId))
+    ]);
+
+    const updates = {};
+    if (scoresSnap.exists()){
+      const groups = scoresSnap.val();
+      Object.keys(groups).forEach(groupId => {
+        Object.keys(groups[groupId] || {}).forEach(hole => {
+          updates[`covidcup_scores/${roundId}/${groupId}/${hole}`] = null;
+        });
+      });
+    }
+    if (attestSnap.exists()){
+      Object.keys(attestSnap.val()).forEach(unitId => {
+        updates[`covidcup_attest/${roundId}/${unitId}`] = null;
+      });
+    }
+
+    if (!Object.keys(updates).length){ setStatus("No scores to reset for that round", "ok"); return; }
+
+    await update(ref(db), updates);
+    setStatus("Scores reset for " + label, "ok");
+  } catch (err){
+    console.error(err);
+    setStatus("Reset failed: " + err.message, "err");
   }
 }
 
