@@ -146,9 +146,12 @@ table.lboard td.mstatus{font-size:19px;white-space:nowrap;}
   background:var(--accent-dim);border:1px solid var(--accent);border-radius:10px;padding:10px 12px;font-size:14px;color:var(--text);}
 .attest-banner.done{background:#e6f1e8;border-color:#2e6a3b;color:#1f4a29;}
 .attest-banner button{background:var(--navy);color:var(--surface);border:none;border-radius:6px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;}
-.hole-joke{margin:10px 0;padding:9px 12px;border-radius:8px;font-size:13px;font-weight:700;text-align:center;}
+.hole-joke{margin:10px 0;padding:9px 12px;border-radius:8px;font-size:13px;font-weight:700;
+  display:flex;align-items:center;gap:10px;text-align:left;}
 .hole-joke.good{background:var(--accent-dim);border:1px solid var(--accent);color:var(--accent);}
 .hole-joke.bad{background:#f7e3e2;border:1px solid var(--danger);color:var(--danger);}
+.hole-joke img{width:44px;height:44px;border-radius:50%;object-fit:cover;flex:0 0 auto;border:2px solid currentColor;}
+.hole-joke span{flex:1;}
 /* weekend tab */
 .groom-photo{width:140px;height:140px;object-fit:cover;border-radius:50%;border:3px solid var(--accent);}
 .groom-bio{font-size:15px;line-height:1.6;text-align:left;margin-top:10px;}
@@ -333,18 +336,11 @@ footer{text-align:center;color:var(--dim);font-size:11px;padding:16px;}
       <img src="assets/gallery/IMG_4177.jpg" alt="Ryan" class="groom-photo">
       <h2 style="margin-top:12px;">Meet the Groom</h2>
       <p class="groom-bio">
-        <b>Ryan</b> &mdash; better known around here as <b>Paw</b> or <b>Wildcat</b> &mdash; is the man of
-        the hour, and yes, he's playing this weekend too.<br><br>
-        Height: officially &ldquo;tall enough.&rdquo; Spelling: a lifelong work in progress. If you hear
-        someone yell <b>&ldquo;C&rsquo;monnnn!&rdquo;</b> from three fairways over, that's him.<br><br>
-        He's a Buckeye through and through, an eternally hopeful Cleveland Browns fan, and a Cubs fan who
-        knows a thing or two about waiting for good things. He played baseball at DePauw University,
-        which is either where he learned patience or where he definitely didn't.<br><br>
-        Rush is the only correct answer to &ldquo;favorite band,&rdquo; don't bother arguing.<br><br>
-        Standing next to him all weekend: his brothers and co-best men, <b>Hunter</b> and
-        <b>Cameron</b> &mdash; also both playing, so watch the leaderboard. Waiting at home: his dog
-        <b>Kai</b> (you already met him) and his fianc&eacute;e <b>Abby</b>, the actual best part of all
-        this.
+        <b>Ryan</b> &mdash; a.k.a. <b>Paw</b> or <b>Wildcat</b> &mdash; is playing in his own bachelor
+        party this weekend. Ohio State / Browns / Cubs guy, DePauw baseball alum, Rush superfan. His
+        brothers and co-best men, <b>Hunter</b> and <b>Cameron</b>, are also playing &mdash; watch the
+        leaderboard. Waiting at home: his dog <b>Kai</b> and his fianc&eacute;e <b>Abby</b>, the real
+        MVP of the weekend. (Keep an eye on the scorecard for more on him.)
       </p>
     </div>
 
@@ -447,9 +443,10 @@ const SCORES_DRAFT_KEY = "covidcup_scores_draft:" + NS;
 const ATTEST_DRAFT_KEY = "covidcup_attest_draft:" + NS;
 
 /* ---------- hole jokes ---------- */
-// A one-liner pops up after a score goes in that's birdie-or-better or bogey-or-worse
-// (nothing for par — every hole would get noisy). Whoever's box it is gets a themed pool if
-// he's the groom, otherwise the general pool. Picked at random so the same hole doesn't
+// A one-liner (plus, for the groom and his brothers, a matching photo from the gallery)
+// pops up after a score goes in that's birdie-or-better or bogey-or-worse (nothing for par —
+// every hole would get noisy). Whoever's box it is gets a themed pool if he's the groom or
+// one of his brothers, otherwise the general pool. Picked at random so the same hole doesn't
 // always say the same thing.
 const HOLE_JOKES_BIRDIE = [
   "Birdie! Somebody's sandbagging their handicap.",
@@ -471,34 +468,68 @@ const HOLE_JOKES_BOGEY = [
   "Somebody's handicap just went up in real time.",
   "The golf gods have officially stopped smiling."
 ];
+// img: null falls back to a random pick from RYAN_FALLBACK_IMAGES — every Ryan joke gets a
+// photo, even the ones with no specific tie-in (DePauw, Rush, spelling, height, etc).
+const RYAN_FALLBACK_IMAGES = ["assets/gallery/IMG_4174.jpg", "assets/gallery/IMG_4177.jpg",
+  "assets/gallery/IMG_4178.jpg", "assets/kai.jpg", "assets/gallery/IMG_4176.jpg", "assets/gallery/IMG_4183.jpg"];
 const RYAN_HOLE_JOKES_BIRDIE = [
-  "Wildcat strikes! Rush is writing a concept album about this hole.",
-  "That's a DePauw-caliber swing right there, Paw.",
-  "Ohio State would be proud. Somewhere, Kai is doing a lap.",
-  "C'monnnn Ryan! That's the good stuff.",
-  "Browns fans wait a lifetime for a win like that — congrats, Paw.",
-  "Somewhere Abby just felt a disturbance in the Force. Nice one, Wildcat.",
-  "That swing had more rhythm than a Neil Peart drum solo.",
-  "Cubs fans know a rare good thing when they see it — nice birdie, Ryan."
+  { text: "Wildcat strikes! Rush is writing a concept album about this hole.", img: null },
+  { text: "That's a DePauw-caliber swing right there, Paw.", img: null },
+  { text: "Ohio State would be proud. Somewhere, Kai is doing a lap.", img: "assets/kai.jpg" },
+  { text: "C'monnnn Ryan! That's the good stuff.", img: null },
+  { text: "Browns fans wait a lifetime for a win like that — congrats, Paw.", img: "assets/gallery/IMG_4178.jpg" },
+  { text: "Somewhere Abby just felt a disturbance in the Force. Nice one, Wildcat.", img: null },
+  { text: "That swing had more rhythm than a Neil Peart drum solo.", img: null },
+  { text: "Cubs fans know a rare good thing when they see it — nice birdie, Ryan.", img: "assets/gallery/IMG_4174.jpg" },
+  { text: "For a guy who can't spell ‘birdie,’ he sure can make one.", img: null },
+  { text: "Somebody call DePauw's baseball coach — his old shortstop's still got it.", img: null },
+  { text: "Tom Sawyer never hit a shot that clean.", img: null },
+  { text: "That's a Buckeye-brand birdie right there.", img: null },
+  { text: "Short king, tall performance.", img: null },
+  { text: "Kai heard the celebration from home and is very proud.", img: "assets/kai.jpg" }
 ];
 const RYAN_HOLE_JOKES_BOGEY = [
-  "C'monnnn Ryan...",
-  "That hole was rough — almost as rough as your spelling, Paw.",
-  "Vintage Browns football right there, Wildcat.",
-  "Somewhere a DePauw baseball coach just shook his head.",
-  "Classic pre-2016 Cubs hole.",
-  "Tough to judge distance when you're this short, Paw.",
-  "Kai could've read that green better.",
-  "That's going to need a Rush song to process — make it a long one."
+  { text: "C'monnnn Ryan...", img: null },
+  { text: "That hole was rough — almost as rough as your spelling, Paw.", img: null },
+  { text: "Vintage Browns football right there, Wildcat.", img: "assets/gallery/IMG_4177.jpg" },
+  { text: "Somewhere a DePauw baseball coach just shook his head.", img: null },
+  { text: "Classic pre-2016 Cubs hole.", img: "assets/gallery/IMG_4174.jpg" },
+  { text: "Tough to judge distance when you're this short, Paw.", img: null },
+  { text: "Kai could've read that green better.", img: "assets/kai.jpg" },
+  { text: "That's going to need a Rush song to process — make it a long one.", img: null },
+  { text: "Browns fans call that ‘a Tuesday.’", img: "assets/gallery/IMG_4178.jpg" },
+  { text: "He probably spelled ‘bogey’ wrong on the scorecard too.", img: null },
+  { text: "Ohio State's defense has had better days. So has this hole.", img: null },
+  { text: "That swing had zero Wildcat in it.", img: null },
+  { text: "2112 minutes of therapy, coming right up.", img: null },
+  { text: "Somewhere, Hunter and Cameron are taking notes for the wedding toast.", img: "assets/gallery/IMG_4179.jpg" }
 ];
-const pickJoke = pool => pool[Math.floor(Math.random() * pool.length)];
+// Ryan's brothers and co-best men get their own (gentler) pool.
+const BROTHER_HOLE_JOKES_BIRDIE = [
+  { text: "Best man behavior right there.", img: "assets/gallery/IMG_4179.jpg" },
+  { text: "The groom's family bringing the heat today.", img: "assets/gallery/IMG_4179.jpg" },
+  { text: "That's the kind of swing that earns a good seat at the wedding.", img: null },
+  { text: "Paw's gonna hear about this one all night.", img: null }
+];
+const BROTHER_HOLE_JOKES_BOGEY = [
+  { text: "Even best men have off holes.", img: null },
+  { text: "Save the good stuff for the toast, not the fairway.", img: "assets/gallery/IMG_4179.jpg" },
+  { text: "Ryan's not gonna let you forget that one.", img: null },
+  { text: "That's going in the rehearsal dinner slideshow.", img: null }
+];
+const pickFrom = pool => pool[Math.floor(Math.random() * pool.length)];
 function holeJokeFor(fieldKey, good){
   const name = String(cfg.roster?.[fieldKey]?.name || "").trim();
   const isRyan = /^ryan\b/i.test(name);
+  const isBrother = /^(hunter|cameron)\b/i.test(name);
   const pool = isRyan
     ? (good ? RYAN_HOLE_JOKES_BIRDIE : RYAN_HOLE_JOKES_BOGEY)
-    : (good ? HOLE_JOKES_BIRDIE : HOLE_JOKES_BOGEY);
-  return pickJoke(pool);
+    : isBrother
+      ? (good ? BROTHER_HOLE_JOKES_BIRDIE : BROTHER_HOLE_JOKES_BOGEY)
+      : null;
+  if (!pool) return { text: pickFrom(good ? HOLE_JOKES_BIRDIE : HOLE_JOKES_BOGEY), img: null };
+  const joke = pickFrom(pool);
+  return { text: joke.text, img: joke.img || pickFrom(RYAN_FALLBACK_IMAGES) };
 }
 // cell is the raw {v,x} just written for this box; f/hole/c give par, strokes and max rule
 // the same way the scorecard itself already works them out.
@@ -509,12 +540,12 @@ function showHoleJoke(c, f, hole, cell){
   const res = scoreCell(cell, hole.par, shots, c.maxRule, c.maxPlus);
   if (!res){ banner.classList.add("hidden"); return; }
   const toPar = res.net - (+hole.par || 0);
-  if (toPar <= -1){
-    banner.textContent = holeJokeFor(f.key, true);
-    banner.className = "hole-joke good";
-  } else if (toPar >= 1){
-    banner.textContent = holeJokeFor(f.key, false);
-    banner.className = "hole-joke bad";
+  if (toPar <= -1 || toPar >= 1){
+    const { text, img } = holeJokeFor(f.key, toPar <= -1);
+    banner.className = "hole-joke " + (toPar <= -1 ? "good" : "bad");
+    const imgEl = document.getElementById("holeJokeImg");
+    if (img){ imgEl.src = img; imgEl.hidden = false; } else { imgEl.hidden = true; imgEl.src = ""; }
+    document.getElementById("holeJokeText").textContent = text;
   } else {
     banner.classList.add("hidden");
     return;
@@ -1085,7 +1116,10 @@ function renderHoleView(body, c){
       '<span class="meta">Par ' + hole.par + " &middot; stroke index " + hole.si + "</span></div>" +
     contestBadges(c, hole.number) +
     entries +
-    '<p id="holeJoke" class="hole-joke hidden"></p>' +
+    '<div id="holeJoke" class="hole-joke hidden">' +
+      '<img id="holeJokeImg" alt="" hidden>' +
+      '<span id="holeJokeText"></span>' +
+    '</div>' +
     totalsHtml(c) +
     (ahead
       ? '<p class="gate-hint">Looking ahead &mdash; finish hole ' + openHole + " before scoring this one.</p>"
