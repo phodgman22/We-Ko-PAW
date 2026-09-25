@@ -11,12 +11,10 @@ and new formats belong.
 **Full technical reference:** [HANDOFF.md](HANDOFF.md) — architecture, data model, every
 format and setting, and the bugs already found and fixed (don't reintroduce them).
 
-Still to finish before this is live for real players:
-1. Create a new Firebase Realtime Database project for We-Ko-PAW and paste its config into
-   `firebase-config.js`; deploy `database.rules.json` to it. (Still pointing at the template's
-   Firebase project right now — see the note in `HANDOFF.md`.)
-2. Set a real `ADMIN_PIN` in `admin-pins.js`.
-3. Set up the event from the commissioner console — event name, courses, roster, rounds.
+Its own Firebase project (`we-ko-paw`) and a fresh `ADMIN_PIN` are already wired up —
+isolated from the template's database, so nothing entered here touches Covid Cup 2026's
+data or vice versa. Still to finish before this is live for real players:
+1. Set up the event from the commissioner console — event name, courses, roster, rounds.
 
 Run locally with `node serve.js`, then open http://localhost:8765. Scoring tests:
 `node tests/run.mjs`.

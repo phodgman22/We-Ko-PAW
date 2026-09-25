@@ -14,15 +14,17 @@ below for what's still outstanding before it's ready for real players.
 [HANDOFF-FOR-PAT.md](HANDOFF-FOR-PAT.md) is kept as-is, inherited from the template — it's
 a historical record of the *original* Covid Cup 2026 build, not this event.
 
+**Firebase and the admin PIN are already separated from the template:** a dedicated
+`we-ko-paw` Firebase Realtime Database project (its config is in `firebase-config.js`,
+`database.rules.json` deployed to it directly via the Firebase console's Rules editor —
+same rules content as the template, since `DB_PATH` in index.html/admin.html is still
+`"covidcup"`, unchanged), and `ADMIN_PIN` in `admin-pins.js` reset to `PAW2026`. Nothing
+saved here touches the template's `covid-cup-2026` project or vice versa.
+
 **Not done yet — before this is live for real players:**
-1. **Firebase.** `firebase-config.js` still points at the template's `covid-cup-2026`
-   project. Create a fresh Firebase Realtime Database project for We-Ko-PAW, paste its
-   config in, and deploy `database.rules.json` to it — **do this before entering any real
-   roster or course data**, since right now anything saved here would write into the
-   template's shared database instead.
-2. **`ADMIN_PIN`** in `admin-pins.js` still reads `CUP2026`, inherited from the template.
-   Set a real one for this event before handing out access.
-3. Set the event up from the commissioner console — event name, courses, roster, rounds.
+1. Set the event up from the commissioner console — event name, courses, roster, rounds.
+   The roster currently still holds Covid Cup 2026's sample players (kept by the template
+   for demo purposes) — replace it with We-Ko-PAW's real roster before go-live.
 
 ## What this is
 
@@ -343,13 +345,14 @@ keyed by **real player id**, and `scoring.js` takes real ids directly (via `memb
 `playerPhs`), so the old generic `{a, b}` remapping is gone along with the class of bug it
 caused.
 
-Firebase project is `covid-cup-2026`, owned by Patrick's Google account
-(phodgman22@gmail.com); Andrew has Editor access.
+Firebase project is `we-ko-paw`, owned by Patrick's Google account (phodgman22@gmail.com).
+(The template repo's own project, `covid-cup-2026`, is separate — see the intro above.)
 
 ## Database rules
 
-`database.rules.json` was **published to the live project by Andrew on 2026-09-09** (pasted
-into Firebase console → Realtime Database → Rules), replacing the wide-open test-mode default.
+`database.rules.json` was **published to the live `we-ko-paw` project via the Firebase
+console's Rules editor** (same content as the file in this repo — keep them in sync by
+hand; editing the file alone deploys nothing), replacing the locked-mode default.
 That means the Oct 1, 2026 test-mode expiry no longer applies — as long as the console still
 shows these rules. Deploy changes with `firebase deploy --only database`, or paste into the
 Rules tab. **Editing or merging the file does not deploy it** — that's a separate, manual step.

@@ -5,7 +5,7 @@
 // These are plain text in public source, same as the Firebase config — a "keep casual
 // players out" gate, not real security.
 
-export const ADMIN_PIN = "CUP2026"; // change this, and tell the commissioner the new value
+export const ADMIN_PIN = "PAW2026"; // change this, and tell the commissioner the new value
 
 export const ACCEPTED_PINS = [ADMIN_PIN];
 
