@@ -218,23 +218,27 @@ every other team format:
 - Any number of teams works, not just two — `rollingBestBallTotals()` and the standings
   table don't assume exactly two sides.
 
-**Hole-joke popup.** After any birdie-or-better or bogey-or-worse score (nothing on par —
-every hole would get noisy), a full-screen popup shows a one-liner and, for the groom and his
-brothers, a matching photo — `showHoleJoke()` in index.html, joke pools and `holeJokeFor()`
-right above it. It's a genuine `.modal` overlay, not a timed banner: it stays up until the
-player taps *anywhere* (`armHoleJokeDismiss()` arms a single `document`-level `pointerdown`
-listener in capture phase, deferred one tick via `setTimeout(…, 0)` so the very tap that
-triggered the popup can't immediately close it again). Only one dismiss listener is ever
-armed at a time (`dismissHoleJokeListener` tracks it), so back-to-back jokes can't stack
-listeners. It only fires once a score is "settled" (the same digit-count heuristic that
-decides when to auto-advance focus to the next box) or on blur — never on every keystroke,
-or a two-digit score would flash two different popups on the way to being typed —
-`maybeShowHoleJoke()` also dedupes by the input's current value (`dataset.jokeShownFor`) so
-the settle-check and the blur handler can't both pop it for the same score. The joke content
-itself (Ryan/Hunter/Cameron-specific pools, general fallback pool, and the photo pairing to
-`assets/gallery/*` and `assets/kai.jpg`) is event flavor specific to this wedding, not
+**Hole-joke popup.** After any birdie-or-better or double-bogey-or-worse score (nothing on a
+plain bogey or par — a single bogey is routine, not worth interrupting the round for; only
+the extremes get a popup: `good = toPar <= -1`, `bad = toPar >= 2` in `showHoleJoke()`), a
+full-screen popup shows a one-liner and a matching photo — **every player gets a photo, not
+just the wedding party**: `holeJokeFor()` falls back to a shared `FALLBACK_IMAGES` pool (every
+gallery photo plus Kai) whenever a joke's own `img` is `null`, general pool included. Whoever's
+box it is gets a themed pool if he's the groom or one of his brothers, otherwise the general
+pool. It's a genuine `.modal` overlay, not a timed banner: it stays up until the player taps
+*anywhere* (`armHoleJokeDismiss()` arms a single `document`-level `pointerdown` listener in
+capture phase, deferred one tick via `setTimeout(…, 0)` so the very tap that triggered the
+popup can't immediately close it again). Only one dismiss listener is ever armed at a time
+(`dismissHoleJokeListener` tracks it), so back-to-back jokes can't stack listeners. It only
+fires once a score is "settled" (the same digit-count heuristic that decides when to
+auto-advance focus to the next box) or on blur — never on every keystroke, or a two-digit
+score would flash two different popups on the way to being typed — `maybeShowHoleJoke()` also
+dedupes by the input's current value (`dataset.jokeShownFor`) so the settle-check and the blur
+handler can't both pop it for the same score. The joke content itself (Ryan/Hunter/Cameron
+pools, general pool, and the photo pairing) is event flavor specific to this wedding, not
 template architecture — don't carry the actual joke text forward when reusing this pattern
-for a future event, just the popup mechanism.
+for a future event, just the popup mechanism and the "give everyone a photo, not just the
+principals" choice.
 
 ## Event style
 

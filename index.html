@@ -452,66 +452,59 @@ const SCORES_DRAFT_KEY = "covidcup_scores_draft:" + NS;
 const ATTEST_DRAFT_KEY = "covidcup_attest_draft:" + NS;
 
 /* ---------- hole jokes ---------- */
-// A one-liner (plus, for the groom and his brothers, a matching photo from the gallery)
-// pops up after a score goes in that's birdie-or-better or bogey-or-worse (nothing for par —
-// every hole would get noisy). Whoever's box it is gets a themed pool if he's the groom or
-// one of his brothers, otherwise the general pool. Picked at random so the same hole doesn't
-// always say the same thing.
+// A one-liner plus a matching photo from the gallery pops up after a score goes in that's
+// birdie-or-better or double-bogey-or-worse (nothing for a plain bogey or par — every hole
+// would get noisy, and a single bogey isn't worth interrupting the round for). Whoever's box
+// it is gets a themed pool if he's the groom or one of his brothers, otherwise the general
+// pool — but EVERYONE gets a photo, not just the wedding party: img: null falls back to a
+// random pick from FALLBACK_IMAGES for every pool, general included. Picked at random so the
+// same hole doesn't always say the same thing.
+const FALLBACK_IMAGES = ["assets/gallery/IMG_4174.jpg", "assets/gallery/IMG_4175.jpg",
+  "assets/gallery/IMG_4176.jpg", "assets/gallery/IMG_4177.jpg", "assets/gallery/IMG_4178.jpg",
+  "assets/gallery/IMG_4179.jpg", "assets/gallery/IMG_4183.jpg", "assets/gallery/IMG_4184.jpg", "assets/kai.jpg"];
 const HOLE_JOKES_BIRDIE = [
-  "Birdie! Somebody's sandbagging their handicap.",
-  "That's a keeper — screenshot it before it disappears.",
-  "Certified golf swing detected.",
-  "Somebody skipped the beer cart this hole.",
-  "The golf gods are smiling. Briefly.",
-  "That'll buy a round at the clubhouse later.",
-  "Somebody's been watching swing tips on YouTube at 2am.",
-  "Put it on the highlight reel."
+  { text: "Full send, Happy Gilmore style.", img: null },
+  { text: "Certified Tiger-in-2000 vibes.", img: null },
+  { text: "Somebody just became the group chat MVP.", img: null },
+  { text: "That's Masters Sunday form right there.", img: null },
+  { text: "Beer cart's on him now.", img: null },
+  { text: "Start the highlight reel, that one's going on the YouTube channel.", img: null },
+  { text: "That swing's got sponsorship potential.", img: null },
+  { text: "Somebody skipped the range and went straight to pro.", img: null }
 ];
-const HOLE_JOKES_BOGEY = [
-  "That hole is going in the vault, never to be spoken of again.",
-  "The beer cart is now mandatory.",
-  "Somebody owes the group a mulligan explanation.",
-  "That one's getting the ‘circle it on the scorecard’ treatment.",
-  "Time to blame the wind, the lie, or the driver — pick one.",
-  "Great time for a gimme... that doesn't exist.",
-  "Somebody's handicap just went up in real time.",
-  "The golf gods have officially stopped smiling."
+const HOLE_JOKES_DOUBLE = [
+  { text: "That's a QB-room-in-Cleveland level of performance.", img: null },
+  { text: "Somewhere, a beer cart girl just made her whole week.", img: null },
+  { text: "That score's getting redacted like a government document.", img: null },
+  { text: "The group chat is never letting this one go.", img: null },
+  { text: "That hole just became a cautionary tale.", img: null },
+  { text: "Somebody's getting the nickname 'Waterworld' after that.", img: null },
+  { text: "The handicap committee has officially been notified.", img: null },
+  { text: "That's a certified disaster area — FEMA's been called.", img: null }
 ];
-// img: null falls back to a random pick from RYAN_FALLBACK_IMAGES — every Ryan joke gets a
-// photo, even the ones with no specific tie-in (DePauw, Rush, spelling, height, etc).
-const RYAN_FALLBACK_IMAGES = ["assets/gallery/IMG_4174.jpg", "assets/gallery/IMG_4177.jpg",
-  "assets/gallery/IMG_4178.jpg", "assets/kai.jpg", "assets/gallery/IMG_4176.jpg", "assets/gallery/IMG_4183.jpg"];
 const RYAN_HOLE_JOKES_BIRDIE = [
-  { text: "Wildcat strikes! Rush is writing a concept album about this hole.", img: null },
-  { text: "That's a DePauw-caliber swing right there, Paw.", img: null },
-  { text: "Ohio State would be proud. Somewhere, Kai is doing a lap.", img: "assets/kai.jpg" },
-  { text: "C'monnnn Ryan! That's the good stuff.", img: null },
-  { text: "Browns fans wait a lifetime for a win like that — congrats, Paw.", img: "assets/gallery/IMG_4178.jpg" },
-  { text: "Somewhere Abby just felt a disturbance in the Force. Nice one, Wildcat.", img: null },
-  { text: "That swing had more rhythm than a Neil Peart drum solo.", img: null },
-  { text: "Cubs fans know a rare good thing when they see it — nice birdie, Ryan.", img: "assets/gallery/IMG_4174.jpg" },
-  { text: "For a guy who can't spell ‘birdie,’ he sure can make one.", img: null },
-  { text: "Somebody call DePauw's baseball coach — his old shortstop's still got it.", img: null },
-  { text: "Tom Sawyer never hit a shot that clean.", img: null },
-  { text: "That's a Buckeye-brand birdie right there.", img: null },
-  { text: "Short king, tall performance.", img: null },
-  { text: "Kai heard the celebration from home and is very proud.", img: "assets/kai.jpg" }
+  { text: "That's more accurate than the Browns' QB room has been since 1999.", img: "assets/gallery/IMG_4177.jpg" },
+  { text: "Wildcat mode: officially activated.", img: null },
+  { text: "DePauw baseball flashbacks — the good kind.", img: null },
+  { text: "C'monnnn Ryan! That's encore-at-a-Rush-concert energy.", img: null },
+  { text: "Ohio State would put that swing straight in the highlight package.", img: null },
+  { text: "Somewhere, a Cubs banner is being printed early.", img: "assets/gallery/IMG_4174.jpg" },
+  { text: "Paw's spelling might be rough, but that swing sure wasn't.", img: null },
+  { text: "That's Wrigley-rooftop-bleacher-bum worthy.", img: "assets/gallery/IMG_4174.jpg" },
+  { text: "Kai heard the celebration from home and is very proud.", img: "assets/kai.jpg" },
+  { text: "Short king, tall performance.", img: null }
 ];
-const RYAN_HOLE_JOKES_BOGEY = [
-  { text: "C'monnnn Ryan...", img: null },
-  { text: "That hole was rough — almost as rough as your spelling, Paw.", img: null },
-  { text: "Vintage Browns football right there, Wildcat.", img: "assets/gallery/IMG_4177.jpg" },
-  { text: "Somewhere a DePauw baseball coach just shook his head.", img: null },
-  { text: "Classic pre-2016 Cubs hole.", img: "assets/gallery/IMG_4174.jpg" },
-  { text: "Tough to judge distance when you're this short, Paw.", img: null },
-  { text: "Kai could've read that green better.", img: "assets/kai.jpg" },
-  { text: "That's going to need a Rush song to process — make it a long one.", img: null },
-  { text: "Browns fans call that ‘a Tuesday.’", img: "assets/gallery/IMG_4178.jpg" },
-  { text: "He probably spelled ‘bogey’ wrong on the scorecard too.", img: null },
-  { text: "Ohio State's defense has had better days. So has this hole.", img: null },
-  { text: "That swing had zero Wildcat in it.", img: null },
-  { text: "2112 minutes of therapy, coming right up.", img: null },
-  { text: "Somewhere, Hunter and Cameron are taking notes for the wedding toast.", img: "assets/gallery/IMG_4179.jpg" }
+const RYAN_HOLE_JOKES_DOUBLE = [
+  { text: "C'monnnn Ryan... that's as bad as the Browns' QB room.", img: "assets/gallery/IMG_4177.jpg" },
+  { text: "That's a DeShone Kizer performance right there, Paw.", img: "assets/gallery/IMG_4178.jpg" },
+  { text: "Ohio State's defense wouldn't give up that many strokes.", img: null },
+  { text: "Somewhere, a DePauw baseball scout is rescinding his offer.", img: null },
+  { text: "The Cubs waited 108 years for a title; this hole might take longer.", img: "assets/gallery/IMG_4174.jpg" },
+  { text: "That's rough — Rush is already writing a 20-minute song about it.", img: null },
+  { text: "Even Baker Mayfield had better accuracy than that, Paw.", img: "assets/gallery/IMG_4177.jpg" },
+  { text: "That's a spelling-bee-level meltdown, Wildcat.", img: null },
+  { text: "Kai could've read that green better from the couch.", img: "assets/kai.jpg" },
+  { text: "Somewhere, Hunter and Cameron are quietly taking notes for the toast.", img: "assets/gallery/IMG_4179.jpg" }
 ];
 // Ryan's brothers and co-best men get their own (gentler) pool.
 const BROTHER_HOLE_JOKES_BIRDIE = [
@@ -520,11 +513,11 @@ const BROTHER_HOLE_JOKES_BIRDIE = [
   { text: "That's the kind of swing that earns a good seat at the wedding.", img: null },
   { text: "Paw's gonna hear about this one all night.", img: null }
 ];
-const BROTHER_HOLE_JOKES_BOGEY = [
-  { text: "Even best men have off holes.", img: null },
+const BROTHER_HOLE_JOKES_DOUBLE = [
+  { text: "Even best men have QB-room-in-Cleveland holes.", img: "assets/gallery/IMG_4177.jpg" },
   { text: "Save the good stuff for the toast, not the fairway.", img: "assets/gallery/IMG_4179.jpg" },
   { text: "Ryan's not gonna let you forget that one.", img: null },
-  { text: "That's going in the rehearsal dinner slideshow.", img: null }
+  { text: "That's going straight in the rehearsal dinner slideshow.", img: null }
 ];
 const pickFrom = pool => pool[Math.floor(Math.random() * pool.length)];
 function holeJokeFor(fieldKey, good){
@@ -532,13 +525,12 @@ function holeJokeFor(fieldKey, good){
   const isRyan = /^ryan\b/i.test(name);
   const isBrother = /^(hunter|cameron)\b/i.test(name);
   const pool = isRyan
-    ? (good ? RYAN_HOLE_JOKES_BIRDIE : RYAN_HOLE_JOKES_BOGEY)
+    ? (good ? RYAN_HOLE_JOKES_BIRDIE : RYAN_HOLE_JOKES_DOUBLE)
     : isBrother
-      ? (good ? BROTHER_HOLE_JOKES_BIRDIE : BROTHER_HOLE_JOKES_BOGEY)
-      : null;
-  if (!pool) return { text: pickFrom(good ? HOLE_JOKES_BIRDIE : HOLE_JOKES_BOGEY), img: null };
+      ? (good ? BROTHER_HOLE_JOKES_BIRDIE : BROTHER_HOLE_JOKES_DOUBLE)
+      : (good ? HOLE_JOKES_BIRDIE : HOLE_JOKES_DOUBLE);
   const joke = pickFrom(pool);
-  return { text: joke.text, img: joke.img || pickFrom(RYAN_FALLBACK_IMAGES) };
+  return { text: joke.text, img: joke.img || pickFrom(FALLBACK_IMAGES) };
 }
 // cell is the raw {v,x} just written for this box; f/hole/c give par, strokes and max rule
 // the same way the scorecard itself already works them out.
@@ -565,8 +557,11 @@ function showHoleJoke(c, f, hole, cell){
   const res = scoreCell(cell, hole.par, shots, c.maxRule, c.maxPlus);
   if (!res) return;
   const toPar = res.net - (+hole.par || 0);
-  if (toPar > -1 && toPar < 1) return; // par — no joke, every hole would get noisy
+  // Only the extremes get a popup: birdie-or-better, or double-bogey-or-worse. A plain bogey
+  // or par doesn't interrupt the round — bogeys are routine, not joke-worthy on their own.
   const good = toPar <= -1;
+  const bad = toPar >= 2;
+  if (!good && !bad) return;
   const { text, img } = holeJokeFor(f.key, good);
   const modal = document.getElementById("holeJokeModal");
   modal.querySelector(".hole-joke-box").classList.toggle("bad", !good);
