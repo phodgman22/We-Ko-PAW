@@ -980,8 +980,21 @@ function renderRoundSetup(roundId, wrap){
   const loose = Object.entries(units).filter(([u]) => !placed.has(u));
   const looseOptions = `<option value="">+ ${noun}</option>` +
     loose.map(([u, unit]) => `<option value="${esc(u)}">${esc(unitName(unit))}</option>`).join("");
+  const scoreEntry = round.scoreEntry === "any" ? "any" : "own";
   const teeHtml = `
     <h3 class="step">Tee times <span class="hint">&middot; who goes out together. Two teams can share a tee time and still score separately.</span></h3>
+    <div class="row" style="align-items:flex-end;margin:2px 0 4px;">
+      <div>
+        <label>Who can enter scores</label>
+        <div class="seg-admin ${isPending("scoreEntry", roundId) ? "needs-review" : ""}">
+          <button type="button" data-set-score-entry="own" class="${scoreEntry === "own" ? "active" : ""}">Own ${noun} only</button>
+          <button type="button" data-set-score-entry="any" class="${scoreEntry === "any" ? "active" : ""}">Anyone on the card</button>
+        </div>
+      </div>
+    </div>
+    <p class="hint" style="margin:0 0 10px;">${scoreEntry === "any"
+      ? "One phone can enter every box for everyone sharing a tee time, not just their own " + noun + "."
+      : "Each " + noun + "'s boxes can only be entered by someone on it, even when more than one shares a tee time."}</p>
     <div class="grid-scroll"><table class="grid">
       <tr><th class="n">#</th><th>Time</th><th>${individual ? "Players" : "Teams"}</th><th class="c">Players</th><th></th></tr>
       ${Object.entries(tees)
@@ -1044,6 +1057,12 @@ function renderRoundSetup(roundId, wrap){
   }
 
   wrap.innerHTML = teamsHtml + teeHtml + matchHtml;
+
+  wrap.querySelectorAll("[data-set-score-entry]").forEach(btn => btn.addEventListener("click", () => {
+    round.scoreEntry = btn.dataset.setScoreEntry;
+    confirmField("scoreEntry", roundId);
+    renderGroups();
+  }));
 
   const dropEverywhere = u => {
     Object.values(tees).forEach(t => { t.unitIds = (t.unitIds || []).filter(x => x !== u); });
@@ -1246,7 +1265,7 @@ const reviewKey = (kind, roundId) => roundId ? `${kind}:${roundId}` : kind;
 const isPending = (kind, roundId) => pendingReview.has(reviewKey(kind, roundId));
 function confirmField(kind, roundId){ pendingReview.delete(reviewKey(kind, roundId)); }
 function seedRoundReview(roundId){
-  ["format", "play", "maxScore", "maxHcp", "rollingBestCount", "skinsGross", "skinsUnit", "skinsCarry"].forEach(k => pendingReview.add(reviewKey(k, roundId)));
+  ["format", "play", "maxScore", "maxHcp", "rollingBestCount", "skinsGross", "skinsUnit", "skinsCarry", "scoreEntry"].forEach(k => pendingReview.add(reviewKey(k, roundId)));
 }
 function seedPendingReview(){
   pendingReview.clear();

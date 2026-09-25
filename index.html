@@ -1064,11 +1064,13 @@ function renderHoleView(body, c){
   // With two teams on one card, each team's boxes sit under its name.
   const headed = c.teams.length > 1 && FORMATS[c.format]?.entry !== "team";
 
-  // Two teams sharing a tee time share the card, but not the pen: each team's boxes can
-  // only be entered by a player on that team, so one phone can't quietly fill in the other
-  // team's numbers. The commissioner is exempt, same as every other lock on this card.
+  // Two teams sharing a tee time share the card, but not always the pen: by default each
+  // team's boxes can only be entered by a player on that team, so one phone can't quietly
+  // fill in the other team's numbers. round.scoreEntry === "any" turns that off — set from
+  // the console when one person is doing all the scoring for a tee time. The commissioner is
+  // always exempt, same as every other lock on this card.
   const myOwnUnit = isAdmin ? null : myUnit(c.base);
-  const othersTeam = f => !isAdmin && c.teams.length > 1 && f.unitId !== myOwnUnit;
+  const othersTeam = f => !isAdmin && c.teams.length > 1 && f.unitId !== myOwnUnit && c.round.scoreEntry !== "any";
 
   let lastUnit = null;
   const entries = c.fields.map((f, i) => {

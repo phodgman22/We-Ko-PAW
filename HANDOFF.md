@@ -244,6 +244,17 @@ Teams can be given a **name** (`groups/<roundId>/<teamId>/name`); the leaderboar
 use it, with the players' surnames underneath. The console lays teams, tee times and matches out
 as spreadsheet-style tables inside each round.
 
+**Who's allowed to enter scores on a shared card** (`round.scoreEntry`, `"own"` default or
+`"any"`) is its own toggle, next to the Tee times step in the console. By default, when more
+than one team (or, in an individual format, more than one player) shares a tee time, each one's
+boxes can only be entered by someone on it — `othersTeam()` in index.html locks every other
+field, so one phone can't quietly fill in someone else's numbers. `"any"` turns that lock off
+for the round: whoever has the card open can enter every box for the whole tee time, useful
+when one person is doing all the scoring for a foursome (this is exactly the Rolling Best Ball
+case — every player has his own individual card, but several share a physical tee time). The
+commissioner could always edit anything regardless; this setting only changes what a *player*
+can touch. Needs-review tracked (`scoreEntry`) like every other round default.
+
 **The scorecard shows only the logged-in player's own card** — his tee time if he's in one (so a
 foursome of two teams is one card, each team's boxes under its name), otherwise just his team.
 Other groups are for the leaderboard: tapping a team, player or match opens its full card in a
@@ -324,8 +335,8 @@ on every course. A player who plays different tees on different courses isn't su
                             holes: [{number, par, si}], tees: [{name, rating, slope, yards}] } }
   /roster   { <playerId>: { name, index, tee, email, code, commissioner? } }
   /rounds   { <roundId>: { name, courseId, format, play, order, maxScore, maxPlus?,
-                           maxHcpStrokes?, rollingBestCount?, ctpOn, ctpHoles, ldOn, ldHoles,
-                           skinsOn?, skinsGross?, skinsUnit?, skinsCarry? } }
+                           maxHcpStrokes?, rollingBestCount?, scoreEntry?, ctpOn, ctpHoles,
+                           ldOn, ldHoles, skinsOn?, skinsGross?, skinsUnit?, skinsCarry? } }
   /groups   { <roundId>: { <teamId>: { name, playerIds: [...] } } }    teams (team formats,
                            and rolling best ball's scoring-only buckets)
   /teeTimes { <roundId>: { <teeTimeId>: { start, unitIds: [...] } } }  who goes out together
