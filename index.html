@@ -322,6 +322,14 @@ footer{text-align:center;color:var(--dim);font-size:11px;padding:16px;}
     <div id="cardModalBody"></div>
   </div>
 </div>
+<div id="kaiModal" class="modal hidden" role="dialog" aria-modal="true">
+  <div class="modal-box" style="max-width:380px;text-align:center;">
+    <button class="modal-x" id="kaiModalClose" aria-label="Close">&times;</button>
+    <img src="assets/kai.jpg" alt="Kai" style="width:100%;max-height:52vh;object-fit:cover;border-radius:8px;margin-top:4px;display:block;">
+    <p style="font-size:17px;font-weight:700;margin:14px 0 2px;">Kai hopes we all have fun this weekend! 🐾</p>
+    <button class="primary" id="kaiModalOk" style="width:100%;margin-top:14px;">Let's golf</button>
+  </div>
+</div>
 <footer>
   <div id="versionFooter"></div>
   <button class="link" id="adminUnlockBtn" style="font-size:11px;color:var(--dim);margin-top:6px;">Commissioner login</button>
@@ -1879,6 +1887,16 @@ function unlockAdmin(){
   } catch (e){}
 }
 
+// Kai (the groom's dog) says hi on every fresh code entry — not on a silent resumed
+// session (trySavedLogin), since that fires on every page load/refresh and would get old.
+function showKaiPopup(){
+  document.getElementById("kaiModal").classList.remove("hidden");
+}
+document.getElementById("kaiModalClose").addEventListener("click", () =>
+  document.getElementById("kaiModal").classList.add("hidden"));
+document.getElementById("kaiModalOk").addEventListener("click", () =>
+  document.getElementById("kaiModal").classList.add("hidden"));
+
 document.getElementById("codeSubmit").addEventListener("click", () => {
   const entered = document.getElementById("codeInput").value;
 
@@ -1887,6 +1905,7 @@ document.getElementById("codeSubmit").addEventListener("click", () => {
   if (isAdminCode(entered)){
     unlockAdmin();
     enterApp();
+    showKaiPopup();
     return;
   }
 
@@ -1899,6 +1918,7 @@ document.getElementById("codeSubmit").addEventListener("click", () => {
   // commissioner login, so this only has to run once.
   if (cfg.roster?.[id]?.commissioner) unlockAdmin();
   enterApp();
+  showKaiPopup();
 });
 document.getElementById("codeInput").addEventListener("keydown", e => {
   if (e.key === "Enter") document.getElementById("codeSubmit").click();

@@ -1,0 +1,4 @@
+# Local staging area for photos/videos before they're picked, cropped, and copied into
+# assets/ as optimized web images. Never commit the raw drops — some of these are tens of
+# MB (phone videos, uncompressed photos) and don't belong in the deployed site or repo history.
+bachelor-party-content/
