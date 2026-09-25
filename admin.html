@@ -1,0 +1,1749 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<title>Template Version &middot; Commissioner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Pirata+One&display=swap" rel="stylesheet">
+<style>
+/* Same clubhouse paper the player app's leaderboard uses — cream stock, blackletter
+   title, Georgia small-caps for structure, so the console reads like the rest of one
+   product instead of a plain utility screen bolted onto it. */
+:root{
+  --bg:#e4d9ba; --surface:#f4ecd8; --surface2:#fbf7ec; --surface3:#e3d6ad;
+  --line:#a9bba9; --text:#161616; --muted:#4a6b55; --dim:#7d9184;
+  --accent:#2e6a3b; --accent-dim:#dce8de; --danger:#a8231f; --ok:#2e6a3b;
+  --navy:#1f3a78;
+  font-family:Georgia,"Times New Roman",serif;
+}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--text);padding-bottom:80px;}
+h1,h2,h3{margin:0 0 8px;}
+h1{font-family:"Pirata One",Georgia,"Times New Roman",serif;font-size:28px;font-weight:400;
+  color:var(--navy);letter-spacing:.03em;}
+h2{font-size:14px;color:var(--accent);text-transform:uppercase;letter-spacing:.12em;font-weight:700;
+  border-bottom:1px solid var(--line);padding-bottom:7px;margin-bottom:12px;}
+h3{font-size:13px;color:var(--text);}
+p{color:var(--muted);margin:0 0 12px;font-size:14px;}
+header{padding:18px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg);z-index:5;}
+main{max-width:860px;margin:0 auto;padding:16px;}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px;margin-bottom:16px;
+  background-image:radial-gradient(ellipse at 30% 8%, rgba(255,255,255,.55), rgba(255,255,255,0) 55%);
+  box-shadow:inset 0 0 0 1px #e9dfc0, 0 3px 12px rgba(40,30,10,.1);}
+.sub-card{background:var(--surface2);border:1px solid var(--line);border-radius:6px;padding:12px;margin-bottom:12px;}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
+.row > *{flex:1;min-width:120px;}
+label{display:block;font-size:11px;color:var(--dim);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em;}
+input,select{width:100%;background:var(--surface2);border:1px solid var(--line);color:var(--text);
+  border-radius:5px;padding:9px 10px;font-size:14px;font-family:Georgia,"Times New Roman",serif;}
+.sub-card input,.sub-card select{background:var(--surface);}
+input:focus,select:focus{outline:2px solid var(--accent);}
+button{cursor:pointer;font-size:14px;border-radius:5px;border:1px solid var(--line);
+  background:var(--surface3);color:var(--text);padding:9px 14px;font-family:Georgia,"Times New Roman",serif;}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--surface);font-weight:700;}
+button.danger{background:transparent;border-color:var(--danger);color:var(--danger);}
+button.link{background:none;border:none;color:var(--accent);padding:2px 4px;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th,td{padding:6px 4px;border-bottom:1px solid var(--line);text-align:left;}
+th{color:var(--dim);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.05em;}
+.nine{display:flex;gap:4px;overflow-x:auto;margin-bottom:10px;padding-bottom:4px;}
+.nine-labels,.nine-col{display:flex;flex-direction:column;gap:4px;}
+.nine-labels{flex:0 0 92px;position:sticky;left:0;background:var(--surface2);z-index:1;}
+.nine-labels span,.nine-num{height:34px;display:flex;align-items:center;font-size:12px;color:var(--dim);}
+.nine-col{flex:1 0 46px;min-width:46px;}
+.nine-num{justify-content:center;color:var(--text);font-weight:600;}
+.nine-col input{height:34px;padding:2px;text-align:center;}
+/* roster */
+#playerList{overflow-x:auto;}
+#playerList table{font-size:13px;}
+#playerList th{font-size:11px;text-transform:uppercase;letter-spacing:.04em;padding:4px 4px 6px;white-space:nowrap;}
+#playerList td{padding:3px 3px;vertical-align:middle;}
+#playerList input,#playerList select{padding:5px 7px;font-size:13px;border-radius:6px;}
+#playerList td.c,#playerList th.c{text-align:center;font-variant-numeric:tabular-nums;white-space:nowrap;}
+#playerList td.gh{font-weight:700;color:var(--accent);}
+#playerList .code-pill{font-size:11px;padding:2px 6px;}
+button.mini{background:none;border:1px solid var(--line);color:var(--muted);border-radius:6px;padding:4px 9px;font-size:12px;}
+button.mini:disabled{opacity:.4;cursor:default;}
+button.icon{background:none;border:none;padding:2px 6px;font-size:18px;line-height:1;color:var(--dim);}
+button.icon.danger-x:hover{color:var(--danger);}
+/* rounds: format, teams, tee times, matches */
+.round-card{padding:14px 14px 8px;}
+h3.step{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);margin:16px 0 8px;
+  border-top:1px solid var(--line);padding-top:14px;}
+h3.step .hint{text-transform:none;letter-spacing:0;font-weight:400;font-size:12px;}
+.toggles{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
+.grid-scroll{overflow-x:auto;}
+table.grid{width:100%;border-collapse:collapse;font-size:13px;background:var(--surface);border:1px solid var(--line);}
+table.grid th{background:var(--surface3);color:var(--muted);font-size:11px;font-weight:600;text-transform:uppercase;
+  letter-spacing:.04em;padding:6px 8px;border:1px solid var(--line);text-align:left;white-space:nowrap;}
+table.grid td{padding:4px 6px;border:1px solid var(--line);vertical-align:middle;}
+table.grid tr:nth-child(odd) td{background:rgba(0,0,0,.028);}
+table.grid td.n,table.grid th.n{width:32px;text-align:center;color:var(--dim);}
+table.grid td.c,table.grid th.c{text-align:center;white-space:nowrap;}
+table.grid input,table.grid select{padding:5px 7px;font-size:13px;border-radius:6px;background:var(--surface2);}
+table.grid select.add{width:auto;min-width:110px;padding:3px 6px;font-size:12px;color:var(--muted);margin:2px 0;}
+table.grid .member{margin:2px 4px 2px 0;}
+table.grid .vs{color:var(--dim);font-size:12px;}
+table.grid .empty-row{color:var(--dim);text-align:center;padding:10px;}
+.grid-foot{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:8px 0 4px;}
+.grid-foot button{padding:6px 12px;font-size:13px;}
+.code-pill{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--surface3);
+  border:1px solid var(--line);border-radius:6px;padding:2px 8px;letter-spacing:.12em;font-size:12px;}
+.tee-row,.group-row{display:flex;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);flex-wrap:wrap;}
+.tee-row:last-child,.group-row:last-child{border-bottom:none;}
+.grow{flex:1;min-width:100px;}
+.checklist{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
+.check-item{display:flex;align-items:center;gap:6px;background:var(--surface2);border:1px solid var(--line);
+  border-radius:8px;padding:6px 10px;font-size:13px;cursor:pointer;}
+.check-item.selected{border-color:var(--accent);background:var(--accent-dim);}
+.check-item input{width:auto;}
+.savebar{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--line);
+  padding:12px 16px;display:flex;justify-content:center;gap:12px;align-items:center;z-index:5;}
+.status{font-size:12px;color:var(--dim);}
+.status.ok{color:var(--ok);}
+.status.err{color:var(--danger);}
+#pinGate{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:20;}
+#pinGate .box{width:280px;text-align:center;}
+#pinGate input{text-align:center;letter-spacing:.3em;font-size:18px;margin-bottom:10px;}
+.hidden{display:none !important;}
+.hdr-link{color:var(--accent);font-size:13px;text-decoration:none;border:1px solid var(--line);border-radius:8px;padding:6px 10px;white-space:nowrap;}
+.warn{background:#faeec6;border:1px solid #c9a84c;color:#5c4813;border-radius:6px;padding:10px 12px;font-size:13px;margin-bottom:16px;}
+.hint{font-size:12px;color:var(--dim);margin:-4px 0 10px;}
+.upload-label{display:inline-block;cursor:pointer;font-size:14px;border-radius:8px;
+  border:1px solid var(--line);background:var(--surface3);color:var(--text);padding:9px 14px;margin:0;}
+.member{display:inline-flex;align-items:center;gap:4px;background:var(--surface3);
+  border:1px solid var(--line);border-radius:999px;padding:2px 4px 2px 10px;font-size:13px;margin:2px 4px 2px 0;}
+.member-x{background:none;border:none;color:var(--dim);padding:0 5px;font-size:15px;line-height:1;cursor:pointer;}
+.member-x:hover{color:var(--danger);}
+.fmt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;}
+.fmt-card{text-align:left;background:var(--surface2);border:1px solid var(--line);border-radius:10px;
+  padding:12px;cursor:pointer;color:var(--text);}
+.fmt-card b{display:block;font-size:15px;margin-bottom:4px;}
+.fmt-card span{display:block;font-size:12px;color:var(--muted);line-height:1.35;}
+.fmt-card.selected{border-color:var(--accent);background:var(--accent-dim);box-shadow:inset 0 0 0 1px var(--accent);}
+.seg-admin{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;}
+.seg-admin button{border:none;border-radius:0;background:var(--surface2);color:var(--dim);padding:9px 18px;}
+.seg-admin button.active{background:var(--accent);color:var(--surface);font-weight:700;}
+
+/* Header subtitle and status text get the handwritten-scorecard treatment used sparingly
+   on the player app, never the dense functional copy (labels, hints, table data). */
+header .sub,.status,#loadStatus{font-family:"Kalam","Segoe Print","Bradley Hand",cursive;}
+#pinGate p{font-family:"Kalam","Segoe Print","Bradley Hand",cursive;color:var(--muted);}
+
+/* A default value nobody's actually chosen yet this session — a loud amber alert ring that
+   pulses, settling to the normal parchment tone only once a different value is picked
+   (merely clicking the already-active option does NOT clear it). */
+@keyframes reviewPulse{
+  0%,100%{box-shadow:0 0 0 3px #e0a318,0 0 0 3px #e0a318 inset,0 0 10px 1px rgba(224,163,24,.7);}
+  50%{box-shadow:0 0 0 3px #e0a318,0 0 0 3px #e0a318 inset,0 0 16px 4px rgba(224,163,24,.95);}
+}
+.needs-review{background:#fff6e0 !important;box-shadow:0 0 0 3px #e0a318;animation:reviewPulse 1.6s ease-in-out infinite;position:relative;}
+.needs-review::after{content:"NEEDS REVIEW";position:absolute;top:-9px;left:10px;background:#e0a318;color:#231a05;
+  font-size:9px;font-weight:800;letter-spacing:.06em;padding:1px 6px;border-radius:4px;line-height:1.5;
+  font-family:Georgia,"Times New Roman",serif;pointer-events:none;}
+.seg-admin.needs-review{border-radius:6px;}
+.seg-admin.needs-review::after{display:none;}
+.seg-admin.needs-review button:not(.active){background:#fff6e0;}
+.fmt-grid.needs-review{border-radius:10px;padding:8px;margin:-8px -8px 10px;}
+select.needs-review,input.needs-review{border-radius:6px;}
+</style>
+</head>
+<body>
+
+<div id="pinGate">
+  <div class="box">
+    <h1>Template Version</h1>
+    <p>Commissioner console &middot; enter PIN</p>
+    <input id="pinInput" type="text" placeholder="Code" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false">
+    <button class="primary" id="pinSubmit" style="width:100%">Enter</button>
+    <p id="pinError" style="color:var(--danger);display:none;margin-top:10px;">Code not recognised</p>
+  </div>
+</div>
+
+<div id="app" class="hidden">
+<header>
+  <h1>Template Version &middot; Commissioner</h1>
+  <span style="display:flex;gap:14px;align-items:center;">
+    <span class="status" id="loadStatus">loading&hellip;</span>
+    <a href="index.html" class="hdr-link">Player app &rarr;</a>
+  </span>
+</header>
+<main>
+  <div id="configWarn" class="warn hidden">
+    Firebase isn't connected yet (placeholder config in firebase-config.js). You can still fill this out —
+    it'll save to your browser only until it's wired up, then nothing will be lost.
+  </div>
+
+  <div class="card">
+    <h2>Event</h2>
+    <div class="row">
+      <div><label>Event name</label><input id="eventName" placeholder="e.g. Smith Family Outing 2026"></div>
+    </div>
+    <div class="row" style="align-items:flex-end;">
+      <div>
+        <label>Event style</label>
+        <div class="seg-admin" id="eventStyleSeg">
+          <button type="button" data-set-event-style="ryder-cup">Ryder Cup</button>
+          <button type="button" data-set-event-style="two-man-teams">2-Man Teams</button>
+          <button type="button" data-set-event-style="singles">Singles</button>
+        </div>
+      </div>
+    </div>
+    <p class="hint" id="eventStyleHint" style="margin:4px 0 12px;"></p>
+    <div class="row hidden" id="sidesRow">
+      <div><label>Side A name</label><input id="sideAName" placeholder="e.g. USA"></div>
+      <div><label>Side B name</label><input id="sideBName" placeholder="e.g. Europe"></div>
+    </div>
+    <div class="row" id="hcpRow">
+      <div>
+        <label>Handicap allowance</label>
+        <input id="allowancePct" type="number" min="0" max="100" step="5">
+      </div>
+      <div>
+        <label>Allowance basis</label>
+        <select id="allowanceMode">
+          <option value="full">Full &mdash; each player off his own handicap</option>
+          <option value="off-lowest">Off the low man &mdash; in the field (stroke) or match (match play)</option>
+        </select>
+      </div>
+      <div id="teamHcpField">
+        <label>Team handicaps (scramble / alt shot)</label>
+        <select id="teamHcpMode">
+          <option value="formula">Formula per team</option>
+          <option value="off-lowest">Off the low team</option>
+        </select>
+      </div>
+    </div>
+    <p class="hint" id="hcpHint">Allowance applies to every player's course handicap, which the app calculates
+      from the tee's rating and slope.</p>
+    <p class="hint hidden" id="grossNote">Gross format &mdash; straight strokes, so handicaps and allowances
+      aren't used. Handicap indexes stay on the roster in case you switch to net.</p>
+  </div>
+
+  <div class="card">
+    <h2>Spreadsheet setup</h2>
+    <p>Faster than typing 18 holes by hand. Download the template, fill it in Excel,
+      and upload it back &mdash; courses, tees and players all come in at once.</p>
+    <div class="row">
+      <div style="flex:0 0 auto;"><button id="downloadTemplateBtn">Download template</button></div>
+      <div style="flex:0 0 auto;">
+        <label for="uploadInput" class="upload-label">Upload filled template</label>
+        <input type="file" id="uploadInput" accept=".xlsx,.xls" class="hidden">
+      </div>
+    </div>
+    <p class="hint">The download opens to a <b>Read me first</b> sheet, plus one example row on each
+      of the other three &mdash; delete the examples before uploading. Uploading <b>replaces</b> courses
+      and players. Players are matched by name &mdash; anyone already in the roster keeps their existing
+      login code.</p>
+    <div id="importStatus" class="status"></div>
+  </div>
+
+  <div class="card">
+    <h2>Courses</h2>
+    <p>Add every course the event plays. Rounds point at one of these.</p>
+    <div id="courseList"></div>
+    <button id="addCourseBtn">+ Add course</button>
+  </div>
+
+  <div class="card">
+    <div class="row" style="align-items:center;justify-content:space-between;">
+      <h2 style="margin:0;">Players</h2>
+      <div style="flex:0 0 auto;display:flex;align-items:center;gap:8px;">
+        <span id="codesStatus" class="status"></span>
+        <button id="exportCodesBtn">Export codes</button>
+      </div>
+    </div>
+    <div class="row">
+      <div><label>Name</label><input id="playerName" placeholder="Player name"></div>
+      <div><label>Handicap index</label><input id="playerIndex" type="number" step="0.1" placeholder="12.4"></div>
+      <div><label>Tee</label><select id="playerTee"></select></div>
+      <div style="flex:0 0 auto;min-width:0;display:flex;align-items:flex-end;">
+        <button class="primary" id="addPlayerBtn">Add</button>
+      </div>
+    </div>
+    <p class="hint">Tees are matched by name across courses, so use the same tee name
+      (e.g. &ldquo;White&rdquo;) on every course a player plays from. <b>Export codes</b> downloads
+      every player's name and login code side by side &mdash; handy for printing a sheet, or pasting
+      into a group text instead of sending codes one at a time.</p>
+    <div id="playerList"></div>
+  </div>
+
+  <div class="card">
+    <h2>Rounds</h2>
+    <p>Each round has its own course, format, teams and tee times &mdash; and matches, in match play.</p>
+    <div id="roundList"></div>
+    <button id="addRoundBtn">+ Add round</button>
+  </div>
+
+</main>
+
+<div class="savebar">
+  <span class="status" id="saveStatus"></span>
+  <button class="primary" id="saveBtn">Save all</button>
+  <button id="reloadBtn">Update to player app</button>
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+import { FIREBASE_CONFIG, FIREBASE_CONFIGURED } from "./firebase-config.js";
+import { FORMATS, coursePar, courseHandicap, playingHandicaps,
+         DEFAULT_TEAM_WEIGHTS, weightsFor, MAX_SCORE_RULES, DEFAULT_MAX_RULE,
+         FORMAT_FAMILIES, DEFAULT_FORMAT, formatFor, formatOf, gameHandicaps } from "./scoring.js";
+import { ACCEPTED_PINS } from "./admin-pins.js";
+
+
+const LS_KEY = "covidcup_admin_draft";
+const DB_PATH = "covidcup";
+
+let db = null;
+if (FIREBASE_CONFIGURED) {
+  const app = initializeApp(FIREBASE_CONFIG);
+  db = getDatabase(app);
+}
+
+const state = {
+  event:   { name: "Template Version", allowancePct: 90, allowanceMode: "full", teamHcpMode: "formula" },
+  courses: {}, // id -> { name, location, holesCount, holes:[{number,par,si,yards}], tees:[{name,rating,slope,yards}] }
+  roster:  {}, // id -> { name, index, tee, code, commissioner? }
+  rounds:  {}, // id -> { name, courseId, format, order }
+  groups:  {},  // roundId -> { teamId: { name, playerIds:[...] } } — the teams that score together
+  teeTimes: {}, // roundId -> { teeTimeId: { start, unitIds:[teamId or "p-<playerId>"] } }
+  matches: {}   // roundId -> { matchId: { unitIds:[sideA, sideB] } } — match play only
+};
+
+const uid = () => Math.random().toString(36).slice(2, 9);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+// Player login codes are name tags, not passwords — the whole roster ships to every
+// phone, so anyone can read them. Ambiguous characters are left out so they're easy
+// to read off a screen and retype.
+const CODE_ALPHABET = "ACDEFHJKLMNPQRTUVWXY34679";
+function newCode(){
+  const taken = new Set(Object.values(state.roster).map(p => p.code));
+  for (let attempt = 0; attempt < 200; attempt++){
+    let code = "";
+    for (let i = 0; i < 4; i++) code += CODE_ALPHABET[Math.floor(Math.random() * CODE_ALPHABET.length)];
+    if (!taken.has(code)) return code;
+  }
+  return uid().slice(0, 4).toUpperCase();
+}
+
+function defaultHoles(count){
+  const holes = [];
+  for (let i = 1; i <= count; i++) holes.push({ number: i, par: 4, si: i });
+  return holes;
+}
+
+function allTeeNames(){
+  const names = new Set();
+  Object.values(state.courses).forEach(c => (c.tees || []).forEach(t => { if (t.name) names.add(t.name); }));
+  return [...names];
+}
+
+function orderedRounds(){
+  return Object.entries(state.rounds).sort((a, b) => (a[1].order ?? 0) - (b[1].order ?? 0));
+}
+
+/* ---------- courses ---------- */
+
+function renderCourses(){
+  const wrap = document.getElementById("courseList");
+  const entries = Object.entries(state.courses);
+  if (!entries.length){ wrap.innerHTML = `<p>No courses yet.</p>`; return; }
+
+  wrap.innerHTML = entries.map(([id, c]) => `
+    <div class="sub-card" data-course="${id}">
+      <div class="row">
+        <div><label>Course name</label><input data-cf="name" value="${esc(c.name)}" placeholder="e.g. Cedar River"></div>
+        <div><label>Location</label><input data-cf="location" value="${esc(c.location || "")}" placeholder="City, State"></div>
+        <div style="flex:0 0 110px;">
+          <label>Holes</label>
+          <select data-cf="holesCount">
+            <option value="18" ${c.holesCount === 18 ? "selected" : ""}>18</option>
+            <option value="9" ${c.holesCount === 9 ? "selected" : ""}>9</option>
+          </select>
+        </div>
+        <div style="flex:0 0 auto;display:flex;align-items:flex-end;">
+          <button class="danger" data-del-course="${id}">Remove</button>
+        </div>
+      </div>
+
+      <h3>Tees</h3>
+      <div class="tee-list">
+        ${(c.tees || []).map((t, i) => `
+          <div class="tee-row" data-tee="${i}">
+            <input class="grow" data-tf="name" placeholder="Tee (e.g. White)" value="${esc(t.name || "")}">
+            <input style="max-width:96px;" data-tf="rating" type="number" step="0.1" placeholder="Rating" value="${t.rating ?? ""}">
+            <input style="max-width:88px;" data-tf="slope" type="number" placeholder="Slope" value="${t.slope ?? ""}">
+            <input style="max-width:96px;" data-tf="yards" type="number" placeholder="Yards" value="${t.yards ?? ""}">
+            <button class="danger" data-del-tee="${i}">&times;</button>
+          </div>`).join("") || `<p>No tees yet.</p>`}
+      </div>
+      <button data-add-tee="${id}" style="margin:8px 0 14px;">+ Add tee</button>
+
+      <h3>Holes</h3>
+      ${[[1, 9], [10, 18]].map(([lo, hi]) => {
+        const nine = (c.holes || []).filter(h => h.number >= lo && h.number <= hi);
+        if (!nine.length) return "";
+        return `<div class="nine">
+          <div class="nine-labels"><span>Hole</span><span>Par</span><span>Stroke index</span></div>
+          ${nine.map(h => `
+            <div class="nine-col">
+              <span class="nine-num">${h.number}</span>
+              <input type="number" min="3" max="6" value="${h.par}" data-hole="${h.number}" data-hf="par">
+              <input type="number" min="1" max="${(c.holes || []).length}" value="${h.si}" data-hole="${h.number}" data-hf="si">
+            </div>`).join("")}
+        </div>`;
+      }).join("")}
+      <p class="hint">Par ${coursePar(c.holes)}</p>
+    </div>
+  `).join("");
+
+  wrap.querySelectorAll("[data-course]").forEach(box => {
+    const id = box.dataset.course;
+    const c = state.courses[id];
+
+    box.querySelectorAll("[data-cf]").forEach(inp => inp.addEventListener("input", () => {
+      const f = inp.dataset.cf;
+      if (f === "holesCount"){
+        const count = +inp.value;
+        c.holesCount = count;
+        const existing = new Map((c.holes || []).map(h => [h.number, h]));
+        c.holes = defaultHoles(count).map(h => existing.get(h.number) || h);
+        renderCourses(); renderRounds(); renderGroups();
+      } else {
+        c[f] = inp.value;
+      }
+    }));
+
+    box.querySelectorAll(".tee-row").forEach(row => {
+      const i = +row.dataset.tee;
+      row.querySelectorAll("[data-tf]").forEach(inp => inp.addEventListener("input", () => {
+        const f = inp.dataset.tf;
+        c.tees[i][f] = f === "name" ? inp.value : +inp.value;
+        renderPlayerTeeOptions(); renderRoster();
+      }));
+      row.querySelector("[data-del-tee]").addEventListener("click", () => {
+        c.tees.splice(i, 1); renderCourses(); renderPlayerTeeOptions();
+      });
+    });
+
+    box.querySelectorAll("[data-hf]").forEach(inp => inp.addEventListener("input", () => {
+      const h = c.holes.find(x => x.number === +inp.dataset.hole);
+      if (h) h[inp.dataset.hf] = +inp.value;
+    }));
+
+    box.querySelector("[data-add-tee]")?.addEventListener("click", () => {
+      c.tees = c.tees || [];
+      c.tees.push({ name: "", rating: "", slope: "", yards: "" });
+      renderCourses(); renderPlayerTeeOptions();
+    });
+
+    box.querySelector("[data-del-course]")?.addEventListener("click", () => {
+      delete state.courses[id];
+      Object.entries(state.rounds).forEach(([rid, r]) => { if (r.courseId === id) r.courseId = ""; });
+      renderCourses(); renderRounds(); renderPlayerTeeOptions();
+    });
+  });
+}
+
+/* ---------- roster ---------- */
+
+function renderPlayerTeeOptions(){
+  const sel = document.getElementById("playerTee");
+  const names = allTeeNames();
+  const current = sel.value;
+  sel.innerHTML = names.map(n => `<option value="${esc(n)}">${esc(n)}</option>`).join("")
+    || `<option value="">No tees defined yet</option>`;
+  if (names.includes(current)) sel.value = current;
+}
+
+// Course handicap for display, using whichever course the player's tee appears on first.
+function displayCourseHandicap(player){
+  for (const c of Object.values(state.courses)){
+    const tee = (c.tees || []).find(t => t.name === player.tee);
+    if (tee && (c.holes || []).length) return Math.round(courseHandicap(player.index, tee, coursePar(c.holes)));
+  }
+  return null;
+}
+
+function renderRoster(){
+  const list = document.getElementById("playerList");
+  const players = Object.entries(state.roster);
+  if (!players.length){ list.innerHTML = `<p>No players yet.</p>`; renderGroups(); return; }
+
+  const rounds = orderedRounds();
+  // One Game hcp column per round: what each player actually plays off in that round's game.
+  const ghHead = rounds.length <= 1
+    ? `<th class="c" title="What the player actually plays off in the round's game">Game hcp</th>`
+    : rounds.map(([, r], i) => `<th class="c" title="${esc(r.name || "Round " + (i + 1))}">R${i + 1} hcp</th>`).join("");
+  const ghValue = (rid, pid) => {
+    const v = rid ? receivedHcp(rid, pid) : null;
+    return v == null ? "&mdash;" : v;
+  };
+  const ghCells = pid => (rounds.length ? rounds.map(([rid]) => rid) : [""])
+    .map(rid => `<td class="c gh" data-gh="${rid}">${ghValue(rid, pid)}</td>`).join("");
+
+  list.innerHTML = `<table>
+    <tr><th>Name</th><th class="c">Index</th><th>Tee</th><th class="c">Course hcp</th>${ghHead}<th>Email</th><th class="c">Code</th><th class="c">Commish</th><th></th></tr>` +
+    players.map(([id, p]) => {
+      const ch = displayCourseHandicap(p);
+      return `<tr data-id="${id}">
+        <td><input value="${esc(p.name)}" data-pf="name" placeholder="Name" style="min-width:130px;"></td>
+        <td class="c"><input type="number" step="0.1" value="${p.index ?? 0}" data-pf="index" style="width:64px;text-align:center;"></td>
+        <td><select data-pf="tee" style="width:94px;">${allTeeNames().map(n =>
+              `<option value="${esc(n)}" ${n === p.tee ? "selected" : ""}>${esc(n)}</option>`).join("")}</select></td>
+        <td class="c" data-ch>${ch == null ? "&mdash;" : ch}</td>
+        ${ghCells(id)}
+        <td><input type="email" value="${esc(p.email || "")}" data-pf="email" placeholder="&mdash;" style="min-width:160px;"></td>
+        <td class="c"><span class="code-pill">${esc(p.code || "")}</span></td>
+        <td class="c"><input type="checkbox" data-pf="commissioner" ${p.commissioner ? "checked" : ""}
+          title="Also log in as the commissioner with this player's own code"></td>
+        <td class="c" style="white-space:nowrap;">
+          <button class="mini" data-mail="${id}" ${p.email ? "" : "disabled"} title="Email this player his code">Send</button>
+          <button class="icon danger-x" data-del-player="${id}" title="Remove player">&times;</button>
+        </td>
+      </tr>`;
+    }).join("") + `</table>
+    <p class="hint" style="margin-top:8px;">Course hcp comes from the tee's rating and slope. <b>Game hcp</b> is what
+      the player actually plays off in the round's game &mdash; after the allowance, off the low man where that
+      applies, and within his match in match play. It shows &mdash; until he's on a team, or in a match.
+      Codes are name tags for logging in, not passwords.
+      <b>Commish</b> lets a player who's also running the event log in with just his own code and get commissioner
+      access too &mdash; no separate console PIN to remember on the course.</p>`;
+
+  // Edits update state and refresh only the cells that depend on them. Re-rendering the
+  // whole table on every keystroke would throw focus out of the field being typed in.
+  const refreshGameHcps = () => list.querySelectorAll("tr[data-id]").forEach(row =>
+    row.querySelectorAll("[data-gh]").forEach(cell => { cell.innerHTML = ghValue(cell.dataset.gh, row.dataset.id); }));
+
+  list.querySelectorAll("tr[data-id]").forEach(row => {
+    const id = row.dataset.id;
+    row.querySelectorAll("[data-pf]").forEach(inp => inp.addEventListener("input", () => {
+      const f = inp.dataset.pf;
+      const player = state.roster[id];
+
+      if (f === "commissioner"){
+        player.commissioner = inp.checked;
+        return;
+      }
+
+      player[f] = f === "index" ? +inp.value : inp.value;
+
+      if (f === "index" || f === "tee"){
+        const ch = displayCourseHandicap(player);
+        row.querySelector("[data-ch]").innerHTML = ch == null ? "&mdash;" : ch;
+        refreshGameHcps(); renderGroups();
+      }
+      if (f === "name") renderGroups(); // team and tee time rows show player names
+      if (f === "email"){
+        const mailBtn = row.querySelector("[data-mail]");
+        if (mailBtn) mailBtn.disabled = !inp.value.trim();
+      }
+    }));
+  });
+
+  // A static page can't send mail itself — that needs a server and a mail service.
+  // This opens the commissioner's own mail client with everything filled in, so the
+  // message comes from him and costs nothing.
+  list.querySelectorAll("[data-mail]").forEach(btn => btn.addEventListener("click", () => {
+    const p = state.roster[btn.dataset.mail];
+    if (!p?.email) return;
+    const event = state.event.name || "Template Version";
+    const link = location.href.replace(/admin\.html.*$/, "");
+    const body =
+      `${p.name},\n\n` +
+      `Here's your login for ${event}.\n\n` +
+      `Scoring app: ${link}\n` +
+      `Your code: ${p.code}\n\n` +
+      `Open the link, enter the code, and you're in. Any hole you play, ` +
+      `you or anyone in your group can enter the score.\n`;
+    location.href = `mailto:${encodeURIComponent(p.email)}` +
+      `?subject=${encodeURIComponent(`${event} — your player code`)}` +
+      `&body=${encodeURIComponent(body)}`;
+  }));
+
+  list.querySelectorAll("[data-del-player]").forEach(btn => btn.addEventListener("click", () => {
+    const id = btn.dataset.delPlayer;
+    Object.values(state.groups).forEach(round => {
+      Object.entries(round).forEach(([gid, g]) => {
+        g.playerIds = (g.playerIds || []).filter(pid => pid !== id);
+        if (!g.playerIds.length) delete round[gid];
+      });
+    });
+    delete state.roster[id];
+    renderRoster();
+  }));
+
+  renderGroups();
+}
+
+
+/* ---------- rounds ---------- */
+
+// One line saying what a round's settings add up to, so it can be checked at a glance.
+function formatSummary(r){
+  const f = FORMATS[r.format] || FORMATS[DEFAULT_FORMAT];
+  const match = r.play === "match";
+  const lowMode = f.teamHcp ? state.event.teamHcpMode : state.event.allowanceMode;
+  const who = f.teamHcp ? "low team" : "low man";
+  return "<b>" + esc(f.label) + " &middot; " + (match ? "match play" : "stroke play") + "</b> &mdash; " +
+    (f.gross
+      ? "straight strokes, no handicaps."
+      : (f.teamHcp ? "one team ball off a combined team handicap" : "each player off his own handicap") +
+        (lowMode === "off-lowest"
+          ? ", played off the " + who + (match ? " in each match." : " in the field.")
+          : ", full handicaps."));
+}
+
+function renderRounds(){
+  const wrap = document.getElementById("roundList");
+  const rounds = orderedRounds();
+  if (!rounds.length){ wrap.innerHTML = `<p>No rounds yet.</p>`; return; }
+
+  const courseOpts = Object.entries(state.courses);
+  wrap.innerHTML = rounds.map(([id, r], i) => {
+    const f = FORMATS[r.format] || FORMATS[DEFAULT_FORMAT];
+    const match = r.play === "match";
+    return `
+    <div class="sub-card round-card" data-round="${id}">
+      <div class="row">
+        <div><label>Round ${i + 1} name</label><input data-rf="name" value="${esc(r.name || "")}" placeholder="e.g. Saturday morning"></div>
+        <div>
+          <label>Course</label>
+          <select data-rf="courseId">
+            <option value="">&mdash; pick a course &mdash;</option>
+            ${courseOpts.map(([cid, c]) => `<option value="${cid}" ${r.courseId === cid ? "selected" : ""}>${esc(c.name || "Untitled")}</option>`).join("")}
+          </select>
+        </div>
+        <div style="flex:0 0 auto;display:flex;align-items:flex-end;">
+          <button class="danger" data-del-round="${id}">Remove round</button>
+        </div>
+      </div>
+
+      <h3 class="step">Format</h3>
+      <div class="toggles">
+        <div class="seg-admin ${isPending("format", id) ? "needs-review" : ""}">
+          <button type="button" data-set-gross="0" class="${f.gross ? "" : "active"}">Net</button>
+          <button type="button" data-set-gross="1" class="${f.gross ? "active" : ""}">Gross</button>
+        </div>
+        <div class="seg-admin ${isPending("play", id) ? "needs-review" : ""}">
+          <button type="button" data-set-play="stroke" class="${match ? "" : "active"}">Stroke play</button>
+          <button type="button" data-set-play="match" class="${match ? "active" : ""}">Match play</button>
+        </div>
+      </div>
+      <div class="fmt-grid ${isPending("format", id) ? "needs-review" : ""}">
+        ${Object.entries(FORMAT_FAMILIES).map(([fam, info]) => `
+          <button type="button" class="fmt-card ${f.family === fam ? "selected" : ""}" data-set-family="${fam}">
+            <b>${esc(info.label)}</b><span>${esc(info.blurb)}</span>
+          </button>`).join("")}
+      </div>
+      <p class="hint" style="margin:8px 0 12px;">${formatSummary(r)}</p>
+
+      ${f.family === "rolling-best-ball" ? `
+      <h3 class="step">Rolling best ball</h3>
+      <div class="row" style="align-items:flex-end;">
+        <div style="flex:0 0 140px;">
+          <label>Count best</label>
+          <input type="number" min="1" max="50" data-rf="rollingBestCount"
+            class="${isPending("rollingBestCount", id) ? "needs-review" : ""}" value="${r.rollingBestCount ?? 4}">
+        </div>
+        <p class="hint" style="margin:0 0 9px;">of each team's scores on every hole.</p>
+      </div>
+      <p class="hint rolling-best-hint" style="margin:4px 0 12px;">Every player plays his own ball. On each hole, only
+        the lowest <b>${+r.rollingBestCount > 0 ? r.rollingBestCount : 4}</b> scores from anywhere across the
+        team count toward its total &mdash; the rest don't matter, however many foursomes the team is
+        split across. A hole with fewer scores in than that still counts, using whatever's posted so
+        far; the total just firms up as the rest of the team finishes.</p>
+      ` : ""}
+
+      ${f.gross ? "" : (() => {
+        const hasHcpCap = r.maxHcpStrokes != null && r.maxHcpStrokes !== "";
+        return `<h3 class="step">Handicap</h3>
+        <div class="row" style="align-items:flex-end;">
+          <div class="seg-admin ${isPending("maxHcp", id) ? "needs-review" : ""}">
+            <button type="button" data-set-maxhcp="0" class="${hasHcpCap ? "" : "active"}">No max</button>
+            <button type="button" data-set-maxhcp="1" class="${hasHcpCap ? "active" : ""}">Cap at</button>
+          </div>
+          ${hasHcpCap ? `<div style="flex:0 0 110px;">
+            <label>Max strokes</label>
+            <input type="number" min="0" max="54" data-rf="maxHcpStrokes" value="${esc(r.maxHcpStrokes)}">
+          </div>` : ""}
+        </div>
+        <p class="hint" style="margin:4px 0 12px;">${hasHcpCap
+          ? "Caps every player&rsquo;s course handicap before any allowance or off-the-low-man adjustment &mdash; nobody plays off more than this, however high their index runs."
+          : "No ceiling on course handicap &mdash; every player plays off his full index (after the event&rsquo;s allowance)."}</p>
+        ${f.teamHcp ? weightsSectionHtml(r.format) : ""}`;
+      })()}
+
+      <div class="row">
+        <div>
+          <label>Maximum score per hole</label>
+          <select data-rf="maxScore" class="${isPending("maxScore", id) ? "needs-review" : ""}">
+            ${Object.entries(MAX_SCORE_RULES).map(([key, m]) =>
+              `<option value="${key}" ${(r.maxScore || DEFAULT_MAX_RULE) === key ? "selected" : ""}>${esc(m.label)}</option>`).join("")}
+          </select>
+        </div>
+        ${r.maxScore === "par-plus" ? `<div style="flex:0 0 120px;">
+          <label>Par plus</label>
+          <input type="number" min="1" max="10" data-rf="maxPlus" value="${r.maxPlus ?? 4}">
+        </div>` : ""}
+      </div>
+      <div class="row" style="align-items:flex-end;">
+        <label class="check-item ${r.ctpOn ? "selected" : ""}" style="flex:0 0 auto;color:var(--text);">
+          <input type="checkbox" data-rf="ctpOn" ${r.ctpOn ? "checked" : ""}>Closest to the pin
+        </label>
+        ${r.ctpOn ? `<div style="flex:0 0 150px;min-width:0;">
+          <label>Hole(s)</label>
+          <input data-rf="ctpHoles" inputmode="numeric" placeholder="e.g. 8 or 2, 8" value="${esc(r.ctpHoles || "")}">
+        </div>` : ""}
+        <label class="check-item ${r.ldOn ? "selected" : ""}" style="flex:0 0 auto;color:var(--text);">
+          <input type="checkbox" data-rf="ldOn" ${r.ldOn ? "checked" : ""}>Long drive
+        </label>
+        ${r.ldOn ? `<div style="flex:0 0 150px;min-width:0;">
+          <label>Hole(s)</label>
+          <input data-rf="ldHoles" inputmode="numeric" placeholder="e.g. 6" value="${esc(r.ldHoles || "")}">
+        </div>` : ""}
+        <label class="check-item ${r.skinsOn ? "selected" : ""}" style="flex:0 0 auto;color:var(--text);">
+          <input type="checkbox" data-rf="skinsOn" ${r.skinsOn ? "checked" : ""}>Skins game
+        </label>
+      </div>
+      ${r.skinsOn ? (() => {
+        // Skins runs its own gross/net and team/individual, independent of the round's own
+        // format — a net best ball round can still play its skins gross, or as individuals.
+        // Individual skins only makes sense where individual scores actually exist (every
+        // format except scramble and alternate shot, which only ever have a team score).
+        const canIndividual = f.entry === "player";
+        // Skins defaults to gross and individual regardless of the round's own format —
+        // a deliberate choice, not just "whatever the round already is".
+        const skinsGross = r.skinsGross ?? true;
+        const skinsUnit = canIndividual ? (r.skinsUnit || "individual") : "team";
+        const skinsCarry = r.skinsCarry ?? true;
+        return `<div class="row" style="align-items:flex-end;margin-top:-4px;">
+          <div class="seg-admin ${isPending("skinsGross", id) ? "needs-review" : ""}">
+            <button type="button" data-set-skins-gross="0" class="${skinsGross ? "" : "active"}">Net</button>
+            <button type="button" data-set-skins-gross="1" class="${skinsGross ? "active" : ""}">Gross</button>
+          </div>
+          ${canIndividual ? `<div class="seg-admin ${isPending("skinsUnit", id) ? "needs-review" : ""}">
+            <button type="button" data-set-skins-unit="team" class="${skinsUnit === "team" ? "active" : ""}">Team</button>
+            <button type="button" data-set-skins-unit="individual" class="${skinsUnit === "individual" ? "active" : ""}">Individual</button>
+          </div>` : ""}
+          <div class="seg-admin ${isPending("skinsCarry", id) ? "needs-review" : ""}">
+            <button type="button" data-set-skins-carry="1" class="${skinsCarry ? "active" : ""}">Carries over</button>
+            <button type="button" data-set-skins-carry="0" class="${skinsCarry ? "" : "active"}">Void on tie</button>
+          </div>
+        </div>
+        <p class="hint" style="margin-top:6px;">Low score on a hole wins the skin${skinsCarry
+          ? "; a tie carries it (and everything riding on it) to the next hole"
+          : "; a tie just voids the hole — nobody wins it and nothing carries forward"}. A hole only
+          counts once every ${skinsUnit === "individual" ? "player" : "team"} in the round has a
+          score on it, so skins can lag behind the leaderboard until the whole field is through a hole.</p>`;
+      })() : ""}
+
+      <div class="round-setup" data-setup="${id}"></div>
+    </div>`;
+  }).join("");
+
+  wrap.querySelectorAll("[data-round]").forEach(box => {
+    const id = box.dataset.round;
+    const r = state.rounds[id];
+
+    box.querySelectorAll("[data-rf]").forEach(inp => inp.addEventListener("input", () => {
+      const rf = inp.dataset.rf;
+      r[rf] = inp.type === "checkbox" ? inp.checked : inp.value;
+      if (rf === "maxScore") confirmField("maxScore", id);
+      if (rf === "rollingBestCount") confirmField("rollingBestCount", id);
+      // Free-typed fields keep focus; anything that changes the card's shape re-renders it.
+      if (["name", "maxPlus", "ctpHoles", "ldHoles", "maxHcpStrokes"].includes(rf)){
+        if (rf === "maxHcpStrokes") renderRoster();
+        return;
+      }
+      if (rf === "rollingBestCount"){
+        inp.classList.remove("needs-review");
+        // Patch just the hint's number in place — a full re-render would drop focus
+        // mid-keystroke, same reason maxPlus/ctpHoles/ldHoles skip it above.
+        const hint = box.querySelector(".rolling-best-hint b");
+        if (hint) hint.textContent = (+inp.value > 0 ? inp.value : 4);
+        return;
+      }
+      renderRounds();
+      if (rf === "courseId") renderRoster();
+    }));
+    // A click into the maxScore select counts as "looked at it" even if the commissioner
+    // backs out and keeps the default — same as clicking an already-active toggle button.
+    box.querySelectorAll('select[data-rf="maxScore"]').forEach(sel => sel.addEventListener("click", () => {
+      confirmField("maxScore", id);
+      sel.classList.remove("needs-review");
+    }));
+    box.querySelectorAll('input[data-rf="rollingBestCount"]').forEach(inp => inp.addEventListener("click", () => {
+      confirmField("rollingBestCount", id);
+      inp.classList.remove("needs-review");
+    }));
+
+    const current = FORMATS[r.format] || FORMATS[DEFAULT_FORMAT];
+    const setFormat = next => {
+      r.format = next;
+      confirmField("format", id);
+      renderRounds(); renderRoster(); renderHandicapSections();
+    };
+    box.querySelectorAll("[data-set-gross]").forEach(btn => btn.addEventListener("click", () =>
+      setFormat(formatFor(current.family, btn.dataset.setGross === "1"))));
+    box.querySelectorAll("[data-set-family]").forEach(btn => btn.addEventListener("click", () =>
+      setFormat(formatFor(btn.dataset.setFamily, current.gross))));
+    box.querySelectorAll("[data-set-play]").forEach(btn => btn.addEventListener("click", () => {
+      r.play = btn.dataset.setPlay;
+      confirmField("play", id);
+      renderRounds(); renderRoster();
+    }));
+    box.querySelectorAll("[data-set-skins-gross]").forEach(btn => btn.addEventListener("click", () => {
+      r.skinsGross = btn.dataset.setSkinsGross === "1";
+      confirmField("skinsGross", id);
+      renderRounds();
+    }));
+    box.querySelectorAll("[data-set-skins-carry]").forEach(btn => btn.addEventListener("click", () => {
+      r.skinsCarry = btn.dataset.setSkinsCarry === "1";
+      confirmField("skinsCarry", id);
+      renderRounds();
+    }));
+    box.querySelectorAll("[data-set-skins-unit]").forEach(btn => btn.addEventListener("click", () => {
+      r.skinsUnit = btn.dataset.setSkinsUnit;
+      confirmField("skinsUnit", id);
+      renderRounds();
+    }));
+    box.querySelectorAll("[data-set-maxhcp]").forEach(btn => btn.addEventListener("click", () => {
+      const on = btn.dataset.setMaxhcp === "1";
+      r.maxHcpStrokes = on ? (r.maxHcpStrokes ?? 18) : null;
+      confirmField("maxHcp", id);
+      renderRounds(); renderRoster();
+    }));
+    wireWeightsSection(box);
+
+    box.querySelector("[data-del-round]").addEventListener("click", () => {
+      delete state.rounds[id];
+      delete state.groups[id];
+      delete state.teeTimes[id];
+      delete state.matches[id];
+      renderRounds(); renderRoster(); renderHandicapSections();
+    });
+  });
+
+  renderGroups();
+}
+
+
+/* ---------- teams, tee times and matches (inside each round) ---------- */
+
+// The competing entries for a round. Team formats use the teams built below — a team with no
+// players yet doesn't count. Individual formats have no teams: every roster player is his own
+// entry, keyed "p-<id>".
+function unitsForAdmin(roundId){
+  const round = state.rounds[roundId];
+  const out = {};
+  if (FORMATS[formatOf(round, state.event)]?.unit === "player"){
+    Object.keys(state.roster).forEach(pid => { out["p-" + pid] = { playerIds: [pid] }; });
+    return out;
+  }
+  Object.entries(state.groups[roundId] || {}).forEach(([gid, g]) => {
+    if ((g.playerIds || []).length) out[gid] = g;
+  });
+  return out;
+}
+
+const unitName = unit => String(unit?.name || "").trim() ||
+  (unit?.playerIds || []).map(pid => state.roster[pid]?.name || "?").join(" / ");
+
+// What everyone receives in a round's game, or null until the round has a course.
+function roundHandicaps(roundId){
+  const r = state.rounds[roundId];
+  const course = state.courses[r?.courseId];
+  if (!r || !course || !(course.holes || []).length) return null;
+  return gameHandicaps({
+    roster: state.roster, course, format: formatOf(r, state.event), play: r.play,
+    allowancePct: state.event.allowancePct, allowanceMode: state.event.allowanceMode,
+    teamHcpMode: state.event.teamHcpMode, teamWeights: state.event.teamWeights,
+    maxStrokes: r.maxHcpStrokes,
+    units: unitsForAdmin(roundId),
+    matches: Object.values(state.matches[roundId] || {})
+  });
+}
+
+// The handicap a player actually plays off in a round, or null while it isn't settled —
+// no course yet, not on a team in a team-ball game, or not in a match in match play.
+function receivedHcp(roundId, pid){
+  const r = state.rounds[roundId];
+  const h = roundHandicaps(roundId);
+  if (!h) return null;
+  const f = FORMATS[formatOf(r, state.event)];
+  if (f.gross) return 0;
+  const units = unitsForAdmin(roundId);
+  const unitId = Object.keys(units).find(u => (units[u].playerIds || []).includes(pid));
+  if (!unitId) return null;
+  if (r.play === "match"){
+    const inMatch = Object.values(state.matches[roundId] || {}).some(m => {
+      const sides = (m.unitIds || []).filter(u => units[u]);
+      return sides.length === 2 && sides.includes(unitId);
+    });
+    if (!inMatch) return null;
+  }
+  if (f.teamHcp) return h.teamPhs[unitId] ?? null;
+  return h.playerPhs[pid] ?? null;
+}
+
+function renderGroups(){
+  document.querySelectorAll("[data-setup]").forEach(el => renderRoundSetup(el.dataset.setup, el));
+}
+
+function renderRoundSetup(roundId, wrap){
+  const round = state.rounds[roundId];
+  if (!round) return;
+  const f = FORMATS[formatOf(round, state.event)] || FORMATS[DEFAULT_FORMAT];
+  const individual = f.unit === "player";
+  // Rolling best ball scores per-player (like Individual) but still buckets players into
+  // teams for standings — the team grid stays available even though it's not the scoring
+  // unit and never appears in a tee time.
+  const showTeams = !individual || f.bigTeams;
+  const match = round.play === "match";
+
+  state.groups[roundId] = state.groups[roundId] || {};
+  state.teeTimes[roundId] = state.teeTimes[roundId] || {};
+  state.matches[roundId] = state.matches[roundId] || {};
+  const teams = state.groups[roundId];
+  const tees = state.teeTimes[roundId];
+  const matches = state.matches[roundId];
+  const units = unitsForAdmin(roundId);
+  const hcps = roundHandicaps(roundId);
+  const noun = individual ? "player" : "team";
+
+  // Entries are filtered for display, never rewritten here: switching a round's format back
+  // and forth must not quietly wipe the tee sheet or the matches.
+  const shown = list => (list || []).filter(u => units[u]);
+  const teeOf = u => Object.values(tees).find(t => shown(t.unitIds).includes(u));
+  const chip = (label, attr, value, title) =>
+    `<span class="member">${esc(label)}<button class="member-x" ${attr}="${esc(value)}" title="${title}">&times;</button></span>`;
+  const hcpText = u => {
+    if (!hcps) return "&mdash;";
+    if (f.gross) return "0";
+    if (f.teamHcp) return hcps.teamPhs[u] ?? "&mdash;";
+    // Team rows for a bigTeams format aren't keyed into `units` (which is player-keyed
+    // here), so fall back to the team roster itself for its members' individual handicaps.
+    return (units[u]?.playerIds || teams[u]?.playerIds || []).map(pid => hcps.playerPhs[pid] ?? "&mdash;").join(" &middot; ");
+  };
+
+  /* ---- teams ---- */
+  let teamsHtml;
+  if (!showTeams){
+    teamsHtml = `
+      <h3 class="step">Teams</h3>
+      <p class="hint" style="margin:0 0 10px;">${esc(f.label)} is an individual format &mdash; every player
+        competes on his own, so there are no teams to build.</p>`;
+  } else {
+    const inTeam = new Set(Object.values(teams).flatMap(g => g.playerIds || []));
+    const free = Object.entries(state.roster).filter(([id]) => !inTeam.has(id));
+    const addOptions = `<option value="">+ player</option>` +
+      free.map(([id, p]) => `<option value="${id}">${esc(p.name)}</option>`).join("");
+    teamsHtml = `
+      <h3 class="step">Teams <span class="hint">&middot; ${esc(TEAM_SIZE_HINT[f.family] || "")}</span></h3>
+      <div class="grid-scroll"><table class="grid">
+        <tr><th class="n">#</th><th>Team name</th><th>Players</th><th class="c">Game hcp</th><th>Tee time</th><th></th></tr>
+        ${Object.entries(teams).map(([gid, g], i) => `
+          <tr data-gid="${gid}">
+            <td class="n">${i + 1}</td>
+            <td><input data-team-name value="${esc(g.name || "")}" placeholder="Team ${i + 1}"></td>
+            <td>
+              ${(g.playerIds || []).map(pid => chip(state.roster[pid]?.name || "?", "data-drop", pid, "Take off this team")).join("")}
+              ${free.length ? `<select class="add" data-add-player>${addOptions}</select>` : ""}
+            </td>
+            <td class="c">${(g.playerIds || []).length ? hcpText(gid) : "&mdash;"}</td>
+            <td>${esc(teeOf(gid)?.start || "") || "&mdash;"}</td>
+            <td class="c"><button class="icon danger-x" data-del-group title="Remove team">&times;</button></td>
+          </tr>`).join("") || `<tr><td colspan="6" class="empty-row">No teams yet.</td></tr>`}
+      </table></div>
+      <div class="grid-foot">
+        <button data-new-team>+ New team</button>
+        <span class="hint" style="margin:0;">${free.length} player${free.length === 1 ? "" : "s"} not on a team</span>
+      </div>`;
+  }
+
+  /* ---- tee times ---- */
+  const placed = new Set(Object.values(tees).flatMap(t => shown(t.unitIds)));
+  const loose = Object.entries(units).filter(([u]) => !placed.has(u));
+  const looseOptions = `<option value="">+ ${noun}</option>` +
+    loose.map(([u, unit]) => `<option value="${esc(u)}">${esc(unitName(unit))}</option>`).join("");
+  const teeHtml = `
+    <h3 class="step">Tee times <span class="hint">&middot; who goes out together. Two teams can share a tee time and still score separately.</span></h3>
+    <div class="grid-scroll"><table class="grid">
+      <tr><th class="n">#</th><th>Time</th><th>${individual ? "Players" : "Teams"}</th><th class="c">Players</th><th></th></tr>
+      ${Object.entries(tees)
+        .sort((a, b) => String(a[1].start || "").localeCompare(String(b[1].start || "")))
+        .map(([tid, t], i) => {
+          const members = shown(t.unitIds);
+          const players = members.reduce((n, u) => n + (units[u]?.playerIds?.length || 0), 0);
+          return `
+          <tr data-tid="${tid}">
+            <td class="n">${i + 1}</td>
+            <td><input data-tt-start value="${esc(t.start || "")}" placeholder="e.g. 8:00"></td>
+            <td>
+              ${members.map(u => chip(unitName(units[u]), "data-unit-drop", u, "Take out of this tee time")).join("")}
+              ${loose.length ? `<select class="add" data-unit-add>${looseOptions}</select>` : ""}
+            </td>
+            <td class="c">${players}</td>
+            <td class="c"><button class="icon danger-x" data-del-teetime title="Remove tee time">&times;</button></td>
+          </tr>`;
+        }).join("") || `<tr><td colspan="5" class="empty-row">No tee times yet.</td></tr>`}
+    </table></div>
+    <div class="grid-foot">
+      <button data-new-tee>+ New tee time</button>
+      <span class="hint" style="margin:0;">${loose.length} ${noun}${loose.length === 1 ? "" : "s"} without a tee time</span>
+    </div>`;
+
+  /* ---- matches (match play only) ---- */
+  let matchHtml = "";
+  if (match){
+    const inMatch = new Set(Object.values(matches).flatMap(m => shown(m.unitIds)));
+    const sideSelect = (idx, value) => {
+      const options = Object.entries(units)
+        .filter(([u]) => u === value || !inMatch.has(u))
+        .map(([u, unit]) => `<option value="${esc(u)}" ${u === value ? "selected" : ""}>${esc(unitName(unit))}</option>`)
+        .join("");
+      return `<select data-side="${idx}"><option value="">&mdash; pick &mdash;</option>${options}</select>`;
+    };
+    matchHtml = `
+      <h3 class="step">Matches <span class="hint">&middot; who plays whom. Handicaps are worked out within each match.</span></h3>
+      <div class="grid-scroll"><table class="grid">
+        <tr><th class="n">#</th><th>${individual ? "Player" : "Team"}</th><th class="c"></th><th>${individual ? "Player" : "Team"}</th><th class="c">Game hcp</th><th></th></tr>
+        ${Object.entries(matches).map(([mid, m], i) => {
+          const [a, b] = m.unitIds || ["", ""];
+          const ready = units[a] && units[b] && a !== b;
+          return `
+          <tr data-mid="${mid}">
+            <td class="n">${i + 1}</td>
+            <td>${sideSelect(0, a)}</td>
+            <td class="c vs">v</td>
+            <td>${sideSelect(1, b)}</td>
+            <td class="c">${ready ? hcpText(a) + ` <span class="vs">v</span> ` + hcpText(b) : "&mdash;"}</td>
+            <td class="c"><button class="icon danger-x" data-del-match title="Remove match">&times;</button></td>
+          </tr>`;
+        }).join("") || `<tr><td colspan="6" class="empty-row">No matches yet.</td></tr>`}
+      </table></div>
+      <div class="grid-foot">
+        <button data-new-match>+ New match</button>
+        <button data-matches-from-tees>Build from tee times</button>
+        <span class="hint" style="margin:0;">Every tee time with exactly two ${noun}s becomes a match.</span>
+      </div>`;
+  }
+
+  wrap.innerHTML = teamsHtml + teeHtml + matchHtml;
+
+  const dropEverywhere = u => {
+    Object.values(tees).forEach(t => { t.unitIds = (t.unitIds || []).filter(x => x !== u); });
+    Object.values(matches).forEach(m => { m.unitIds = (m.unitIds || ["", ""]).map(x => x === u ? "" : x); });
+  };
+
+  /* ---- team wiring ---- */
+  wrap.querySelectorAll("tr[data-gid]").forEach(row => {
+    const gid = row.dataset.gid;
+    row.querySelector("[data-team-name]").addEventListener("input", e => { teams[gid].name = e.target.value; });
+    row.querySelector("[data-add-player]")?.addEventListener("change", e => {
+      if (!e.target.value) return;
+      teams[gid].playerIds = [...(teams[gid].playerIds || []), e.target.value];
+      renderRoster();
+    });
+    row.querySelectorAll("[data-drop]").forEach(btn => btn.addEventListener("click", () => {
+      teams[gid].playerIds = (teams[gid].playerIds || []).filter(pid => pid !== btn.dataset.drop);
+      if (!teams[gid].playerIds.length) dropEverywhere(gid);
+      renderRoster();
+    }));
+    row.querySelector("[data-del-group]").addEventListener("click", () => {
+      delete teams[gid];
+      dropEverywhere(gid);
+      renderRoster();
+    });
+  });
+  wrap.querySelector("[data-new-team]")?.addEventListener("click", () => {
+    teams[uid()] = { name: "", playerIds: [] };
+    renderGroups();
+  });
+
+  /* ---- tee time wiring ---- */
+  wrap.querySelectorAll("tr[data-tid]").forEach(row => {
+    const tid = row.dataset.tid;
+    row.querySelector("[data-tt-start]").addEventListener("input", e => { tees[tid].start = e.target.value; });
+    row.querySelector("[data-unit-add]")?.addEventListener("change", e => {
+      if (!e.target.value) return;
+      tees[tid].unitIds = [...(tees[tid].unitIds || []), e.target.value];
+      renderGroups();
+    });
+    row.querySelectorAll("[data-unit-drop]").forEach(btn => btn.addEventListener("click", () => {
+      tees[tid].unitIds = (tees[tid].unitIds || []).filter(u => u !== btn.dataset.unitDrop);
+      renderGroups();
+    }));
+    row.querySelector("[data-del-teetime]").addEventListener("click", () => {
+      delete tees[tid];
+      renderGroups();
+    });
+  });
+  wrap.querySelector("[data-new-tee]")?.addEventListener("click", () => {
+    tees[uid()] = { start: "", unitIds: [] };
+    renderGroups();
+  });
+
+  /* ---- match wiring ---- */
+  wrap.querySelectorAll("tr[data-mid]").forEach(row => {
+    const mid = row.dataset.mid;
+    row.querySelectorAll("[data-side]").forEach(sel => sel.addEventListener("change", () => {
+      const sides = [...(matches[mid].unitIds || ["", ""])];
+      sides[+sel.dataset.side] = sel.value;
+      matches[mid].unitIds = sides;
+      renderRoster();
+    }));
+    row.querySelector("[data-del-match]").addEventListener("click", () => {
+      delete matches[mid];
+      renderRoster();
+    });
+  });
+  wrap.querySelector("[data-new-match]")?.addEventListener("click", () => {
+    matches[uid()] = { unitIds: ["", ""] };
+    renderGroups();
+  });
+  wrap.querySelector("[data-matches-from-tees]")?.addEventListener("click", () => {
+    const taken = new Set(Object.values(matches).flatMap(m => shown(m.unitIds)));
+    Object.values(tees).forEach(t => {
+      const pair = shown(t.unitIds);
+      if (pair.length === 2 && !pair.some(u => taken.has(u))){
+        matches[uid()] = { unitIds: pair };
+        pair.forEach(u => taken.add(u));
+      }
+    });
+    renderRoster();
+  });
+}
+
+
+/* ---------- event fields ---------- */
+
+/* ---------- team handicap weightings ---------- */
+
+const WEIGHT_SIZES = [2, 3, 4];
+const RANK_LABELS = ["Lowest", "2nd", "3rd", "Highest"];
+
+// The label depends on group size — in a twosome the second man IS the highest.
+function rankLabel(i, size){
+  if (i === size - 1) return "Highest";
+  return RANK_LABELS[i] || `#${i + 1}`;
+}
+
+// Markup for one format's weight editor, embedded in that format's round card(s). The
+// underlying data (state.event.teamWeights[fmt]) is still shared at the event level, so two
+// rounds both playing scramble edit and see the same table — only where it's shown moved.
+function weightsSectionHtml(fmt){
+  return `<h3 class="step">Team handicap weighting <span class="hint">&mdash; ${esc(FORMATS[fmt]?.label || fmt)}</span></h3>
+    <div class="sub-card" data-wfmt="${fmt}">
+      <p class="hint" style="margin-top:0;">Each row is a group size, and the boxes run from the
+        <b>lowest handicap in the group</b> to the highest &mdash; so &ldquo;35 / 15&rdquo; means
+        35% of the low man plus 15% of the high man. Shared with every other round playing this
+        same format.</p>
+      ${WEIGHT_SIZES.map(size => {
+        const w = weightsFor(fmt, size, state.event.teamWeights) || [];
+        const total = w.reduce((a, b) => a + (+b || 0), 0);
+        return `<div class="row" data-wsize="${size}" style="align-items:flex-end;">
+          <div style="flex:0 0 96px;min-width:0;"><label>Group of</label>
+            <div style="padding:9px 0;font-size:15px;">${size}</div></div>
+          ${Array.from({ length: size }, (_, i) => `
+            <div style="flex:0 0 92px;min-width:0;">
+              <label>${rankLabel(i, size)}</label>
+              <input type="number" min="0" max="200" step="5" value="${w[i] ?? 0}" data-wi="${i}">
+            </div>`).join("")}
+          <div style="flex:1;min-width:80px;">
+            <span class="hint" style="margin:0;">totals ${total}%</span>
+          </div>
+        </div>`;
+      }).join("")}
+      <p class="hint">Group sizes above four fall back to an even split.</p>
+      <button type="button" data-reset-weights="${fmt}">Reset to standard</button>
+    </div>`;
+}
+
+function wireWeightsSection(box){
+  box.querySelectorAll("[data-wfmt]").forEach(wbox => {
+    const fmt = wbox.dataset.wfmt;
+    wbox.querySelectorAll("[data-wsize]").forEach(row => {
+      const size = +row.dataset.wsize;
+      row.querySelectorAll("[data-wi]").forEach(inp => inp.addEventListener("input", () => {
+        state.event.teamWeights = state.event.teamWeights || {};
+        state.event.teamWeights[fmt] = state.event.teamWeights[fmt] || {};
+        const current = [...(weightsFor(fmt, size, state.event.teamWeights) || Array(size).fill(0))];
+        current[+inp.dataset.wi] = +inp.value;
+        state.event.teamWeights[fmt][size] = current;
+        renderRoster();
+        // Update just this row's total; re-rendering would throw focus out of the box.
+        const total = current.reduce((a, b) => a + (+b || 0), 0);
+        row.querySelector(".hint").textContent = `totals ${total}%`;
+      }));
+    });
+    wbox.querySelector("[data-reset-weights]")?.addEventListener("click", () => {
+      if (state.event.teamWeights) delete state.event.teamWeights[fmt];
+      renderRounds(); renderRoster();
+    });
+  });
+}
+
+/* ---------- format and handicap sections ---------- */
+
+const TEAM_SIZE_HINT = {
+  "best-ball": "Best ball is usually played in 2-man teams.",
+  "shamble": "Shamble is usually played in teams of 2 to 4.",
+  "scramble": "Scramble is usually played in teams of 2 to 4.",
+  "alternate-shot": "Alternate shot is played in 2-man teams.",
+  "total": "Every player's score is added up, so any team size works.",
+  "rolling-best-ball": "Built for big teams split across several foursomes — put the whole team here, then place its players into whatever tee times fit."
+};
+
+// Every format being played across the rounds.
+function usedFormats(){
+  return [...new Set(Object.values(state.rounds).map(r => formatOf(r, state.event)))];
+}
+
+// Format and play belong to each round. Older saves kept a format on the event and left
+// rounds empty to follow it — give those rounds the event's format explicitly, then drop it.
+function normaliseFormats(){
+  const legacy = FORMATS[state.event.format] ? state.event.format : DEFAULT_FORMAT;
+  Object.values(state.rounds).forEach(r => {
+    if (!FORMATS[r.format]) r.format = legacy;
+    if (r.play !== "match") r.play = "stroke";
+  });
+  delete state.event.format;
+}
+
+// Handicap settings only show when some round actually uses them.
+function renderHandicapSections(){
+  const formats = usedFormats().map(k => FORMATS[k]).filter(Boolean);
+  const anyNet = !formats.length || formats.some(f => !f.gross);
+  const anyTeamBall = formats.some(f => f.teamHcp);
+  document.getElementById("hcpRow").classList.toggle("hidden", !anyNet);
+  document.getElementById("hcpHint").classList.toggle("hidden", !anyNet);
+  document.getElementById("grossNote").classList.toggle("hidden", anyNet);
+  document.getElementById("teamHcpField").classList.toggle("hidden", !anyTeamBall);
+}
+
+// A default value nobody's confirmed yet THIS session — resets on every load, on purpose,
+// the same way a paper form gets re-initialed each time it's picked up rather than only
+// once ever. Any interaction with the field (even re-picking the same value) confirms it.
+// Session-only: never written to Firebase, so it says nothing about whether a setting was
+// reviewed on a previous visit.
+const pendingReview = new Set();
+const reviewKey = (kind, roundId) => roundId ? `${kind}:${roundId}` : kind;
+const isPending = (kind, roundId) => pendingReview.has(reviewKey(kind, roundId));
+function confirmField(kind, roundId){ pendingReview.delete(reviewKey(kind, roundId)); }
+function seedRoundReview(roundId){
+  ["format", "play", "maxScore", "maxHcp", "rollingBestCount", "skinsGross", "skinsUnit", "skinsCarry"].forEach(k => pendingReview.add(reviewKey(k, roundId)));
+}
+function seedPendingReview(){
+  pendingReview.clear();
+  ["allowancePct", "allowanceMode", "teamHcpMode", "eventStyle"].forEach(k => pendingReview.add(k));
+  Object.keys(state.rounds).forEach(seedRoundReview);
+}
+
+// A high-level label for the whole event, set once. It doesn't hide or restrict any format
+// or team-size choice elsewhere in the console — every round still picks its own format
+// freely — it's a hint for the commissioner and a foundation for Ryder Cup's two-sided
+// structure (side names here; team assignment and the cross-round points race are separate,
+// not-yet-built features layered on top of this selection).
+const EVENT_STYLES = {
+  "ryder-cup":     { label: "Ryder Cup", hint: "Two rival teams face off across every round, with points totaled for an overall winner — think USA vs. Europe." },
+  "two-man-teams": { label: "2-Man Teams", hint: "Teams of two play together, scored against the whole field each round — the most common outing format." },
+  "singles":       { label: "Singles", hint: "Every player scores on his own, no teams involved." }
+};
+
+function renderEvent(){
+  document.getElementById("eventName").value = state.event.name || "";
+  document.getElementById("allowancePct").value = state.event.allowancePct ?? 100;
+  document.getElementById("allowanceMode").value = state.event.allowanceMode || "full";
+  document.getElementById("teamHcpMode").value = state.event.teamHcpMode || "formula";
+  document.getElementById("allowancePct").classList.toggle("needs-review", isPending("allowancePct"));
+  document.getElementById("allowanceMode").classList.toggle("needs-review", isPending("allowanceMode"));
+  document.getElementById("teamHcpMode").classList.toggle("needs-review", isPending("teamHcpMode"));
+
+  const style = state.event.style;
+  const seg = document.getElementById("eventStyleSeg");
+  seg.classList.toggle("needs-review", isPending("eventStyle"));
+  seg.querySelectorAll("[data-set-event-style]").forEach(btn =>
+    btn.classList.toggle("active", btn.dataset.setEventStyle === style));
+  document.getElementById("eventStyleHint").textContent = EVENT_STYLES[style]?.hint || "Pick the style that best fits this event.";
+  document.getElementById("sidesRow").classList.toggle("hidden", style !== "ryder-cup");
+  document.getElementById("sideAName").value = state.event.sideAName || "";
+  document.getElementById("sideBName").value = state.event.sideBName || "";
+}
+
+function renderAll(){
+  normaliseFormats();
+  renderHandicapSections(); renderEvent(); renderCourses(); renderPlayerTeeOptions();
+  renderRoster(); renderRounds();
+}
+
+
+/* ---------- wiring ---------- */
+
+document.getElementById("eventName").addEventListener("input", e => state.event.name = e.target.value);
+// A click into the field counts as "looked at it" even if the commissioner backs out and
+// keeps the default — same as clicking a toggle button that's already the active choice.
+document.getElementById("allowancePct").addEventListener("click", e => {
+  confirmField("allowancePct"); e.target.classList.remove("needs-review");
+});
+document.getElementById("allowancePct").addEventListener("input", e => {
+  state.event.allowancePct = +e.target.value;
+  confirmField("allowancePct"); e.target.classList.remove("needs-review");
+  renderRoster();
+});
+document.getElementById("allowanceMode").addEventListener("click", e => {
+  confirmField("allowanceMode"); e.target.classList.remove("needs-review");
+});
+document.getElementById("allowanceMode").addEventListener("change", e => {
+  state.event.allowanceMode = e.target.value;
+  confirmField("allowanceMode"); e.target.classList.remove("needs-review");
+  renderRoster(); renderRounds();
+});
+document.getElementById("teamHcpMode").addEventListener("click", e => {
+  confirmField("teamHcpMode"); e.target.classList.remove("needs-review");
+});
+document.getElementById("teamHcpMode").addEventListener("change", e => {
+  state.event.teamHcpMode = e.target.value;
+  confirmField("teamHcpMode"); e.target.classList.remove("needs-review");
+  renderRoster(); renderRounds();
+});
+document.querySelectorAll("#eventStyleSeg [data-set-event-style]").forEach(btn => btn.addEventListener("click", () => {
+  state.event.style = btn.dataset.setEventStyle;
+  confirmField("eventStyle");
+  renderEvent();
+}));
+document.getElementById("sideAName").addEventListener("input", e => state.event.sideAName = e.target.value);
+document.getElementById("sideBName").addEventListener("input", e => state.event.sideBName = e.target.value);
+
+document.getElementById("addCourseBtn").addEventListener("click", () => {
+  state.courses[uid()] = { name: "", location: "", holesCount: 18, holes: defaultHoles(18), tees: [] };
+  renderCourses();
+});
+
+document.getElementById("addRoundBtn").addEventListener("click", () => {
+  const firstCourse = Object.keys(state.courses)[0] || "";
+  const id = uid();
+  state.rounds[id] = {
+    name: `Round ${Object.keys(state.rounds).length + 1}`,
+    courseId: firstCourse,
+    format: DEFAULT_FORMAT,
+    play: "stroke",
+    maxScore: DEFAULT_MAX_RULE,
+    order: Object.keys(state.rounds).length
+  };
+  seedRoundReview(id);
+  renderRounds(); renderRoster(); renderHandicapSections();
+});
+
+document.getElementById("addPlayerBtn").addEventListener("click", () => {
+  const name = document.getElementById("playerName").value.trim();
+  const index = +document.getElementById("playerIndex").value;
+  const tee = document.getElementById("playerTee").value;
+  if (!name) return;
+  state.roster[uid()] = { name, index: isFinite(index) ? index : 0, tee, code: newCode() };
+  document.getElementById("playerName").value = "";
+  document.getElementById("playerIndex").value = "";
+  renderRoster();
+});
+
+/* ---------- spreadsheet import / export ---------- */
+
+// Sheet layouts are flat on purpose — one row per thing, course name repeated — so the
+// file stays obvious to someone who has never seen it and is editing it in Excel.
+const SHEET_READ_ME = "Read me first";
+const SHEET_COURSES = "Courses";
+const SHEET_HOLES   = "Holes";
+const SHEET_PLAYERS = "Players";
+
+const COURSE_HEADERS = ["Course", "Location", "Holes (9 or 18)", "Tee", "Rating", "Slope", "Yards"];
+const HOLE_HEADERS   = ["Course", "Hole", "Par", "Stroke index"];
+const PLAYER_HEADERS = ["Player", "Handicap index", "Tee", "Email", "Commissioner (Y/N)"];
+
+// An obviously-fake course/player name, so a row left in by accident is easy to spot and
+// remove in the console afterward rather than quietly becoming a real entry.
+const EXAMPLE = "EXAMPLE — delete this row";
+
+function setImportStatus(msg, cls){
+  const el = document.getElementById("importStatus");
+  el.textContent = msg;
+  el.className = "status" + (cls ? " " + cls : "");
+}
+
+// Plain sentences, one per row, on the sheet that opens first. Example rows on the other
+// three sheets show the shape; this explains the two things that aren't obvious from
+// column headers alone — how the sheets link up, and the one silent-failure mode.
+function buildReadMeRows(){
+  return [
+    ["Spreadsheet setup"],
+    [""],
+    ["Three sheets do the real work: Courses, Holes, Players. Fill them in, save the file, and"],
+    ["upload it back in the console — Download template / Upload filled template."],
+    [""],
+    ["Each of those three sheets has one EXAMPLE row already in it, showing the format. Delete"],
+    ["the example rows before you upload — otherwise you'll get a fake course and a fake player"],
+    ["alongside your real ones (harmless, but easy to forget to clean up)."],
+    [""],
+    ["COURSES — one row per TEE, not one row per course. A course with four tees (Black, Blue,"],
+    ["White, Gold) needs four rows, all with the same Course name. Location and Holes only need"],
+    ["to be filled in on one of those rows; leave the rest blank."],
+    [""],
+    ["HOLES — one row per hole. An 18-hole course needs 18 rows, all with the same Course name"],
+    ["as on the Courses sheet."],
+    [""],
+    ["PLAYERS — one row per player. Tee must be spelled exactly as it is on the Courses sheet"],
+    ["— same capitalization too (\"White\", not \"white\"). This one matters: a Tee that doesn't"],
+    ["match anything on the Courses sheet doesn't raise an error, it just quietly gives that"],
+    ["player a handicap of zero. If someone's handicap looks wrong after you upload, this is the"],
+    ["first thing to check."],
+    [""],
+    ["Course names on the Courses and Holes sheets need to match each other exactly too, for the"],
+    ["same reason — that's how the app knows which holes belong to which course."],
+    [""],
+    ["Commissioner (Y/N) — if you're playing and running the event, put Y on your own row. You'll"],
+    ["then get commissioner access just by logging into the player app with your own code — no"],
+    ["separate console PIN to carry around on the course. Leave it blank (or N) for everyone else."],
+    ["Leaving the column blank on an upload doesn't turn this off for anyone it's already on for."],
+    [""],
+    ["Uploading REPLACES every course and every player with what's in the file. Players are"],
+    ["matched by name against who's already in the roster, so anyone already there keeps their"],
+    ["login code and any settings you've made for them — you're not starting over each time."]
+  ];
+}
+
+function buildTemplateRows(){
+  const readMeRows = buildReadMeRows();
+
+  const courseRows = [COURSE_HEADERS,
+    [EXAMPLE, "Anytown, ST", 18, "White", 72.3, 134, 6400],
+    [EXAMPLE, "", "", "Gold", 69.5, 126, 5800]];
+
+  // A plausible, valid par-72 card: every stroke index 1-18 used once, four par 3s, four par 5s.
+  const EXAMPLE_HOLES = [
+    [1, 4, 7], [2, 4, 13], [3, 3, 17], [4, 5, 1], [5, 4, 9], [6, 3, 15], [7, 4, 5], [8, 5, 11], [9, 4, 3],
+    [10, 4, 8], [11, 3, 18], [12, 5, 2], [13, 4, 10], [14, 4, 6], [15, 3, 16], [16, 5, 4], [17, 4, 12], [18, 4, 14]
+  ];
+  const holeRows = [HOLE_HEADERS, ...EXAMPLE_HOLES.map(([hole, par, si]) => [EXAMPLE, hole, par, si])];
+
+  const playerRows = [PLAYER_HEADERS, [EXAMPLE, 12.4, "White", "example@email.com", "N"]];
+
+  return { readMeRows, courseRows, holeRows, playerRows };
+}
+
+function downloadTemplate(){
+  if (typeof XLSX === "undefined"){
+    setImportStatus("Spreadsheet library didn't load — check your connection.", "err");
+    return;
+  }
+  const { readMeRows, courseRows, holeRows, playerRows } = buildTemplateRows();
+  const wb = XLSX.utils.book_new();
+
+  // First, so it's the tab Excel opens to.
+  const wsReadMe = XLSX.utils.aoa_to_sheet(readMeRows);
+  wsReadMe["!cols"] = [{ wch: 88 }];
+  XLSX.utils.book_append_sheet(wb, wsReadMe, SHEET_READ_ME);
+
+  const wsCourses = XLSX.utils.aoa_to_sheet(courseRows);
+  wsCourses["!cols"] = [{ wch: 26 }, { wch: 18 }, { wch: 14 }, { wch: 12 }, { wch: 9 }, { wch: 8 }, { wch: 9 }];
+  XLSX.utils.book_append_sheet(wb, wsCourses, SHEET_COURSES);
+
+  const wsHoles = XLSX.utils.aoa_to_sheet(holeRows);
+  wsHoles["!cols"] = [{ wch: 26 }, { wch: 7 }, { wch: 6 }, { wch: 13 }];
+  XLSX.utils.book_append_sheet(wb, wsHoles, SHEET_HOLES);
+
+  const wsPlayers = XLSX.utils.aoa_to_sheet(playerRows);
+  wsPlayers["!cols"] = [{ wch: 24 }, { wch: 15 }, { wch: 12 }, { wch: 28 }, { wch: 18 }];
+  XLSX.utils.book_append_sheet(wb, wsPlayers, SHEET_PLAYERS);
+
+  XLSX.writeFile(wb, "covid-cup-setup.xlsx");
+  setImportStatus("Template downloaded.", "ok");
+}
+
+// A quick reference sheet for handing out codes without clicking "Send" once per player —
+// print it, paste it into a group text, whatever's fastest for the commissioner. Its own
+// status span, right next to the button — setImportStatus lives up in Spreadsheet setup,
+// which would put the confirmation off-screen from the button that triggered it.
+function setCodesStatus(msg, cls){
+  const el = document.getElementById("codesStatus");
+  el.textContent = msg;
+  el.className = "status" + (cls ? " " + cls : "");
+}
+function downloadCodes(){
+  if (typeof XLSX === "undefined"){
+    setCodesStatus("Spreadsheet library didn't load — check your connection.", "err");
+    return;
+  }
+  const players = Object.values(state.roster)
+    .sort((a, b) => String(a.name || "").localeCompare(String(b.name || "")));
+  if (!players.length){
+    setCodesStatus("No players yet.", "err");
+    return;
+  }
+  const rows = [["Name", "Code", "Email"],
+    ...players.map(p => [p.name || "", p.code || "", p.email || ""])];
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  ws["!cols"] = [{ wch: 24 }, { wch: 10 }, { wch: 28 }];
+  XLSX.utils.book_append_sheet(wb, ws, "Codes");
+  XLSX.writeFile(wb, "covid-cup-codes.xlsx");
+  setCodesStatus("Downloaded.", "ok");
+}
+
+// Header matching is loose — case and punctuation vary once a human has edited the file.
+const normalise = s => String(s ?? "").toLowerCase().replace(/[^a-z0-9]/g, "");
+
+function rowsOf(wb, sheetName){
+  const ws = wb.Sheets[sheetName];
+  if (!ws) return null;
+  const rows = XLSX.utils.sheet_to_json(ws, { header: 1, blankrows: false });
+  if (!rows.length) return [];
+  const header = rows[0].map(normalise);
+  return rows.slice(1).map(r => {
+    const obj = {};
+    header.forEach((h, i) => { obj[h] = r[i]; });
+    return obj;
+  });
+}
+
+const pick = (row, ...keys) => {
+  for (const k of keys){
+    const v = row[normalise(k)];
+    if (v !== undefined && v !== "") return v;
+  }
+  return undefined;
+};
+
+function importWorkbook(wb){
+  const courseRows = rowsOf(wb, SHEET_COURSES);
+  const holeRows   = rowsOf(wb, SHEET_HOLES);
+  const playerRows = rowsOf(wb, SHEET_PLAYERS);
+
+  const missing = [];
+  if (!courseRows) missing.push(SHEET_COURSES);
+  if (!holeRows)   missing.push(SHEET_HOLES);
+  if (!playerRows) missing.push(SHEET_PLAYERS);
+  if (missing.length) throw new Error(`Missing sheet${missing.length > 1 ? "s" : ""}: ${missing.join(", ")}`);
+
+  // Keep existing ids so rounds keep pointing at their course and players keep their codes.
+  const courseIdByName = new Map(Object.entries(state.courses).map(([id, c]) => [normalise(c.name), id]));
+  const playerByName   = new Map(Object.entries(state.roster).map(([id, p]) => [normalise(p.name), { id, p }]));
+
+  const courses = {};
+  const courseIdFor = name => {
+    const key = normalise(name);
+    let id = courseIdByName.get(key);
+    if (!id){ id = uid(); courseIdByName.set(key, id); }
+    if (!courses[id]) courses[id] = { name, location: "", holesCount: 18, holes: [], tees: [] };
+    return id;
+  };
+
+  courseRows.forEach(r => {
+    const name = pick(r, "Course");
+    if (!name) return;
+    const id = courseIdFor(String(name).trim());
+    const c = courses[id];
+    const location = pick(r, "Location");
+    const holesCount = +pick(r, "Holes (9 or 18)", "Holes") || 18;
+    if (location) c.location = String(location);
+    c.holesCount = holesCount === 9 ? 9 : 18;
+
+    const teeName = pick(r, "Tee");
+    if (teeName){
+      c.tees.push({
+        name: String(teeName).trim(),
+        rating: +pick(r, "Rating") || "",
+        slope:  +pick(r, "Slope")  || "",
+        yards:  +pick(r, "Yards")  || ""
+      });
+    }
+  });
+
+  holeRows.forEach(r => {
+    const name = pick(r, "Course");
+    const number = +pick(r, "Hole");
+    if (!name || !number) return;
+    const id = courseIdFor(String(name).trim());
+    courses[id].holes.push({ number, par: +pick(r, "Par") || 4, si: +pick(r, "Stroke index", "SI") || number });
+  });
+
+  // Any course whose holes weren't listed still needs a full card to be scoreable.
+  Object.values(courses).forEach(c => {
+    c.holes.sort((a, b) => a.number - b.number);
+    if (!c.holes.length) c.holes = defaultHoles(c.holesCount);
+  });
+
+  // Blank means "leave it as it was" (like Email above); only Y/Yes/True/1 turns it on —
+  // anything else, including a blank cell on a brand new player, defaults to off.
+  const YES = new Set(["y", "yes", "true", "1"]);
+  const truthyYN = (v, fallback = false) => v === undefined ? fallback : YES.has(String(v).trim().toLowerCase());
+
+  const roster = {};
+  let kept = 0;
+  playerRows.forEach(r => {
+    const name = pick(r, "Player", "Name");
+    if (!name) return;
+    const clean = String(name).trim();
+    const existing = playerByName.get(normalise(clean));
+    const id = existing ? existing.id : uid();
+    if (existing) kept++;
+    roster[id] = {
+      name: clean,
+      index: +pick(r, "Handicap index", "Index") || 0,
+      tee: String(pick(r, "Tee") ?? "").trim(),
+      email: String(pick(r, "Email") ?? existing?.p.email ?? "").trim(),
+      commissioner: truthyYN(pick(r, "Commissioner (Y/N)", "Commissioner"), existing?.p.commissioner || false),
+      code: existing?.p.code || newCode()
+    };
+  });
+
+  if (!Object.keys(courses).length && !Object.keys(roster).length){
+    throw new Error("Nothing to import — the sheets had no rows filled in.");
+  }
+
+  state.courses = courses;
+  state.roster = roster;
+
+  // Drop anyone who's no longer on the roster out of the groups they were in.
+  const validPlayers = new Set(Object.keys(roster));
+  Object.values(state.groups || {}).forEach(round => {
+    Object.entries(round).forEach(([gid, g]) => {
+      g.playerIds = (g.playerIds || []).filter(pid => validPlayers.has(pid));
+      if (!g.playerIds.length) delete round[gid];
+    });
+  });
+  Object.values(state.rounds || {}).forEach(rd => {
+    if (rd.courseId && !courses[rd.courseId]) rd.courseId = Object.keys(courses)[0] || "";
+  });
+
+  return {
+    courses: Object.keys(courses).length,
+    players: Object.keys(roster).length,
+    kept
+  };
+}
+
+document.getElementById("downloadTemplateBtn").addEventListener("click", downloadTemplate);
+document.getElementById("exportCodesBtn").addEventListener("click", downloadCodes);
+
+document.getElementById("uploadInput").addEventListener("change", async e => {
+  const file = e.target.files?.[0];
+  if (!file) return;
+  if (typeof XLSX === "undefined"){
+    setImportStatus("Spreadsheet library didn't load — check your connection.", "err");
+    return;
+  }
+  try {
+    setImportStatus("Reading…");
+    const wb = XLSX.read(await file.arrayBuffer(), { type: "array" });
+    const result = importWorkbook(wb);
+    renderAll();
+    setImportStatus(
+      `Imported ${result.courses} course${result.courses === 1 ? "" : "s"} and ` +
+      `${result.players} player${result.players === 1 ? "" : "s"}` +
+      (result.kept ? ` (${result.kept} kept their existing code)` : "") +
+      ` — press Save all to publish.`, "ok");
+  } catch (err){
+    console.error(err);
+    setImportStatus("Couldn't read that file: " + err.message, "err");
+  } finally {
+    e.target.value = "";
+  }
+});
+
+/* ---------- save / load ---------- */
+
+function setStatus(msg, cls){
+  const el = document.getElementById("saveStatus");
+  el.textContent = msg;
+  el.className = "status" + (cls ? " " + cls : "");
+}
+
+async function saveAll(){
+  localStorage.setItem(LS_KEY, JSON.stringify(state));
+  if (!db){ setStatus("Saved locally (Firebase not connected)", "ok"); return; }
+  try {
+    setStatus("Saving…");
+    await set(ref(db, DB_PATH), state);
+    setStatus("Saved", "ok");
+  } catch (err){
+    console.error(err);
+    setStatus("Save failed: " + err.message, "err");
+  }
+}
+
+async function loadAll(){
+  if (db){
+    try {
+      const snap = await get(ref(db, DB_PATH));
+      if (snap.exists()){
+        Object.assign(state, snap.val());
+        state.courses = state.courses || {};
+        state.roster  = state.roster  || {};
+        state.rounds  = state.rounds  || {};
+        state.groups  = state.groups  || {};
+        state.teeTimes = state.teeTimes || {};
+        state.matches = state.matches || {};
+        document.getElementById("loadStatus").textContent = "loaded from server";
+        seedPendingReview();
+        renderAll();
+        return;
+      }
+      document.getElementById("loadStatus").textContent = "no event saved yet";
+    } catch (err){
+      console.error(err);
+      document.getElementById("loadStatus").textContent = "load failed";
+    }
+  } else {
+    document.getElementById("configWarn").classList.remove("hidden");
+    document.getElementById("loadStatus").textContent = "offline draft";
+  }
+  try {
+    const draft = JSON.parse(localStorage.getItem(LS_KEY) || "null");
+    if (draft) Object.assign(state, draft);
+  } catch (e){}
+  seedPendingReview();
+  renderAll();
+}
+
+document.getElementById("saveBtn").addEventListener("click", saveAll);
+document.getElementById("reloadBtn").addEventListener("click", () => location.reload());
+
+/* ---------- PIN gate ---------- */
+
+const ADMIN_SESSION_KEY = "covidcup_admin_ok";
+
+function unlock(){
+  // Remembered on this device and shared with the player app's commissioner mode, so moving
+  // between the two never asks for the code again. Exit in the player app forgets it.
+  try {
+    sessionStorage.setItem(ADMIN_SESSION_KEY, "1");
+    localStorage.setItem("covidcup_admin", "1");
+  } catch (e){}
+  document.getElementById("pinGate").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
+  loadAll();
+}
+
+function tryPin(){
+  const val = document.getElementById("pinInput").value.trim().toUpperCase();
+  if (ACCEPTED_PINS.includes(val)) unlock();
+  else document.getElementById("pinError").style.display = "block";
+}
+document.getElementById("pinSubmit").addEventListener("click", tryPin);
+document.getElementById("pinInput").addEventListener("keydown", e => { if (e.key === "Enter") tryPin(); });
+
+let alreadyUnlocked = false;
+try {
+  alreadyUnlocked = sessionStorage.getItem(ADMIN_SESSION_KEY) === "1" || localStorage.getItem("covidcup_admin") === "1";
+} catch (e){}
+if (alreadyUnlocked) unlock();
+</script>
+</body>
+</html>

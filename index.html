@@ -1,0 +1,1983 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<title>Template Version</title>
+<link rel="manifest" href="site.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Pirata+One&display=swap" rel="stylesheet">
+<style>
+/* Same clubhouse paper the leaderboard has always used, and admin.html now shares too —
+   cream stock, blackletter title, Georgia small-caps structure, so the whole product
+   reads as one thing instead of a dark app with one cream tab bolted on. */
+:root{
+  --bg:#e4d9ba; --surface:#f4ecd8; --surface2:#fbf7ec; --surface3:#e3d6ad;
+  --line:#a9bba9; --text:#161616; --muted:#4a6b55; --dim:#7d9184;
+  --accent:#2e6a3b; --accent-dim:#dce8de; --danger:#a8231f; --ok:#2e6a3b;
+  --navy:#1f3a78;
+  font-family:Georgia,"Times New Roman",serif;
+}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--text);padding-bottom:40px;}
+h1{font-family:"Pirata One",Georgia,"Times New Roman",serif;font-size:24px;margin:0;
+  font-weight:400;color:var(--navy);letter-spacing:.03em;}
+h2{font-size:13px;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;
+  font-weight:700;margin:0 0 10px;border-bottom:1px solid var(--line);padding-bottom:6px;}
+p{color:var(--muted);font-size:14px;margin:0 0 12px;}
+header{padding:14px 16px;border-bottom:1px solid var(--line);background:var(--bg);}
+header .sub{font-family:"Kalam","Segoe Print","Bradley Hand",cursive;font-size:13px;color:var(--dim);margin-top:3px;}
+nav.tabs{display:flex;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5;}
+nav.tabs button{flex:1;background:none;border:none;color:var(--dim);padding:12px 4px;font-size:13px;
+  cursor:pointer;border-bottom:2px solid transparent;font-family:Georgia,"Times New Roman",serif;}
+nav.tabs button.active{color:var(--accent);border-bottom-color:var(--accent);}
+main{max-width:720px;margin:0 auto;padding:16px;}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px;margin-bottom:14px;
+  background-image:radial-gradient(ellipse at 30% 8%, rgba(255,255,255,.5), rgba(255,255,255,0) 55%);
+  box-shadow:inset 0 0 0 1px #e9dfc0, 0 3px 12px rgba(40,30,10,.1);}
+.empty{color:var(--dim);font-size:14px;}
+select{width:100%;background:var(--surface2);border:1px solid var(--line);color:var(--text);
+  border-radius:5px;padding:9px 10px;font-size:14px;margin-bottom:12px;font-family:Georgia,"Times New Roman",serif;}
+button.primary{background:var(--accent);border:1px solid var(--accent);color:var(--surface);font-weight:700;
+  border-radius:5px;padding:10px 16px;font-size:14px;cursor:pointer;font-family:Georgia,"Times New Roman",serif;}
+button.link{background:none;border:none;color:var(--accent);cursor:pointer;font-size:13px;padding:2px 4px;}
+.stats{display:flex;gap:18px;font-size:13px;color:var(--muted);}
+.pairing{padding:10px 0;border-bottom:1px solid var(--line);font-size:14px;}
+.pairing:last-child{border-bottom:none;}
+.pairing .when{color:var(--dim);font-size:12px;}
+
+.seg{display:flex;gap:0;margin-bottom:14px;border:1px solid var(--line);border-radius:8px;overflow:hidden;}
+.seg button{flex:1;background:var(--surface2);border:none;color:var(--dim);padding:9px 4px;font-size:13px;cursor:pointer;}
+.seg button.active{background:var(--surface3);color:var(--accent);}
+
+/* hole strip */
+.strip{display:flex;gap:4px;overflow-x:auto;padding-bottom:8px;margin-bottom:14px;}
+.strip button{flex:0 0 34px;height:34px;border-radius:8px;border:1px solid var(--line);
+  background:var(--surface2);color:var(--dim);font-size:13px;cursor:pointer;padding:0;}
+.strip button.done{color:var(--text);border-color:var(--accent-dim);background:var(--accent-dim);}
+.strip button.current{border-color:var(--accent);color:var(--accent);font-weight:700;}
+
+/* one hole */
+.hole-head{display:flex;align-items:baseline;gap:12px;margin-bottom:4px;}
+.hole-head .num{font-size:30px;font-weight:700;line-height:1;}
+.hole-head .meta{font-size:13px;color:var(--muted);}
+.entry{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line);}
+.entry:last-of-type{border-bottom:none;}
+.entry .who{flex:1;font-size:15px;}
+.entry .who .shots{display:block;font-size:11px;color:var(--dim);}
+.big-box{position:relative;}
+.big-box input{width:64px;height:56px;text-align:center;background:var(--surface2);
+  border:1px solid var(--line);color:var(--text);border-radius:10px;font-size:24px;padding:0;}
+.big-box input:focus{outline:2px solid var(--accent);}
+.big-box input.picked{color:var(--dim);}
+.dot{position:absolute;top:5px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--danger);}
+.dot.two{box-shadow:-10px 0 0 var(--danger);}
+.entry .acts{display:flex;flex-direction:column;gap:4px;}
+.acts button{font-size:11px;color:var(--dim);background:var(--surface3);border:1px solid var(--line);
+  border-radius:6px;padding:4px 8px;cursor:pointer;}
+.acts button.on{background:var(--accent-dim);border-color:var(--accent);color:var(--accent);}
+.nav-holes{display:flex;gap:10px;margin-top:16px;}
+.nav-holes button{flex:1;padding:12px;background:var(--surface3);border:1px solid var(--line);
+  color:var(--text);border-radius:8px;font-size:14px;cursor:pointer;}
+.nav-holes button:disabled{opacity:.35;cursor:default;}
+.nav-holes button.primary{background:var(--accent);border-color:var(--accent);color:var(--surface);font-weight:700;}
+
+/* The scorecard reads as its own crisp white card on the page — the "fill this in"
+   surface — rather than a full palette swap now that the whole app is on the same
+   cream stock. Just a whiter surface and a firmer shadow, everything else inherited. */
+#tab-score .card{
+  --surface:#ffffff; --surface2:#ffffff; --surface3:var(--accent-dim);
+  background:var(--surface); box-shadow:0 10px 24px rgba(40,30,10,.16);
+}
+#tab-score .nav-holes button.primary{background:var(--navy);border-color:var(--navy);color:var(--surface);}
+#tab-score .nav-holes button:disabled{opacity:.3;}
+.strip button{position:relative;}
+.strip button.ahead{opacity:.45;}
+.big-box input:disabled:not(.picked){background:var(--surface3);}
+.strip button.ctp::after,.strip button.ld::after{content:"";position:absolute;top:3px;right:3px;
+  width:6px;height:6px;border-radius:50%;}
+.strip button.ctp::after{background:#c0272d;}
+.strip button.ld::after{background:#2e6a3b;}
+.strip button.ctp.ld::after{background:linear-gradient(90deg,#c0272d 50%,#2e6a3b 50%);}
+.contest{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+  border-radius:999px;padding:3px 9px;margin:6px 6px 2px 0;color:#fff;}
+.contest.ctp{background:#c0272d;}
+.contest.ld{background:#2e6a3b;}
+.contest.mini{font-size:9px;padding:1px 5px;margin:0 1px;}
+.gate-hint{font-size:12px;color:#9a3b1f;margin:12px 0 0;}
+.team-head{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin:14px 0 0;}
+.card-totals{margin-top:14px;display:flex;flex-direction:column;gap:6px;}
+.tt-name{font-weight:700;color:var(--text);min-width:130px;}
+table.scard tr.unit td{background:var(--surface3);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.05em;text-align:left;}
+.next-contest{font-size:12px;color:var(--muted);margin:10px 0 0;}
+.mline .tt-name{min-width:0;}
+.board-tip{font-size:11px;color:var(--dim);text-align:center;margin:8px 0 0;}
+table.lboard tr.lb-open{cursor:pointer;}
+table.lboard tr.lb-open:hover td{background:rgba(46,106,59,.07);}
+table.lboard td.nm.lead{background:rgba(192,39,45,.07);}
+table.lboard td.mstatus{font-size:19px;white-space:nowrap;}
+/* scorecard pop-up, the same crisp white "fill this in" card as the scorecard itself */
+.modal{position:fixed;inset:0;background:rgba(5,10,20,.72);z-index:30;display:flex;align-items:flex-start;
+  justify-content:center;padding:28px 10px;overflow-y:auto;}
+.modal-box{position:relative;width:100%;max-width:760px;border-radius:8px;padding:18px 14px 14px;
+  --surface:#ffffff; --surface2:#ffffff; --surface3:var(--accent-dim);
+  background:var(--surface);color:var(--text);box-shadow:0 18px 40px rgba(0,0,0,.45);}
+.modal-box h3{margin:6px 34px 8px 0;font-size:16px;}
+.modal-box .modal-card + h3{margin-top:22px;}
+.modal-x{position:absolute;top:6px;right:10px;background:none;border:none;font-size:28px;line-height:1;color:var(--dim);cursor:pointer;}
+.modal-edit{margin:0 0 10px;background:var(--navy);color:var(--surface);border:none;border-radius:6px;padding:8px 14px;font-size:13px;cursor:pointer;}
+.modal-status{font-size:12px;color:var(--accent);margin:-4px 0 8px;}
+/* commissioner mode — navy, like the title and the primary actions, so it reads as
+   "you're in a different mode" rather than a warning. */
+.adminbar{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;padding:8px 16px;background:var(--navy);
+  border-bottom:1px solid var(--navy);color:#dfe6f2;font-size:13px;}
+.adminbar b{letter-spacing:.06em;text-transform:uppercase;font-size:11px;}
+.adminbar label{display:flex;gap:6px;align-items:center;}
+.adminbar select{width:auto;max-width:170px;margin:0;padding:5px 8px;font-size:13px;background:#16295a;border-color:#3f5590;color:#dfe6f2;}
+.adminbar a,.adminbar button{color:#dfe6f2;background:none;border:1px solid #3f5590;border-radius:6px;padding:5px 10px;
+  font-size:12px;cursor:pointer;text-decoration:none;}
+#adminUnlock{display:flex;gap:8px;justify-content:center;margin-top:8px;}
+#adminUnlock input{width:120px;background:var(--surface2);border:1px solid var(--line);color:var(--text);border-radius:6px;
+  padding:6px 8px;text-transform:uppercase;text-align:center;}
+/* review & submit */
+.attest-banner{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:14px 0;
+  background:var(--accent-dim);border:1px solid var(--accent);border-radius:10px;padding:10px 12px;font-size:14px;color:var(--text);}
+.attest-banner.done{background:#e6f1e8;border-color:#2e6a3b;color:#1f4a29;}
+.attest-banner button{background:var(--navy);color:var(--surface);border:none;border-radius:6px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;}
+.attest-banner button.ghost{background:none;color:inherit;border:1px solid currentColor;font-weight:400;}
+.attest-box{margin-top:16px;border-top:1px solid var(--line);padding-top:14px;}
+.attest-box label{display:flex;gap:10px;align-items:flex-start;font-size:15px;color:var(--text);cursor:pointer;margin-bottom:12px;}
+.attest-box input[type=checkbox]{width:22px;height:22px;margin:0;flex:0 0 auto;}
+.attest-box .submit{width:100%;background:var(--navy);color:var(--surface);border:none;border-radius:6px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;}
+.attest-box .submit:disabled{opacity:.35;cursor:default;}
+.attest-note{font-size:12px;color:var(--dim);margin:8px 0 0;}
+.review-actions{display:flex;gap:10px;margin-top:14px;}
+.review-actions button{flex:1;padding:11px;background:var(--surface3);border:1px solid var(--line);color:var(--text);border-radius:8px;font-size:14px;cursor:pointer;}
+table.lboard .att{color:#2e6a3b;font-size:.85em;margin-left:3px;}
+
+/* full card */
+.card-scroll{overflow-x:auto;}
+table.scard{border-collapse:collapse;font-size:12px;white-space:nowrap;}
+table.scard th,table.scard td{border:1px solid var(--line);padding:4px 6px;text-align:center;min-width:30px;}
+table.scard th.name,table.scard td.name{text-align:left;position:sticky;left:0;background:var(--surface);
+  min-width:96px;max-width:96px;overflow:hidden;text-overflow:ellipsis;}
+table.scard tr.meta td,table.scard tr.meta th{color:var(--dim);font-weight:400;}
+table.scard td.tot{background:var(--surface2);font-weight:700;}
+/* standard scorecard notation, drawn rather than coloured in */
+.mark{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;}
+.mark.birdie{border:1px solid var(--danger);border-radius:50%;color:var(--danger);}
+.mark.eagle{border:1px solid var(--danger);border-radius:50%;color:var(--danger);
+  box-shadow:0 0 0 2px var(--surface),0 0 0 3px var(--danger);}
+.mark.bogey{border:1px solid var(--text);}
+.mark.double{border:1px solid var(--text);box-shadow:0 0 0 2px var(--surface),0 0 0 3px var(--text);}
+
+/* statistics */
+.highlights{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px;}
+.hl{background:var(--surface2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;}
+.hl .cap{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.04em;}
+.hl .who{font-size:15px;margin-top:3px;}
+.hl .val{font-size:20px;font-weight:700;color:var(--accent);}
+table.statgrid{border-collapse:collapse;font-size:13px;width:100%;white-space:nowrap;}
+table.statgrid th,table.statgrid td{border-bottom:1px solid var(--line);padding:7px 6px;text-align:center;}
+table.statgrid th{color:var(--dim);font-weight:500;font-size:11px;}
+table.statgrid th.name,table.statgrid td.name{text-align:left;}
+table.statgrid td.rank{color:var(--dim);width:22px;}
+table.statgrid td.lead{font-weight:700;color:var(--accent);}
+
+/* Clubhouse leaderboard — a deliberate single look (hand-lettered board on cream stock),
+   so it does not follow the app's dark theme. */
+.board{background:#f4ecd8;color:#161616;border-radius:4px;padding:16px 10px 18px;
+  background-image:radial-gradient(ellipse at 30% 15%, rgba(255,255,255,.6), rgba(255,255,255,0) 60%);
+  box-shadow:inset 0 0 0 1px #d9cca8, 0 12px 28px rgba(0,0,0,.35);}
+.board-title{font-family:"Pirata One",Georgia,"Times New Roman",serif;color:#1f3a78;font-size:36px;line-height:1;
+  display:flex;align-items:center;gap:12px;letter-spacing:.05em;white-space:nowrap;}
+.board-title::before,.board-title::after{content:"";flex:1;height:2px;background:#161616;opacity:.5;}
+.board-sub{font-family:"Kalam","Segoe Print","Bradley Hand",cursive;color:#3f6149;text-align:center;font-size:14px;margin:6px 0 12px;}
+.board-scroll{overflow-x:auto;}
+.board-empty{font-family:"Kalam","Segoe Print","Bradley Hand",cursive;color:#3f6149;text-align:center;font-size:18px;margin:18px 0 6px;}
+table.lboard{width:100%;border-collapse:collapse;}
+table.lboard th,table.lboard td{border:1px solid #a9bba9;text-align:center;padding:3px 5px;vertical-align:middle;}
+table.lboard tr.parrow th{border-top:none;border-left:none;border-right:none;
+  font-family:"Kalam","Segoe Print","Bradley Hand",cursive;font-weight:700;color:#2e6a3b;font-size:17px;}
+table.lboard tr.parrow th.nm{text-align:right;font-family:Georgia,"Times New Roman",serif;font-size:11px;
+  color:#161616;letter-spacing:.12em;text-transform:uppercase;}
+table.lboard tr.head th{font-family:Georgia,"Times New Roman",serif;font-size:10px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:#161616;background:rgba(46,106,59,.07);}
+table.lboard th.nm,table.lboard td.nm{text-align:left;}
+table.lboard td.nm{padding:6px 10px 3px;}
+.lb-big{font-family:"Pirata One",Georgia,"Times New Roman",serif;font-size:25px;line-height:1;
+  text-transform:uppercase;letter-spacing:.02em;color:#161616;}
+.lb-big .sn{white-space:nowrap;}
+.lb-big .cap{color:#2e6a3b;font-size:1.5em;}
+.lb-small{font-family:"Kalam","Segoe Print","Bradley Hand",cursive;font-size:12px;color:#4a6b55;text-align:right;line-height:1.1;}
+table.lboard td.num{font-family:"Kalam","Segoe Print","Bradley Hand",cursive;font-weight:700;font-size:23px;line-height:1;min-width:44px;}
+table.lboard td.num.under{color:#c0272d;}
+table.lboard td.num.over{color:#2e6a3b;}
+table.lboard td.num.even{color:#161616;}
+table.lboard td.num.dash{color:#9aa99b;font-weight:400;}
+table.lboard td.tot{font-size:30px;min-width:56px;}
+table.lboard td.pos{font-family:"Kalam","Segoe Print","Bradley Hand",cursive;font-size:17px;width:36px;}
+table.lboard td.thru{font-family:"Kalam","Segoe Print","Bradley Hand",cursive;font-size:16px;color:#4a6b55;width:40px;}
+@media (max-width:480px){
+  .board-title{font-size:27px;gap:8px;}
+  .lb-big{font-size:18px;}
+  table.lboard td.nm{padding:5px 6px 2px;}
+  table.lboard td.num{font-size:19px;min-width:34px;}
+  table.lboard td.tot{font-size:24px;min-width:42px;}
+}
+
+#loginGate{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:20;padding:16px;}
+#loginGate .box{width:300px;text-align:center;}
+#loginGate input{width:100%;text-align:center;letter-spacing:.4em;font-size:22px;text-transform:uppercase;
+  background:var(--surface2);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:12px;margin-bottom:12px;}
+.hidden{display:none !important;}
+footer{text-align:center;color:var(--dim);font-size:11px;padding:16px;}
+</style>
+</head>
+<body>
+
+<div id="loginGate">
+  <div class="box">
+    <h1>Template Version</h1>
+    <p style="margin-top:6px;">Enter your player code</p>
+    <p style="margin:-6px 0 12px;font-size:12px;color:var(--dim);">Commissioner? Your console code works here too.</p>
+    <input id="codeInput" placeholder="CODE" autocomplete="off" maxlength="8">
+    <button class="primary" id="codeSubmit" style="width:100%">Enter</button>
+    <p id="codeError" style="color:var(--danger);display:none;margin-top:10px;">Code not recognised</p>
+    <p id="codeWait" style="margin-top:14px;font-size:12px;">Loading event&hellip;</p>
+  </div>
+</div>
+
+<div id="app" class="hidden">
+<div id="adminBar" class="adminbar hidden">
+  <b>Commissioner</b>
+  <label>Playing as <select id="adminPlayAs"></select></label>
+  <a href="admin.html">Console &rarr;</a>
+  <button id="adminExit">Exit</button>
+</div>
+<header>
+  <h1 id="eventName">Template Version</h1>
+  <div class="sub" id="eventSub">Loading event details&hellip;</div>
+</header>
+
+<nav class="tabs">
+  <button data-tab="home" class="active">Home</button>
+  <button data-tab="score">Scorecard</button>
+  <button data-tab="board">Leaderboard</button>
+  <button data-tab="stats">Stats</button>
+</nav>
+
+<main>
+  <section id="tab-home">
+    <div class="card">
+      <h2>Rounds</h2>
+      <div id="roundsInfo"><p class="empty">Not set up yet.</p></div>
+    </div>
+    <div class="card">
+      <h2>Tee times</h2>
+      <select id="homeRoundSelect"></select>
+      <div id="groupsList"><p class="empty">No groups posted yet.</p></div>
+    </div>
+  </section>
+
+  <section id="tab-score" class="hidden">
+    <div class="card">
+      <select id="scoreRoundSelect"></select>
+      <select id="scoreCardSelect" class="hidden"></select>
+      <div class="seg">
+        <button data-view="hole" class="active">Hole by hole</button>
+        <button data-view="card">Full card</button>
+      </div>
+      <div id="scorecardBody"><p class="empty">No rounds set up yet.</p></div>
+    </div>
+  </section>
+
+  <section id="tab-board" class="hidden">
+    <div class="card">
+      <select id="boardRoundSelect"></select>
+      <div id="leaderboardList"><p class="empty">No scores posted yet.</p></div>
+    </div>
+  </section>
+
+  <section id="tab-stats" class="hidden">
+    <div class="card">
+      <h2>Statistics</h2>
+      <select id="statsRoundSelect"></select>
+      <div class="seg" id="statsBasis">
+        <button data-basis="net" class="active">Net</button>
+        <button data-basis="gross">Gross</button>
+      </div>
+      <div id="statHighlights" class="highlights"></div>
+      <select id="statSort"></select>
+      <div class="card-scroll"><div id="statTable"></div></div>
+      <p id="statNote" style="font-size:12px;color:var(--dim);margin-top:12px;"></p>
+    </div>
+  </section>
+</main>
+<div id="cardModal" class="modal hidden" role="dialog" aria-modal="true">
+  <div class="modal-box">
+    <button class="modal-x" id="cardModalClose" aria-label="Close">&times;</button>
+    <div id="cardModalBody"></div>
+  </div>
+</div>
+<footer>
+  <div id="versionFooter"></div>
+  <button class="link" id="adminUnlockBtn" style="font-size:11px;color:var(--dim);margin-top:6px;">Commissioner login</button>
+  <div id="adminUnlock" class="hidden">
+    <input id="adminCodeInput" placeholder="Code" autocomplete="off" autocapitalize="characters" spellcheck="false">
+    <button class="primary" id="adminCodeGo" style="padding:6px 12px;">Unlock</button>
+  </div>
+  <p id="adminCodeErr" class="hidden" style="color:var(--danger);font-size:12px;margin:6px 0 0;">Code not recognised</p>
+</footer>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getDatabase, ref, onValue, update, set } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+import { FIREBASE_CONFIG, FIREBASE_CONFIGURED } from "./firebase-config.js";
+import { FORMATS, coursePar, playingHandicaps, teamHandicaps,
+         computeHoleResult, roundTotals, fmtToPar, strokesOnHole,
+         collectPlayerHoles, summarisePlayer,
+         scoreCell, grossCap, DEFAULT_MAX_RULE, formatOf, formatFor,
+         gameHandicaps, matchStatus, skinsForRound, rollingBestBallTotals } from "./scoring.js";
+import { isAdminCode } from "./admin-pins.js";
+
+const DB_PATH = "covidcup";
+const SCORES_PATH = "covidcup_scores";
+const ME_KEY = "covidcup_me";
+const ATTEST_PATH = "covidcup_attest";
+const ADMIN_KEY = "covidcup_admin";
+
+let db = null;
+let cfg = { event: {}, courses: {}, roster: {}, rounds: {}, groups: {} };
+let scores = {};      // roundId -> groupId -> hole -> { playerId|team: {v,x} }
+let attests = {};     // roundId -> teamId -> { by, name, at } once a card is submitted
+let meId = null;
+let scoreView = "hole";   // "hole", "card" or "review"
+
+// Commissioner mode: every card can be opened and edited, submitted ones included. Codes are
+// name tags rather than security (see admin-pins.js), and the flag is shared with the console.
+let isAdmin = false;
+try {
+  isAdmin = localStorage.getItem(ADMIN_KEY) === "1" || sessionStorage.getItem("covidcup_admin_ok") === "1";
+} catch (e){}
+let loaded = false;
+
+// One debounce timer per field. A single shared timer used to cancel earlier holes'
+// pending writes before they reached Firebase — keep this keyed per field.
+const writeTimers = new Map();
+
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+const orderedRounds = () =>
+  Object.entries(cfg.rounds || {}).sort((a, b) => (a[1].order ?? 0) - (b[1].order ?? 0));
+
+const courseFor = roundId => cfg.courses?.[cfg.rounds?.[roundId]?.courseId] || null;
+
+/* ---------- handicap context for a round ---------- */
+
+// Contest holes are typed as free text ("2, 8"). Only numbers that exist on the round's
+// course are kept, so a typo can't flag a hole that isn't there.
+function contestHoles(on, text, holes){
+  if (!on) return [];
+  const valid = new Set((holes || []).map(h => h.number));
+  const picked = String(text || "").split(/[^0-9]+/).filter(Boolean).map(Number);
+  return [...new Set(picked)].filter(n => valid.has(n)).sort((a, b) => a - b);
+}
+
+// The competing entries for a round. Team formats use the teams the commissioner built;
+// individual formats have none — every roster player is his own entry, keyed "p-<id>".
+function unitsFor(roundId, round){
+  if (FORMATS[round.format]?.unit === "player"){
+    const out = {};
+    Object.keys(cfg.roster || {}).forEach(pid => { out["p-" + pid] = { playerIds: [pid] }; });
+    return out;
+  }
+  // A team with no players yet doesn't compete.
+  const out = {};
+  Object.entries(cfg.groups?.[roundId] || {}).forEach(([gid, g]) => {
+    if ((g.playerIds || []).length) out[gid] = g;
+  });
+  return out;
+}
+
+function roundContext(roundId){
+  const stored = cfg.rounds?.[roundId];
+  // Every round carries its effective format and play, so nothing downstream asks twice.
+  const round = stored && {
+    ...stored,
+    format: formatOf(stored, cfg.event),
+    play: stored.play === "match" ? "match" : "stroke"
+  };
+  const course = courseFor(roundId);
+  if (!round || !course) return null;
+
+  const groups = unitsFor(roundId, round);
+
+  // A match only counts once both sides point at two different entries that exist.
+  const matches = round.play !== "match" ? [] :
+    Object.entries(cfg.matches?.[roundId] || {})
+      .map(([id, m]) => ({ id, unitIds: (m.unitIds || []).filter(u => groups[u]) }))
+      .filter(m => m.unitIds.length === 2 && m.unitIds[0] !== m.unitIds[1]);
+
+  const { playerPhs, teamPhs } = gameHandicaps({
+    roster: cfg.roster || {}, course, format: round.format, play: round.play,
+    allowancePct: cfg.event?.allowancePct ?? 100,
+    allowanceMode: cfg.event?.allowanceMode || "full",
+    teamHcpMode: cfg.event?.teamHcpMode || "formula",
+    teamWeights: cfg.event?.teamWeights,
+    maxStrokes: round.maxHcpStrokes,
+    units: groups, matches
+  });
+
+  return { round, course, groups, units: groups, teeTimes: cfg.teeTimes?.[roundId] || {}, matches,
+           playerPhs, teamPhs, holeCount: (course.holes || []).length,
+           maxRule: round.maxScore || DEFAULT_MAX_RULE, maxPlus: round.maxPlus,
+           contests: {
+             ctp: contestHoles(round.ctpOn, round.ctpHoles, course.holes),
+             ld: contestHoles(round.ldOn, round.ldHoles, course.holes)
+           } };
+}
+
+
+/* ---------- round pickers ---------- */
+
+function fillRoundSelect(el, { includeOverall = false } = {}){
+  const rounds = orderedRounds();
+  const current = el.value;
+  el.innerHTML =
+    (includeOverall ? `<option value="__all">Overall</option>` : "") +
+    rounds.map(([id, r], i) => `<option value="${id}">${esc(r.name || `Round ${i + 1}`)}</option>`).join("");
+  if (!rounds.length && !includeOverall) el.innerHTML = `<option value="">No rounds yet</option>`;
+  if ([...el.options].some(o => o.value === current)) el.value = current;
+}
+
+/* ---------- home ---------- */
+
+function renderHome(){
+  document.getElementById("eventName").textContent = cfg.event?.name || "Template Version";
+
+  const rounds = orderedRounds();
+  document.getElementById("eventSub").textContent = rounds.length
+    ? `${rounds.length} round${rounds.length > 1 ? "s" : ""} · ${Object.keys(cfg.roster || {}).length} players`
+    : "Event setup in progress";
+
+  document.getElementById("roundsInfo").innerHTML = rounds.length ? rounds.map(([id, r], i) => {
+    const course = courseFor(id);
+    return `<div class="pairing">
+      <b>${esc(r.name || `Round ${i + 1}`)}</b> &middot; ${esc(FORMATS[formatOf(r, cfg.event)]?.label || "")}${r.play === "match" ? " &middot; match play" : ""}
+      <div class="when">${course ? esc(course.name) + (course.location ? " · " + esc(course.location) : "") + " · par " + coursePar(course.holes) : "No course set"}</div>
+      ${(() => {
+        const ctp = contestHoles(r.ctpOn, r.ctpHoles, course?.holes);
+        const ld = contestHoles(r.ldOn, r.ldHoles, course?.holes);
+        const parts = [];
+        if (ctp.length) parts.push("Closest to the pin: " + ctp.join(", "));
+        if (ld.length) parts.push("Long drive: " + ld.join(", "));
+        return parts.length ? `<div class="when">${parts.join(" · ")}</div>` : "";
+      })()}
+    </div>`;
+  }).join("") : `<p class="empty">Not set up yet.</p>`;
+
+  fillRoundSelect(document.getElementById("homeRoundSelect"));
+  renderGroupsList();
+}
+
+function renderGroupsList(){
+  const roundId = document.getElementById("homeRoundSelect").value;
+  const el = document.getElementById("groupsList");
+  const base = roundContext(roundId);
+  if (!base){ el.innerHTML = `<p class="empty">No tee times posted yet.</p>`; return; }
+
+  const unitLine = u => (base.units[u]?.name ? "<b>" + esc(base.units[u].name) + "</b> &middot; " : "") +
+    (base.units[u]?.playerIds || []).map(pid => esc(cfg.roster?.[pid]?.name || "?")).join(" &amp; ");
+  const tees = Object.values(base.teeTimes)
+    .map(t => ({ start: t.start || "", unitIds: (t.unitIds || []).filter(u => base.units[u]) }))
+    .filter(t => t.unitIds.length)
+    .sort((a, b) => a.start.localeCompare(b.start));
+
+  el.innerHTML = tees.length ? tees.map(t => `
+    <div class="pairing">
+      <b>${t.start ? esc(t.start) : "Time to be confirmed"}</b>
+      ${t.unitIds.map(u => `<div class="when">${unitLine(u)}</div>`).join("")}
+    </div>`).join("") : `<p class="empty">No tee times posted yet.</p>`;
+
+  if (base.round.play === "match" && base.matches.length){
+    el.innerHTML += '<h2 style="margin-top:16px;">Matches</h2>' + base.matches.map(m =>
+      '<div class="pairing">' + unitLine(m.unitIds[0]) + ' <span class="when" style="display:inline;">v</span> ' +
+      unitLine(m.unitIds[1]) + "</div>").join("");
+  }
+}
+
+/* ---------- scorecard ---------- */
+
+const unitLabel = (base, u) => String(base.units[u]?.name || "").trim() || boardName(base.units[u]?.playerIds || []).big;
+
+function myUnit(base){
+  return Object.keys(base.units).find(u => (base.units[u].playerIds || []).includes(meId)) || null;
+}
+
+// The logged-in player's own card and nobody else's — other groups are for the leaderboard.
+// It's his tee time when he has one, so a foursome of two teams is one card; otherwise just
+// his own team.
+function myCard(base){
+  const mine = myUnit(base);
+  if (!mine) return null;
+  const tee = Object.values(base.teeTimes || {}).find(t => (t.unitIds || []).includes(mine));
+  const unitIds = tee ? (tee.unitIds || []).filter(u => base.units[u]) : [mine];
+  return { start: tee?.start || "", unitIds };
+}
+
+function renderScoreTab(){
+  const sel = document.getElementById("scoreRoundSelect");
+  fillRoundSelect(sel);
+  sel.classList.toggle("hidden", orderedRounds().length < 2);
+  renderScorecard();
+}
+
+// Every card in a round, for the commissioner: each tee time, then any team not yet in one.
+function cardOptions(base){
+  const tees = Object.entries(base.teeTimes || {})
+    .map(([id, t]) => ({ id: "t:" + id, start: t.start || "", unitIds: (t.unitIds || []).filter(u => base.units[u]) }))
+    .filter(t => t.unitIds.length)
+    .sort((a, b) => a.start.localeCompare(b.start));
+  const placed = new Set(tees.flatMap(t => t.unitIds));
+  const loose = Object.keys(base.units).filter(u => !placed.has(u))
+    .map(u => ({ id: "u:" + u, start: "", unitIds: [u] }));
+  return [...tees, ...loose];
+}
+
+// Which card the commissioner has open, per round. Defaults to his own card if he's playing.
+const adminPick = {};
+
+function adminCard(roundId, base){
+  const options = cardOptions(base);
+  const mine = myUnit(base);
+  return options.find(o => o.id === adminPick[roundId]) ||
+    options.find(o => o.unitIds.includes(mine)) || options[0] || null;
+}
+
+function fillCardSelect(roundId){
+  const sel = document.getElementById("scoreCardSelect");
+  const base = isAdmin ? roundContext(roundId) : null;
+  const options = base ? cardOptions(base) : [];
+  sel.classList.toggle("hidden", !options.length);
+  if (!options.length){ sel.innerHTML = ""; return; }
+  const current = adminCard(roundId, base);
+  const mine = myUnit(base);
+  sel.innerHTML = options.map(o => {
+    const label = (o.start ? o.start + " · " : "") + o.unitIds.map(u => unitLabel(base, u)).join(" / ") +
+      (o.unitIds.includes(mine) ? " (you)" : "") +
+      (o.unitIds.every(u => attestOf(roundId, u)) ? " ✓ submitted" : "");
+    return '<option value="' + esc(o.id) + '"' + (o.id === current?.id ? " selected" : "") + ">" + esc(label) + "</option>";
+  }).join("");
+}
+
+// A player gets his own card; the commissioner gets whichever card he picked.
+function currentCard(){
+  const roundId = document.getElementById("scoreRoundSelect").value;
+  const base = roundContext(roundId);
+  if (!base) return null;
+  const card = isAdmin ? adminCard(roundId, base) : myCard(base);
+  if (!card) return { roundId, fields: [] };
+  return buildCard(roundId, base, card);
+}
+
+/* ---- submitting a card ---- */
+
+// attests: roundId -> teamId -> { by, name, at }. A submitted team's scores are final for
+// players; the commissioner can still change them, or reopen the card.
+const attestOf = (roundId, unitId) => attests?.[roundId]?.[unitId] || null;
+const cardComplete = c => c.holes.length > 0 && firstOpenIndex(c) === -1;
+const cardSubmitted = c => c.teams.length > 0 && c.teams.every(t => attestOf(c.roundId, t.unitId));
+const unitLocked = (roundId, unitId) => !isAdmin && !!attestOf(roundId, unitId);
+const attestState = c => (cardComplete(c) ? "c" : "o") + c.teams.filter(t => attestOf(c.roundId, t.unitId)).length;
+
+const whenText = at => at ? new Date(at).toLocaleString([], { weekday: "short", hour: "numeric", minute: "2-digit" }) : "";
+
+function submittedLine(c){
+  const done = c.teams.map(t => ({ t, a: attestOf(c.roundId, t.unitId) })).filter(x => x.a);
+  if (!done.length) return "";
+  const first = done[0].a;
+  return "Submitted by " + esc(first.name || "?") + (first.at ? " &middot; " + esc(whenText(first.at)) : "") +
+    (done.length < c.teams.length ? " (" + done.map(x => esc(x.t.label)).join(", ") + " only)" : "");
+}
+
+// Online, the database listener brings the change back (and undoes it if the write is refused).
+function writeAttest(roundId, unitId, value){
+  if (!db){
+    attests[roundId] = attests[roundId] || {};
+    if (value) attests[roundId][unitId] = value; else delete attests[roundId][unitId];
+    localStorage.setItem("covidcup_attest_draft", JSON.stringify(attests));
+    return Promise.resolve();
+  }
+  return set(ref(db, `${ATTEST_PATH}/${roundId}/${unitId}`), value || null);
+}
+
+// The prompt to review and submit once every hole is in — or who submitted the card.
+function attestBanner(c){
+  if (c.teams.some(t => attestOf(c.roundId, t.unitId))){
+    return '<div class="attest-banner done"><span>&#10003; ' + submittedLine(c) +
+        (isAdmin ? "" : ". Scores are locked &mdash; ask the commissioner for any change.") + "</span>" +
+      (!cardSubmitted(c) && cardComplete(c) ? "<button data-review>Review &amp; submit</button>" : "") +
+      (isAdmin ? '<button class="ghost" data-reopen>Reopen card</button>' : "") +
+    "</div>";
+  }
+  if (!cardComplete(c)) return "";
+  return '<div class="attest-banner"><span><b>All ' + c.holes.length + " holes are in.</b> Check the card, then submit it.</span>" +
+    "<button data-review>Review &amp; submit</button></div>";
+}
+
+function wireBanner(scope, c){
+  scope.querySelectorAll("[data-review]").forEach(b => b.addEventListener("click", () => {
+    scoreView = "review";
+    renderScorecard();
+    window.scrollTo(0, 0);
+  }));
+  scope.querySelectorAll("[data-reopen]").forEach(b => b.addEventListener("click", () => {
+    if (!confirm("Reopen this card? Players will be able to change scores again, and it will need to be submitted again.")) return;
+    Promise.all(c.teams.map(t => writeAttest(c.roundId, t.unitId, null)))
+      .then(() => renderScorecard())
+      .catch(err => alert("Couldn't reopen the card: " + err.message));
+  }));
+}
+
+
+// Everything a scorecard needs for a set of teams: the round, the teams, their matches, and
+// every box — one per player, or one per team in scramble and alternate shot — each tagged
+// with the team whose score it is. Used for your own card and for the leaderboard pop-up.
+function buildCard(roundId, base, card){
+  const { round, course, units, playerPhs, teamPhs, holeCount, maxRule, maxPlus, contests } = base;
+  const teamEntry = FORMATS[round.format]?.entry === "team";
+
+  const teams = card.unitIds.map(u => ({
+    unitId: u,
+    label: unitLabel(base, u),
+    ctx: { memberIds: units[u].playerIds || [], playerPhs, teamPh: teamPhs[u] ?? 0, holeCount, maxRule, maxPlus }
+  }));
+
+  const fields = card.unitIds.flatMap(u => teamEntry
+    ? [{ unitId: u, key: "team", label: unitLabel(base, u), ph: teamPhs[u] ?? 0 }]
+    : (units[u].playerIds || []).map(pid => ({
+        unitId: u, key: pid, label: cfg.roster?.[pid]?.name || "?", ph: playerPhs[pid] ?? 0
+      })));
+
+  return {
+    roundId, base, round, course, holeCount, maxRule, maxPlus, contests, teams, fields,
+    start: card.start,
+    play: round.play,
+    matches: (base.matches || []).filter(m => m.unitIds.some(u => card.unitIds.includes(u))),
+    gross: !!FORMATS[round.format]?.gross,
+    format: round.format,
+    holes: course.holes || []
+  };
+}
+
+
+const cellFor = (c, f, hole) => scores?.[c.roundId]?.[f.unitId]?.[hole]?.[f.key];
+const unitScores = (c, unitId) => scores?.[c.roundId]?.[unitId] || {};
+
+const holeComplete = (c, hole) => c.fields.every(f => {
+  const cell = cellFor(c, f, hole);
+  return cell && (cell.x || cell.v != null);
+});
+
+// Index of the first hole still missing a score or pickup, or -1 once the card is full.
+const firstOpenIndex = c => c.holes.findIndex(h => !holeComplete(c, h.number));
+
+function contestLabel(c, holeNumber){
+  const names = [];
+  if (c.contests.ctp.includes(holeNumber)) names.push("Closest to the pin");
+  if (c.contests.ld.includes(holeNumber)) names.push("Long drive");
+  return names.join(" & ");
+}
+
+function contestBadges(c, holeNumber){
+  return (c.contests.ctp.includes(holeNumber) ? '<span class="contest ctp">Closest to the pin</span>' : "") +
+         (c.contests.ld.includes(holeNumber) ? '<span class="contest ld">Long drive</span>' : "");
+}
+
+// Standard scorecard notation, taken from gross against par.
+function markClass(gross, par){
+  if (gross == null) return "";
+  const d = gross - par;
+  if (d <= -2) return "eagle";
+  if (d === -1) return "birdie";
+  if (d === 1) return "bogey";
+  if (d >= 2) return "double";
+  return "";
+}
+
+// Running totals, one line per team on the card — or, in match play, one line per match.
+function totalsHtml(c){
+  if (c.play === "match") return matchTotalsHtml(c);
+  return '<div class="card-totals">' + c.teams.map(t => {
+    const r = roundTotals(c.format, c.holes, unitScores(c, t.unitId), t.ctx);
+    return '<div class="stats">' +
+      (c.teams.length > 1 ? '<span class="tt-name">' + esc(t.label) + "</span>" : "") +
+      "<span>Thru <b>" + r.thru + "</b></span>" +
+      "<span>Total <b>" + (r.thru ? fmtToPar(r.toPar) : "&mdash;") + "</b></span>" +
+    "</div>";
+  }).join("") + "</div>";
+}
+
+// A match's state in plain words: "Hanna & Hodgman 2 UP", "All square", "Rungta wins 3&2".
+function matchWords(base, m, s){
+  const name = u => esc(unitLabel(base, u));
+  const [a, b] = m.unitIds;
+  if (!s.thru) return "Not started";
+  if (s.finished) return s.winner ? name(s.winner === "A" ? a : b) + " wins " + s.label : "Halved";
+  return s.leader ? name(s.leader === "A" ? a : b) + " " + s.label : "All square";
+}
+
+function matchTotalsHtml(c){
+  const lines = c.matches.map(m => {
+    const s = statusFor(c.base, c.roundId, m);
+    const [a, b] = m.unitIds;
+    return '<div class="stats mline">' +
+      '<span class="tt-name">' + esc(unitLabel(c.base, a)) + " v " + esc(unitLabel(c.base, b)) + "</span>" +
+      "<span><b>" + matchWords(c.base, m, s) + "</b></span>" +
+      (s.thru && !s.finished ? "<span>thru " + s.thru + "</span>" : "") +
+    "</div>";
+  });
+  const unmatched = c.teams
+    .filter(t => !c.matches.some(m => m.unitIds.includes(t.unitId)))
+    .map(t => '<div class="stats"><span class="tt-name">' + esc(t.label) + "</span><span>Not in a match yet</span></div>");
+  return '<div class="card-totals">' + lines.join("") + unmatched.join("") + "</div>";
+}
+
+
+let currentHole = null;
+
+function renderScorecard(){
+  const body = document.getElementById("scorecardBody");
+  fillCardSelect(document.getElementById("scoreRoundSelect").value);
+  document.querySelectorAll("#tab-score .seg button").forEach(b => b.classList.toggle("active", b.dataset.view === scoreView));
+  const c = currentCard();
+
+  if (!c){ body.innerHTML = '<p class="empty">This round does not have a course set yet.</p>'; return; }
+  if (!c.fields.length){
+    body.innerHTML = '<p class="empty">' +
+      (isAdmin ? "No teams are set up for this round yet." : "You are not on a team for this round yet.") + "</p>";
+    return;
+  }
+  if (!c.holes.length){ body.innerHTML = '<p class="empty">This round\'s course has no holes set up.</p>'; return; }
+
+  if (scoreView === "review"){ renderReview(body, c); return; }
+  if (scoreView === "card"){
+    renderFullCard(body, c);
+    body.insertAdjacentHTML("afterbegin", attestBanner(c));
+    wireBanner(body, c);
+    return;
+  }
+
+  // Land on the first unplayed hole rather than making the player hunt for it.
+  if (currentHole == null || !c.holes.some(h => h.number === currentHole)){
+    const firstOpen = c.holes.find(h => !holeComplete(c, h.number));
+    currentHole = (firstOpen || c.holes[c.holes.length - 1]).number;
+  }
+  renderHoleView(body, c);
+}
+
+// Review & submit: the whole card with its totals, then a sign-off. Submitting stamps every
+// team on the card with who submitted it and when, which locks the scores for players.
+function renderReview(body, c){
+  const complete = cardComplete(c);
+  const submitted = cardSubmitted(c);
+  const who = meId ? (cfg.roster?.[meId]?.name || "?") : "Commissioner";
+  const open = c.teams.filter(t => !attestOf(c.roundId, t.unitId));
+
+  body.innerHTML =
+    '<h2 style="margin:0 0 10px;">Review &amp; submit</h2>' +
+    '<div id="reviewCard"></div>' +
+    '<div class="attest-box">' +
+      (submitted
+        ? '<div class="attest-banner done"><span>&#10003; ' + submittedLine(c) + "</span>" +
+            (isAdmin ? '<button class="ghost" data-reopen>Reopen card</button>' : "") + "</div>"
+        : !complete
+          ? '<p class="gate-hint">Hole ' + c.holes[firstOpenIndex(c)].number +
+              " still needs a score for everyone before this card can be submitted.</p>"
+          : '<label><input type="checkbox" id="attestCheck"><span>I\'ve checked every score on this card' +
+              (c.teams.length > 1 ? " &mdash; " + open.map(t => esc(t.label)).join(" and ") + " &mdash;" : "") +
+              " and it's correct.</span></label>" +
+            '<button class="submit" id="attestSubmit" disabled>Submit card as ' + esc(who) + "</button>" +
+            '<p class="attest-note">Once it\'s submitted, scores on this card are locked. Only the commissioner can change them.</p>' +
+            '<p id="attestErr" class="gate-hint hidden"></p>') +
+      '<div class="review-actions"><button data-back>&larr; Back to scoring</button></div>' +
+    "</div>";
+
+  renderFullCard(body.querySelector("#reviewCard"), c);
+  wireBanner(body, c);
+
+  body.querySelector("[data-back]").addEventListener("click", () => { scoreView = "hole"; renderScorecard(); });
+  const check = body.querySelector("#attestCheck");
+  const submit = body.querySelector("#attestSubmit");
+  check?.addEventListener("change", () => { submit.disabled = !check.checked; });
+  submit?.addEventListener("click", () => {
+    submit.disabled = true;
+    const stamp = { by: meId || "commissioner", name: who, at: Date.now() };
+    Promise.all(open.map(t => writeAttest(c.roundId, t.unitId, stamp)))
+      .then(() => renderScorecard())
+      .catch(err => {
+        const e = body.querySelector("#attestErr");
+        if (!e) return;
+        e.textContent = "Couldn't submit the card: " + err.message;
+        e.classList.remove("hidden");
+        submit.disabled = false;
+      });
+  });
+}
+
+
+function renderHoleView(body, c){
+  const hole = c.holes.find(h => h.number === currentHole);
+  const idx = c.holes.indexOf(hole);
+
+  // Holes past the first one still missing a score can be looked at but not scored, so a
+  // group can't get three holes on before anyone notices a blank. Going back always works.
+  const openIdx = firstOpenIndex(c);
+  const strip = c.holes.map((h, i) => {
+    const locked = openIdx !== -1 && i > openIdx;
+    const contest = contestLabel(c, h.number);
+    return '<button data-goto="' + h.number + '" class="' +
+      (h.number === currentHole ? "current " : "") +
+      (holeComplete(c, h.number) ? "done " : "") +
+      (locked ? "ahead " : "") +
+      (c.contests.ctp.includes(h.number) ? "ctp " : "") +
+      (c.contests.ld.includes(h.number) ? "ld" : "") + '"' +
+      (contest ? ' title="' + contest + '"' : "") +
+      ">" + h.number + "</button>";
+  }).join("");
+
+  // A hole after the one being played is view-only until that hole is finished.
+  const ahead = openIdx !== -1 && idx > openIdx;
+  const openHole = openIdx === -1 ? null : c.holes[openIdx].number;
+
+  // With two teams on one card, each team's boxes sit under its name.
+  const headed = c.teams.length > 1 && FORMATS[c.format]?.entry !== "team";
+
+  // Two teams sharing a tee time share the card, but not the pen: each team's boxes can
+  // only be entered by a player on that team, so one phone can't quietly fill in the other
+  // team's numbers. The commissioner is exempt, same as every other lock on this card.
+  const myOwnUnit = isAdmin ? null : myUnit(c.base);
+  const othersTeam = f => !isAdmin && c.teams.length > 1 && f.unitId !== myOwnUnit;
+
+  let lastUnit = null;
+  const entries = c.fields.map((f, i) => {
+    const cell = cellFor(c, f, hole.number) || {};
+    const shots = c.gross ? 0 : strokesOnHole(f.ph, hole.si, c.holeCount);
+    const cap = grossCap(c.maxRule, hole.par, shots, c.maxPlus);
+    const picked = !!cell.x;
+    const locked = othersTeam(f);
+    // Nothing to score on a hole further ahead, on a card that's been submitted, or on the
+    // other team's boxes.
+    const noEdit = ahead || unitLocked(c.roundId, f.unitId) || locked;
+    const header = headed && f.unitId !== lastUnit
+      ? '<div class="team-head">' + esc(c.teams.find(t => t.unitId === f.unitId).label) + "</div>" : "";
+    lastUnit = f.unitId;
+    return header +
+      '<div class="entry" data-i="' + i + '">' +
+        '<span class="who">' + esc(f.label) +
+          '<span class="shots">' +
+            (c.gross
+              ? "gross" + (cap != null ? " &middot; max " + cap : "")
+              : (shots ? shots + " shot" + (shots > 1 ? "s" : "") + " here" : "no shot here") +
+                " &middot; plays off " + f.ph + (cap != null ? " &middot; max " + cap : "")) +
+            (locked ? " &middot; their team enters this" : "") +
+          "</span>" +
+        "</span>" +
+        '<span class="big-box">' +
+          '<input type="' + (picked ? "text" : "number") + '" inputmode="numeric" min="1" max="15"' +
+            ' class="' + (picked ? "picked" : "") + '"' + (picked || noEdit ? " disabled" : "") +
+            ' value="' + (picked ? "X" : (cell.v ?? "")) + '" data-score>' +
+          (shots ? '<span class="dot ' + (shots > 1 ? "two" : "") + '"></span>' : "") +
+        "</span>" +
+        (noEdit ? "" :
+          '<span class="acts">' +
+            (cap == null && !picked ? "" : '<button data-pickup class="' + (picked ? "on" : "") + '">Picked up</button>') +
+            "<button data-clear>Clear</button>" +
+          "</span>") +
+      "</div>";
+  }).join("");
+
+  const complete = holeComplete(c, hole.number);
+  body.innerHTML =
+    '<p style="margin-bottom:10px;">' + esc(FORMATS[c.format]?.label || c.format) + " &middot; " +
+      esc(c.course.name || "") + (c.start ? " &middot; " + esc(c.start) : "") + "</p>" +
+    '<div class="strip">' + strip + "</div>" +
+    '<div class="hole-head"><span class="num">' + hole.number + "</span>" +
+      '<span class="meta">Par ' + hole.par + " &middot; stroke index " + hole.si + "</span></div>" +
+    contestBadges(c, hole.number) +
+    entries +
+    totalsHtml(c) +
+    (ahead
+      ? '<p class="gate-hint">Looking ahead &mdash; finish hole ' + openHole + " before scoring this one.</p>"
+      : '<p class="gate-hint' + (complete ? " hidden" : "") + '">Every player needs a score' +
+          (c.maxRule === "none" ? "" : " or Picked up") + " before the next hole opens for scoring.</p>") +
+    '<div id="attestSlot" data-state="' + attestState(c) + '">' + attestBanner(c) + "</div>" +
+    '<div class="nav-holes">' +
+      "<button data-prev" + (idx === 0 ? " disabled" : "") + ">&larr; " +
+        (idx === 0 ? "Start" : "Hole " + c.holes[idx - 1].number) + "</button>" +
+      (idx === c.holes.length - 1 && cardComplete(c) && !cardSubmitted(c)
+        ? '<button data-review class="primary">Review &amp; submit &rarr;</button>'
+        : '<button data-next class="primary"' + (idx === c.holes.length - 1 ? " disabled" : "") + ">" +
+            (idx === c.holes.length - 1 ? "Last hole" : "Hole " + c.holes[idx + 1].number) + " &rarr;</button>") +
+    "</div>" +
+    (c.holes[idx + 1] && contestLabel(c, c.holes[idx + 1].number)
+      ? '<p class="next-contest">Next hole: ' + contestLabel(c, c.holes[idx + 1].number) + "</p>" : "") +
+    (isAdmin ? "" : '<button class="link" id="switchPlayerBtn" style="margin-top:12px;">Not you? Switch player</button>');
+
+  wireBanner(body, c);
+  const inputs = [...body.querySelectorAll("input[data-score]")];
+
+  body.querySelectorAll(".entry").forEach(row => {
+    const f = c.fields[+row.dataset.i];
+    const input = row.querySelector("input[data-score]");
+    const pos = inputs.indexOf(input);
+
+    input?.addEventListener("input", () => {
+      if (input.value === ""){
+        queueScoreWrite(c.roundId, f.unitId, hole.number, f.key, { v: null, x: false });
+        refreshRunningTotal(c);
+        return;
+      }
+      const n = Math.max(1, Math.min(15, Math.floor(+input.value) || 1));
+      // Cap rather than storing a number nobody actually made.
+      if (+input.value > 15) input.value = String(n);
+      queueScoreWrite(c.roundId, f.unitId, hole.number, f.key, { v: n, x: false });
+      refreshRunningTotal(c);
+
+      // Move to the next box once the number cannot get any more specific — a lone 1
+      // could still become 10 through 15, anything else could not.
+      const raw = input.value;
+      if (raw.length >= 2 || (raw.length === 1 && raw !== "1")) inputs[pos + 1]?.focus();
+    });
+
+    row.querySelector("[data-pickup]")?.addEventListener("click", () => {
+      const now = !!cellFor(c, f, hole.number)?.x;
+      queueScoreWrite(c.roundId, f.unitId, hole.number, f.key, now ? { v: null, x: false } : { v: null, x: true }, true);
+    });
+    // Look-ahead holes have no scoring buttons at all.
+    row.querySelector("[data-clear]")?.addEventListener("click", () => {
+      queueScoreWrite(c.roundId, f.unitId, hole.number, f.key, { v: null, x: false }, true);
+    });
+  });
+
+  body.querySelectorAll("[data-goto]").forEach(btn => btn.addEventListener("click", () => {
+    currentHole = +btn.dataset.goto;
+    renderScorecard();
+  }));
+  body.querySelector("[data-prev]")?.addEventListener("click", () => {
+    currentHole = c.holes[idx - 1]?.number ?? currentHole;
+    renderScorecard();
+  });
+  body.querySelector("[data-next]")?.addEventListener("click", () => {
+    currentHole = c.holes[idx + 1]?.number ?? currentHole;
+    renderScorecard();
+  });
+  const switchBtn = document.getElementById("switchPlayerBtn");
+  if (switchBtn) switchBtn.onclick = () => {
+    localStorage.removeItem(ME_KEY);
+    location.reload();
+  };
+}
+
+// Updates totals, the strip and the gate without re-rendering the hole, which would throw
+// focus out of the box being typed in.
+function refreshRunningTotal(c){
+  const totals = document.querySelector("#scorecardBody .card-totals");
+  if (totals) totals.outerHTML = totalsHtml(c);
+
+  const openIdx = firstOpenIndex(c);
+  document.querySelectorAll("#scorecardBody [data-goto]").forEach((btn, i) => {
+    btn.classList.toggle("done", holeComplete(c, +btn.dataset.goto));
+    btn.classList.toggle("ahead", openIdx !== -1 && i > openIdx);
+  });
+  document.querySelector("#scorecardBody .gate-hint")?.classList.toggle("hidden", holeComplete(c, currentHole));
+
+  // The last score in brings up Review & submit without a re-render.
+  const slot = document.getElementById("attestSlot");
+  if (slot && slot.dataset.state !== attestState(c)){
+    slot.dataset.state = attestState(c);
+    slot.innerHTML = attestBanner(c);
+    wireBanner(slot, c);
+  }
+}
+
+function renderFullCard(body, c){
+  const front = c.holes.filter(h => h.number <= 9);
+  const back = c.holes.filter(h => h.number > 9);
+  const sumPar = hs => hs.reduce((s, h) => s + (+h.par || 0), 0);
+
+  // The score that COUNTS in each cell, after the round's maximum — the same number the
+  // leaderboard uses, so the card and the leaderboard can never disagree.
+  const countedFor = (f, h) => scoreCell(
+    cellFor(c, f, h.number), h.par,
+    c.gross ? 0 : strokesOnHole(f.ph, h.si, c.holeCount), c.maxRule, c.maxPlus
+  );
+  const sumGross = (f, hs) => {
+    let total = 0, any = false;
+    hs.forEach(h => {
+      const res = countedFor(f, h);
+      if (res){ total += res.gross; any = true; }
+    });
+    return any ? total : "";
+  };
+  const playerCells = (f, hs) => hs.map(h => {
+    const res = countedFor(f, h);
+    if (!res) return "<td></td>";
+    if (res.pickedUp) return '<td><span class="mark double">X</span></td>';
+    const cls = markClass(res.gross, h.par);
+    return "<td>" + (cls ? '<span class="mark ' + cls + '">' + res.gross + "</span>" : res.gross) + "</td>";
+  }).join("");
+
+  const headed = c.teams.length > 1 && FORMATS[c.format]?.entry !== "team";
+  const fieldRows = hs => {
+    let lastUnit = null;
+    return c.fields.map(f => {
+      const head = headed && f.unitId !== lastUnit
+        ? '<tr class="unit"><td class="name" colspan="' + (hs.length + 2) + '">' +
+            esc(c.teams.find(t => t.unitId === f.unitId).label) + "</td></tr>"
+        : "";
+      lastUnit = f.unitId;
+      return head + '<tr><td class="name">' + esc(f.label) + "</td>" + playerCells(f, hs) +
+        '<td class="tot">' + sumGross(f, hs) + "</td></tr>";
+    }).join("");
+  };
+
+  const section = (hs, label) => !hs.length ? "" :
+    '<tr class="meta"><th class="name">Hole</th>' + hs.map(h => "<th>" + h.number + "</th>").join("") + "<th>" + label + "</th></tr>" +
+    '<tr class="meta"><td class="name">Par</td>' + hs.map(h => "<td>" + h.par + "</td>").join("") + "<td>" + sumPar(hs) + "</td></tr>" +
+    '<tr class="meta"><td class="name">Stroke index</td>' + hs.map(h => "<td>" + h.si + "</td>").join("") + "<td></td></tr>" +
+    (hs.some(h => contestLabel(c, h.number))
+      ? '<tr class="meta"><td class="name">Contest</td>' + hs.map(h =>
+          "<td>" + (c.contests.ctp.includes(h.number) ? '<span class="contest ctp mini">CTP</span>' : "") +
+          (c.contests.ld.includes(h.number) ? '<span class="contest ld mini">LD</span>' : "") + "</td>").join("") +
+        "<td></td></tr>"
+      : "") +
+    fieldRows(hs);
+
+  body.innerHTML =
+    '<p style="margin-bottom:10px;">' + esc(FORMATS[c.format]?.label || c.format) + " &middot; " +
+      esc(c.course.name || "") + (c.start ? " &middot; " + esc(c.start) : "") + "</p>" +
+    '<div class="card-scroll"><table class="scard">' +
+      section(front, "Out") +
+      (back.length ? '<tr><td colspan="' + (back.length + 2) + '" style="border:none;height:10px;"></td></tr>' : "") +
+      section(back, "In") +
+    "</table></div>" +
+    totalsHtml(c) +
+    '<p style="font-size:12px;color:var(--dim);margin-top:10px;">' +
+      "Circle = birdie &middot; double circle = eagle &middot; box = bogey &middot; double box = double or worse. " +
+      "Numbers are the gross that counts, after the round's maximum; X is a picked-up ball, scored at the maximum. " +
+      (c.gross ? "Totals are gross." : "Totals are net.") +
+    "</p>";
+}
+
+function queueScoreWrite(roundId, groupId, hole, field, value, immediate = false){
+  // A submitted card is final for players, whatever the screen shows.
+  if (unitLocked(roundId, groupId)) return;
+  scores[roundId] = scores[roundId] || {};
+  scores[roundId][groupId] = scores[roundId][groupId] || {};
+  scores[roundId][groupId][hole] = scores[roundId][groupId][hole] || {};
+  scores[roundId][groupId][hole][field] = value;
+
+  if (!db){
+    localStorage.setItem("covidcup_scores_draft", JSON.stringify(scores));
+    if (immediate) renderScorecard();
+    return;
+  }
+
+  const key = `${roundId}|${groupId}|${hole}|${field}`;
+  clearTimeout(writeTimers.get(key));
+  const run = () => {
+    writeTimers.delete(key);
+    update(ref(db, `${SCORES_PATH}/${roundId}/${groupId}/${hole}`), { [field]: value })
+      .catch(err => console.error(err));
+  };
+  if (immediate){ run(); renderScorecard(); }
+  else writeTimers.set(key, setTimeout(run, 400));
+}
+
+/* ---------- leaderboard ---------- */
+
+// "Andrew Hanna" -> first "Andrew", last "Hanna". A single word is treated as the last name.
+function splitName(full){
+  const parts = String(full || "").trim().split(/\s+/).filter(Boolean);
+  if (parts.length < 2) return { first: "", last: parts[0] || "?" };
+  return { first: parts.slice(0, -1).join(" "), last: parts[parts.length - 1] };
+}
+
+// Board-style name: surnames large, first names small underneath, like a hand-lettered board.
+function boardName(playerIds){
+  const names = (playerIds || []).map(id => splitName(cfg.roster?.[id]?.name));
+  return {
+    big: names.map(n => n.last).join(" & "),
+    small: names.map(n => n.first).filter(Boolean).join(" & ")
+  };
+}
+
+// One round's rows, in that round's natural unit (the group, or each player), with the
+// front and back nine scored separately for the board.
+function rowsForRound(roundId){
+  const ctxBase = roundContext(roundId);
+  if (!ctxBase) return [];
+  const { round, course, groups, playerPhs, teamPhs, holeCount, maxRule, maxPlus } = ctxBase;
+  const format = round.format;
+  const holes = course.holes || [];
+  const front = holes.filter(h => h.number <= 9);
+  const back = holes.filter(h => h.number > 9);
+  const byPlayer = FORMATS[format]?.unit === "player";
+  const rows = [];
+
+  const totalsFor = (groupScores, ctx) => ({
+    ...roundTotals(format, holes, groupScores, ctx),
+    front: roundTotals(format, front, groupScores, ctx),
+    back: roundTotals(format, back, groupScores, ctx)
+  });
+
+  Object.entries(groups).forEach(([gid, g]) => {
+    const memberIds = g.playerIds || [];
+    const groupScores = scores?.[roundId]?.[gid] || {};
+
+    if (byPlayer){
+      memberIds.forEach(pid => {
+        const t = totalsFor(groupScores, { memberIds: [pid], playerPhs, teamPh: 0, holeCount, maxRule, maxPlus });
+        rows.push({ key: pid, unitId: gid, names: cfg.roster?.[pid]?.name || "?", playerIds: [pid], ...t });
+      });
+    } else {
+      const t = totalsFor(groupScores, { memberIds, playerPhs, teamPh: teamPhs[gid] ?? 0, holeCount, maxRule, maxPlus });
+      rows.push({
+        key: gid,
+        unitId: gid,
+        teamName: g.name || "",
+        names: memberIds.map(pid => cfg.roster?.[pid]?.name || "?").join(" / "),
+        playerIds: memberIds, ...t
+      });
+    }
+  });
+  return rows;
+}
+
+// Overall rolls everything up to the player — a group's score counts for each of its
+// members, so rounds with different formats and group sizes can share one table.
+function rowsOverall(only){
+  const totals = new Map();
+  orderedRounds().filter(([id]) => !only || only.includes(id)).forEach(([roundId]) => {
+    rowsForRound(roundId).forEach(r => {
+      if (!r.thru) return;
+      r.playerIds.forEach(pid => {
+        const acc = totals.get(pid) || { toPar: 0, thru: 0, rounds: 0, byRound: {} };
+        acc.toPar += r.toPar;
+        acc.thru += r.thru;
+        acc.rounds += 1;
+        acc.byRound[roundId] = r.toPar;
+        totals.set(pid, acc);
+      });
+    });
+  });
+  return [...totals.entries()].map(([pid, acc]) => ({
+    key: pid,
+    names: cfg.roster?.[pid]?.name || "?",
+    playerIds: [pid],
+    toPar: acc.toPar,
+    thru: acc.thru,
+    roundsPlayed: acc.rounds,
+    byRound: acc.byRound
+  }));
+}
+
+const parClass = n => n < 0 ? "under" : n > 0 ? "over" : "even";
+const numCell = (n, extra = "") => n == null
+  ? '<td class="num dash ' + extra + '">&ndash;</td>'
+  : '<td class="num ' + parClass(n) + " " + extra + '">' + fmtToPar(n) + "</td>";
+
+// Tied positions read "T2", the way a tournament board shows them.
+function positions(rows){
+  return rows.map(r => {
+    const first = rows.findIndex(x => x.toPar === r.toPar) + 1;
+    const tied = rows.filter(x => x.toPar === r.toPar).length > 1;
+    return (tied ? "T" : "") + first;
+  });
+}
+
+const capWord = w => '<span class="sn"><span class="cap">' + esc(w.charAt(0)) + "</span>" + esc(w.slice(1)) + "</span>";
+
+// A named team shows its name large with the surnames small underneath. Otherwise the
+// surnames go large, each with its own drop cap, and first names go small.
+function nameCell(playerIds, teamName, cls = ""){
+  const names = (playerIds || []).map(id => splitName(cfg.roster?.[id]?.name));
+  const named = String(teamName || "").trim();
+  const big = named
+    ? named.split(/\s+/).map(capWord).join(" ")
+    : names.map(n => capWord(String(n.last))).join(" &amp; ");
+  const small = named
+    ? names.map(n => n.last).join(" & ")
+    : names.map(n => n.first).filter(Boolean).join(" & ");
+  return '<td class="nm ' + cls + '"><div class="lb-big">' + big + "</div>" +
+    (small ? '<div class="lb-small">' + esc(small) + "</div>" : "") + "</td>";
+}
+
+function boardShell(sub, inner){
+  return '<div class="board">' +
+    '<div class="board-title">' + esc(cfg.event?.name || "Template Version") + "</div>" +
+    (sub ? '<div class="board-sub">' + sub + "</div>" : "") +
+    '<div class="board-scroll">' + inner + "</div></div>" +
+    '<p class="board-tip">Tap a name to see the scorecard &middot; &#10003; card submitted</p>';
+}
+
+const fmtPts = p => (Math.floor(p) || (p % 1 ? "" : "0")) + (p % 1 ? "½" : "");
+
+// The skins game runs across the WHOLE round, independent of stroke or match play — every
+// unit needs a score on a hole before it can be settled. It also runs its own gross/net and
+// team/individual, independent of the round's own format — set in the console alongside the
+// opt-in checkbox. Empty string once it's switched off or nobody's posted a score yet.
+function skinsSectionHtml(base, roundId){
+  if (!base.round.skinsOn) return "";
+  const holes = base.course.holes || [];
+  const f = FORMATS[base.round.format];
+  const canIndividual = f?.entry === "player";
+  // Defaults to gross and individual regardless of the round's own format — must match
+  // admin.html's defaults exactly, since a round saved before these were ever touched has
+  // neither field set.
+  const skinsUnit = canIndividual ? (base.round.skinsUnit || "individual") : "team";
+  const skinsGross = base.round.skinsGross ?? true;
+  const skinsCarry = base.round.skinsCarry ?? true;
+  const skinsFormat = skinsUnit === "individual" ? formatFor("individual", skinsGross) : formatFor(f?.family, skinsGross);
+
+  let unitIds, unitScores = {}, ctxs = {}, labelOf, openUnitOf = u => u;
+
+  if (skinsUnit === "individual"){
+    // Individual skins still needs each player's own entry, which is stored under his
+    // actual team's unit id (the round itself may not be individual format) — so map every
+    // rostered player back to that unit before pulling his cell out of it. The same mapping
+    // is what tapping a row should open — his real card, not a unit id that may not exist.
+    const groupOfPlayer = {};
+    Object.entries(base.units).forEach(([gid, g]) => (g.playerIds || []).forEach(pid => { groupOfPlayer[pid] = gid; }));
+    unitIds = Object.keys(groupOfPlayer);
+    unitIds.forEach(pid => {
+      const teamScores = scores?.[roundId]?.[groupOfPlayer[pid]] || {};
+      const perHole = {};
+      holes.forEach(h => { const cell = teamScores[h.number]?.[pid]; if (cell) perHole[h.number] = { [pid]: cell }; });
+      unitScores[pid] = perHole;
+      ctxs[pid] = { memberIds: [pid], playerPhs: base.playerPhs, teamPh: 0, holeCount: base.holeCount, maxRule: base.maxRule, maxPlus: base.maxPlus };
+    });
+    labelOf = pid => nameCell([pid], null);
+    openUnitOf = pid => groupOfPlayer[pid];
+  } else {
+    unitIds = Object.keys(base.units);
+    unitIds.forEach(u => {
+      unitScores[u] = scores?.[roundId]?.[u] || {};
+      ctxs[u] = { memberIds: base.units[u]?.playerIds || [], playerPhs: base.playerPhs,
+        teamPh: base.teamPhs[u] ?? 0, holeCount: base.holeCount, maxRule: base.maxRule, maxPlus: base.maxPlus };
+    });
+    labelOf = u => nameCell(base.units[u].playerIds, base.units[u].name);
+  }
+  if (!unitIds.length) return "";
+
+  const { perHole, totals, carry } = skinsForRound(skinsFormat, holes, unitScores, ctxs, { carryOver: skinsCarry });
+  if (!perHole.length) return "";
+
+  const standing = unitIds.map(u => ({ u, skins: totals[u] || 0 }))
+    .filter(r => r.skins > 0)
+    .sort((a, b) => b.skins - a.skins);
+
+  const label = skinsUnit === "individual" ? "Player" : "Team";
+  const rows = standing.length
+    ? '<table class="lboard"><tr class="head"><th class="nm">' + label + '</th><th>Skins</th></tr>' +
+        standing.map(r =>
+          '<tr class="lb-open" data-open-round="' + roundId + '" data-open-units="' + esc(openUnitOf(r.u)) + '">' +
+            labelOf(r.u) +
+            '<td class="num tot under">' + r.skins + "</td></tr>").join("") +
+      "</table>"
+    : '<p class="board-empty">No skins won yet.</p>';
+
+  const nextHole = holes[perHole.length]?.number;
+  const pending = carry > 0 && nextHole
+    ? '<p class="board-tip">' + carry + " skin" + (carry > 1 ? "s" : "") +
+        " riding into hole " + nextHole + " &mdash; waiting on the rest of the field.</p>"
+    : "";
+
+  return '<div class="board-sub" style="margin-top:14px;">Skins' +
+      (skinsGross ? " &middot; gross" : " &middot; net") + (skinsUnit === "individual" ? " &middot; individual" : "") +
+      (skinsCarry ? "" : " &middot; void on tie") +
+    "</div>" + rows + pending;
+}
+
+// Rolling best ball's own team standings, alongside the round's normal (per-player)
+// leaderboard above. Teams here are scoring buckets only (state.groups, same UI as any
+// other team format) — they never appear in a tee time, since each player has his own card
+// and can be in a different foursome than his own teammates. Empty string until at least
+// one team has a score posted.
+function rollingBestBallSectionHtml(base, roundId){
+  const f = FORMATS[base.round.format];
+  if (f?.family !== "rolling-best-ball") return "";
+  const holes = base.course.holes || [];
+  const teams = cfg.groups?.[roundId] || {};
+  const teamIds = Object.keys(teams).filter(gid => (teams[gid].playerIds || []).length);
+  if (!teamIds.length) return "";
+
+  const bestCount = (+base.round.rollingBestCount > 0) ? +base.round.rollingBestCount : 4;
+
+  const standing = teamIds.map(gid => {
+    const memberIds = teams[gid].playerIds || [];
+    const unitScores = {}, ctxs = {};
+    memberIds.forEach(pid => {
+      unitScores[pid] = scores?.[roundId]?.["p-" + pid] || {};
+      ctxs[pid] = { memberIds: [pid], playerPhs: base.playerPhs, holeCount: base.holeCount, maxRule: base.maxRule, maxPlus: base.maxPlus };
+    });
+    const { perHole, total } = rollingBestBallTotals(base.round.format, holes, unitScores, ctxs, bestCount);
+    const thru = perHole.filter(h => h.score != null).length;
+    return { gid, memberIds, name: teams[gid].name, total, thru };
+  });
+
+  if (!standing.some(s => s.thru > 0)) return "";
+
+  standing.sort((a, b) => a.total - b.total || b.thru - a.thru);
+
+  // Not tappable like the other leaderboard rows above — a rolling best ball "team" is a
+  // scoring bucket with no card or tee time of its own (its players each have their own,
+  // scattered across whatever foursomes they're in), so there's no single card to open.
+  const rows = '<table class="lboard"><tr class="head"><th class="nm">Team</th><th>Total</th><th>Thru</th></tr>' +
+    standing.map(s =>
+      "<tr>" +
+        nameCell(s.memberIds, s.name) +
+        '<td class="num tot">' + (s.thru ? s.total : "&ndash;") + "</td>" +
+        '<td class="thru">' + (s.thru === holes.length ? "F" : (s.thru || "&ndash;")) + "</td></tr>").join("") +
+    "</table>";
+
+  return '<div class="board-sub" style="margin-top:14px;">Rolling best ball &middot; best ' +
+    bestCount + " of the team</div>" + rows;
+}
+
+function renderRoundBoard(el, roundId){
+  const base = roundContext(roundId);
+  if (!base){ el.innerHTML = boardShell("", '<p class="board-empty">This round has no course yet.</p>'); return; }
+  if (base.round.play === "match"){ renderMatchBoard(el, roundId, base); return; }
+
+  const round = base.round;
+  const holes = base.course.holes || [];
+  const parOf = hs => hs.reduce((s, h) => s + (+h.par || 0), 0);
+  const front = holes.filter(h => h.number <= 9);
+  const back = holes.filter(h => h.number > 9);
+
+  const rows = rowsForRound(roundId).filter(r => r.thru > 0)
+    .sort((a, b) => a.toPar - b.toPar || b.thru - a.thru);
+  const pos = positions(rows);
+  const unit = FORMATS[round.format]?.unit === "player" ? "Player" : "Team";
+
+  const sub = esc(round.name || "") + " &middot; " + esc(base.course.name || "") + " &middot; " +
+    esc(FORMATS[round.format]?.label || round.format);
+
+  if (!rows.length){ el.innerHTML = boardShell(sub, '<p class="board-empty">No scores posted yet.</p>'); return; }
+
+  const table =
+    '<table class="lboard">' +
+      '<tr class="parrow"><th></th><th class="nm">Par</th>' +
+        "<th>" + (front.length ? parOf(front) : "") + "</th>" +
+        "<th>" + (back.length ? parOf(back) : "") + "</th>" +
+        "<th>" + parOf(holes) + "</th><th></th></tr>" +
+      '<tr class="head"><th>Pos</th><th class="nm">' + unit + "</th><th>Out</th><th>In</th><th>Total</th><th>Thru</th></tr>" +
+      rows.map((r, i) =>
+        '<tr class="lb-open" data-open-round="' + roundId + '" data-open-units="' + esc(r.unitId) + '">' +
+          '<td class="pos">' + pos[i] + "</td>" +
+          nameCell(r.playerIds, r.teamName) +
+          numCell(r.front.thru ? r.front.toPar : null) +
+          numCell(back.length && r.back.thru ? r.back.toPar : null) +
+          numCell(r.toPar, "tot") +
+          '<td class="thru">' + (r.thru === holes.length ? "F" : r.thru) +
+            (attestOf(roundId, r.unitId) ? '<span class="att" title="Card submitted">&#10003;</span>' : "") + "</td>" +
+        "</tr>").join("") +
+    "</table>";
+
+  el.innerHTML = boardShell(sub, table + rollingBestBallSectionHtml(base, roundId) + skinsSectionHtml(base, roundId));
+}
+
+// Hole context for one side of a match.
+const sideCtx = (base, u) => ({
+  memberIds: base.units[u]?.playerIds || [], playerPhs: base.playerPhs, teamPh: base.teamPhs[u] ?? 0,
+  holeCount: base.holeCount, maxRule: base.maxRule, maxPlus: base.maxPlus
+});
+
+function statusFor(base, roundId, m){
+  const [a, b] = m.unitIds;
+  return matchStatus(base.round.format, base.course.holes || [],
+    [scores?.[roundId]?.[a] || {}, scores?.[roundId]?.[b] || {}],
+    [sideCtx(base, a), sideCtx(base, b)]);
+}
+
+function renderMatchBoard(el, roundId, base){
+  const round = base.round;
+  const unit = FORMATS[round.format]?.unit === "player" ? "Player" : "Team";
+  const sub = esc(round.name || "") + " &middot; " + esc(base.course.name || "") + " &middot; " +
+    esc(FORMATS[round.format]?.label || round.format) + " &middot; match play";
+
+  if (!base.matches.length){ el.innerHTML = boardShell(sub, '<p class="board-empty">No matches set up yet.</p>'); return; }
+
+  const played = base.matches.map(m => ({ m, s: statusFor(base, roundId, m) }));
+  const side = (u, lead) => nameCell(base.units[u].playerIds, base.units[u].name, lead ? "lead" : "");
+  const statusText = s => !s.thru ? "&ndash;"
+    : !s.leader ? s.label
+    : (s.leader === "A" ? "&larr; " : "") + s.label + (s.leader === "B" ? " &rarr;" : "");
+
+  const matchesTable =
+    '<table class="lboard">' +
+      '<tr class="head"><th class="nm">' + unit + '</th><th>Match</th><th class="nm">' + unit + "</th><th>Thru</th></tr>" +
+      played.map(({ m, s }) =>
+        '<tr class="lb-open" data-open-round="' + roundId + '" data-open-units="' + m.unitIds.map(u => esc(u)).join(",") + '">' +
+          side(m.unitIds[0], s.leader === "A") +
+          '<td class="num mstatus ' + (s.leader ? "under" : "even") + '">' + statusText(s) + "</td>" +
+          side(m.unitIds[1], s.leader === "B") +
+          '<td class="thru">' + (s.finished ? "F" : (s.thru || "&ndash;")) +
+            (m.unitIds.every(u => attestOf(roundId, u)) ? '<span class="att" title="Cards submitted">&#10003;</span>' : "") + "</td>" +
+        "</tr>").join("") +
+    "</table>";
+
+  // Points: a win is 1, a halved match ½ each. Only finished matches score.
+  const tally = new Map();
+  played.forEach(({ m, s }) => m.unitIds.forEach((u, i) => {
+    const row = tally.get(u) || { u, played: 0, w: 0, h: 0, l: 0, pts: 0 };
+    if (s.points){
+      row.played += 1;
+      row.pts += s.points[i];
+      if (s.points[i] === 1) row.w += 1;
+      else if (s.points[i] === 0.5) row.h += 1;
+      else row.l += 1;
+    }
+    tally.set(u, row);
+  }));
+  const standing = [...tally.values()].sort((a, b) => b.pts - a.pts || b.w - a.w);
+  const pos = positions(standing.map(r => ({ toPar: -r.pts })));
+
+  const standingsTable =
+    '<table class="lboard standings">' +
+      '<tr class="head"><th>Pos</th><th class="nm">' + unit + "</th><th>P</th><th>W</th><th>H</th><th>L</th><th>Pts</th></tr>" +
+      standing.map((r, i) =>
+        '<tr class="lb-open" data-open-round="' + roundId + '" data-open-units="' + esc(r.u) + '">' +
+          '<td class="pos">' + pos[i] + "</td>" +
+          nameCell(base.units[r.u].playerIds, base.units[r.u].name) +
+          '<td class="thru">' + r.played + '</td><td class="thru">' + r.w + '</td>' +
+          '<td class="thru">' + r.h + '</td><td class="thru">' + r.l + "</td>" +
+          '<td class="num tot ' + (r.pts > 0 ? "under" : "even") + '">' + fmtPts(r.pts) + "</td>" +
+        "</tr>").join("") +
+    "</table>";
+
+  el.innerHTML = boardShell(sub, matchesTable + '<div class="board-sub" style="margin-top:14px;">Standings</div>' + standingsTable +
+    skinsSectionHtml(base, roundId));
+}
+
+function renderOverallBoard(el){
+  const withCtx = orderedRounds().map(([id]) => [id, roundContext(id)]).filter(([, b]) => b);
+  const strokeIds = withCtx.filter(([, b]) => b.round.play !== "match").map(([id]) => id);
+  const matchIds = withCtx.filter(([, b]) => b.round.play === "match").map(([id]) => id);
+
+  if (!strokeIds.length && matchIds.length){ renderOverallPoints(el, matchIds); return; }
+
+  const rows = rowsOverall(strokeIds).filter(r => r.thru > 0)
+    .sort((a, b) => a.toPar - b.toPar || b.thru - a.thru);
+  const pos = positions(rows);
+  const sub = matchIds.length ? "Stroke play rounds &middot; match play rounds have their own boards" : "All rounds";
+
+  if (!rows.length){ el.innerHTML = boardShell(sub, '<p class="board-empty">No scores posted yet.</p>'); return; }
+
+  const roundNo = id => orderedRounds().findIndex(([rid]) => rid === id) + 1;
+  const table =
+    '<table class="lboard">' +
+      '<tr class="head"><th>Pos</th><th class="nm">Player</th>' +
+        strokeIds.map(id => "<th>R" + roundNo(id) + "</th>").join("") + "<th>Total</th></tr>" +
+      rows.map((r, i) =>
+        '<tr class="lb-open" data-open-player="' + esc(r.key) + '">' +
+          '<td class="pos">' + pos[i] + "</td>" +
+          nameCell(r.playerIds) +
+          strokeIds.map(rid => numCell(r.byRound[rid] ?? null)).join("") +
+          numCell(r.toPar, "tot") +
+        "</tr>").join("") +
+    "</table>";
+
+  el.innerHTML = boardShell(sub, table);
+}
+
+// Every round is match play: one table of points by player, a match counting for every
+// player on the side that won or halved it.
+function renderOverallPoints(el, matchIds){
+  const tally = new Map();
+  matchIds.forEach(roundId => {
+    const base = roundContext(roundId);
+    base.matches.forEach(m => {
+      const s = statusFor(base, roundId, m);
+      if (!s.points) return;
+      m.unitIds.forEach((u, i) => (base.units[u].playerIds || []).forEach(pid => {
+        const row = tally.get(pid) || { pid, pts: 0, played: 0 };
+        row.pts += s.points[i];
+        row.played += 1;
+        tally.set(pid, row);
+      }));
+    });
+  });
+  const rows = [...tally.values()].sort((a, b) => b.pts - a.pts);
+  const sub = "All rounds &middot; points";
+  if (!rows.length){ el.innerHTML = boardShell(sub, '<p class="board-empty">No finished matches yet.</p>'); return; }
+  const pos = positions(rows.map(r => ({ toPar: -r.pts })));
+  el.innerHTML = boardShell(sub,
+    '<table class="lboard"><tr class="head"><th>Pos</th><th class="nm">Player</th><th>Matches</th><th>Pts</th></tr>' +
+    rows.map((r, i) =>
+      '<tr class="lb-open" data-open-player="' + esc(r.pid) + '">' +
+        '<td class="pos">' + pos[i] + "</td>" + nameCell([r.pid]) +
+        '<td class="thru">' + r.played + '</td><td class="num tot under">' + fmtPts(r.pts) + "</td>" +
+      "</tr>").join("") +
+    "</table>");
+}
+
+function renderLeaderboard(){
+  // With a single round there's nothing to choose between, so the picker goes away.
+  const multi = orderedRounds().length > 1;
+  const sel = document.getElementById("boardRoundSelect");
+  fillRoundSelect(sel, { includeOverall: multi });
+  sel.classList.toggle("hidden", !multi);
+  const el = document.getElementById("leaderboardList");
+  if (!sel.value){ el.innerHTML = boardShell("", '<p class="board-empty">No rounds set up yet.</p>'); return; }
+  if (sel.value === "__all") renderOverallBoard(el);
+  else renderRoundBoard(el, sel.value);
+}
+
+/* ---------- scorecard pop-up ---------- */
+
+function closeModal(){ document.getElementById("cardModal").classList.add("hidden"); }
+
+// A read-only full card for some teams in a round — the pop-up is for looking, not scoring.
+function cardSection(roundId, unitIds, heading){
+  const base = roundContext(roundId);
+  if (!base) return null;
+  const ids = (unitIds || []).filter(u => base.units[u]);
+  if (!ids.length) return null;
+  const tee = Object.values(base.teeTimes || {}).find(t => ids.every(u => (t.unitIds || []).includes(u)));
+  const c = buildCard(roundId, base, { start: tee?.start || "", unitIds: ids });
+  return { c, heading: heading || ids.map(u => unitLabel(base, u)).join(" v ") };
+}
+
+function openCards(sections){
+  const valid = sections.filter(Boolean);
+  if (!valid.length) return;
+  const body = document.getElementById("cardModalBody");
+  body.innerHTML = valid.map((s, i) => "<h3>" + esc(s.heading) + "</h3>" +
+    (submittedLine(s.c) ? '<p class="modal-status">&#10003; ' + submittedLine(s.c) + "</p>" : "") +
+    (isAdmin ? '<button class="modal-edit" data-edit="' + i + '">Edit this card</button>' : "") +
+    '<div class="modal-card" data-i="' + i + '"></div>').join("");
+  body.querySelectorAll(".modal-card").forEach(box => renderFullCard(box, valid[+box.dataset.i].c));
+
+  // The commissioner can jump from any card on the leaderboard straight into editing it.
+  body.querySelectorAll("[data-edit]").forEach(btn => btn.addEventListener("click", () => {
+    const { c } = valid[+btn.dataset.edit];
+    const option = cardOptions(c.base).find(o => o.unitIds.includes(c.teams[0].unitId));
+    if (option) adminPick[c.roundId] = option.id;
+    const sel = document.getElementById("scoreRoundSelect");
+    fillRoundSelect(sel);
+    sel.value = c.roundId;
+    currentHole = null;
+    scoreView = "hole";
+    closeModal();
+    document.querySelector('nav.tabs button[data-tab="score"]').click();
+  }));
+  document.getElementById("cardModal").classList.remove("hidden");
+}
+
+document.getElementById("leaderboardList").addEventListener("click", e => {
+  const row = e.target.closest("[data-open-round], [data-open-player]");
+  if (!row) return;
+  if (row.dataset.openPlayer){
+    const pid = row.dataset.openPlayer;
+    openCards(orderedRounds().map(([roundId, r], i) => {
+      const base = roundContext(roundId);
+      const u = base && Object.keys(base.units).find(k => (base.units[k].playerIds || []).includes(pid));
+      return u ? cardSection(roundId, [u], (r.name || "Round " + (i + 1)) + " — " + unitLabel(base, u)) : null;
+    }));
+  } else {
+    openCards([cardSection(row.dataset.openRound, row.dataset.openUnits.split(","))]);
+  }
+});
+document.getElementById("cardModalClose").addEventListener("click", closeModal);
+document.getElementById("cardModal").addEventListener("click", e => { if (e.target.id === "cardModal") closeModal(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
+
+
+/* ---------- statistics ---------- */
+
+let statsBasis = "net";   // "net" or "gross"
+let statsSort = "toPar";
+
+const STAT_COLUMNS = [
+  { key: "toPar",   label: "To par",  best: "low"  },
+  { key: "eagles",  label: "Eagles",  best: "high" },
+  { key: "birdies", label: "Birdies", best: "high" },
+  { key: "pars",    label: "Pars",    best: "high" },
+  { key: "bogeys",  label: "Bogeys",  best: "low"  },
+  { key: "doubles", label: "Dbl+",    best: "low"  },
+  { key: "counted", label: "Counted", best: "high", onlyWhen: "counted" },
+  { key: "won",     label: "Won",     best: "high", onlyWhen: "match" },
+  { key: "halved",  label: "Halved",  best: "high", onlyWhen: "match" },
+  { key: "lost",    label: "Lost",    best: "low",  onlyWhen: "match" },
+  { key: "holes",   label: "Holes",   best: "high" }
+];
+
+// The rounds a stats view covers — one round, or all of them for Overall.
+const statRounds = which => which === "__all" ? orderedRounds().map(([id]) => id) : [which];
+
+// What the formats in view allow: net only means something if some round is played net,
+// and "Counted" only exists in best ball and shamble.
+function statsScope(which){
+  const formats = statRounds(which)
+    .map(id => roundContext(id)?.round.format)
+    .filter(Boolean)
+    .map(k => FORMATS[k]);
+  return {
+    anyNet: formats.some(f => !f.gross),
+    counted: formats.some(f => f.family === "best-ball" || f.family === "shamble"),
+    teamBall: formats.some(f => f.entry === "team"),
+    match: statRounds(which).some(id => roundContext(id)?.round.play === "match")
+  };
+}
+
+// Every player's records across one round, or the whole event.
+function gatherRecords(which){
+  const all = {};
+  statRounds(which).forEach(roundId => {
+    const base = roundContext(roundId);
+    if (!base) return;
+    const { round, course, groups, playerPhs, teamPhs, holeCount, maxRule, maxPlus } = base;
+    const recs = collectPlayerHoles(
+      round.format, course.holes || [], groups,
+      scores?.[roundId] || {}, playerPhs, teamPhs, holeCount, maxRule, maxPlus
+    );
+    Object.entries(recs).forEach(([pid, list]) => {
+      (all[pid] = all[pid] || []).push(...list);
+    });
+  });
+  return all;
+}
+
+// Holes won, halved and lost per player, from every match in view. A side's result on a hole
+// counts for every player on that side.
+function matchTallies(which){
+  const out = {};
+  statRounds(which).forEach(roundId => {
+    const base = roundContext(roundId);
+    if (!base || base.round.play !== "match") return;
+    base.matches.forEach(m => {
+      statusFor(base, roundId, m).results.forEach(res => m.unitIds.forEach((u, i) => {
+        const side = i === 0 ? "A" : "B";
+        (base.units[u].playerIds || []).forEach(pid => {
+          const t = out[pid] = out[pid] || { won: 0, halved: 0, lost: 0 };
+          if (res.result === "H") t.halved += 1;
+          else if (res.result === side) t.won += 1;
+          else t.lost += 1;
+        });
+      }));
+    });
+  });
+  return out;
+}
+
+function renderStatsTab(){
+  fillRoundSelect(document.getElementById("statsRoundSelect"), { includeOverall: true });
+  renderStats();
+}
+
+function renderStats(){
+  const which = document.getElementById("statsRoundSelect").value;
+  const scope = statsScope(which);
+
+  // A gross-only view has no net to show, so the toggle goes and gross is used.
+  const basisBox = document.getElementById("statsBasis");
+  basisBox.classList.toggle("hidden", !scope.anyNet);
+  const basis = scope.anyNet ? statsBasis : "gross";
+  basisBox.querySelectorAll("button").forEach(b => b.classList.toggle("active", b.dataset.basis === basis));
+
+  const columns = STAT_COLUMNS.filter(c => !c.onlyWhen || scope[c.onlyWhen]);
+  if (!columns.some(c => c.key === statsSort)) statsSort = "toPar";
+  const sortSel = document.getElementById("statSort");
+  sortSel.innerHTML = columns.map(c => '<option value="' + c.key + '">Rank by ' + c.label + "</option>").join("");
+  sortSel.value = statsSort;
+
+  const records = gatherRecords(which);
+  const tallies = matchTallies(which);
+  const rows = Object.entries(records).map(([pid, list]) => {
+    const s = summarisePlayer(list);
+    return {
+      pid,
+      name: cfg.roster?.[pid]?.name || "?",
+      pickedUp: s.pickedUp,
+      holesPlayed: s.holesPlayed,
+      bucket: { ...(basis === "gross" ? s.gross : s.net), counted: s.counted, ...(tallies[pid] || { won: 0, halved: 0, lost: 0 }) }
+    };
+  }).filter(r => r.holesPlayed > 0);
+
+  const highlights = document.getElementById("statHighlights");
+  const table = document.getElementById("statTable");
+  const note = document.getElementById("statNote");
+
+  if (!rows.length){
+    highlights.innerHTML = "";
+    table.innerHTML = '<p class="empty">No scores posted yet.</p>';
+    note.textContent = "";
+    return;
+  }
+
+  // ---- highlight cards ----
+  const bestBy = (key, dir) => [...rows].sort((a, b) =>
+    dir === "low" ? a.bucket[key] - b.bucket[key] : b.bucket[key] - a.bucket[key])[0];
+
+  const lowScore = bestBy("toPar", "low");
+  const mostBirdies = bestBy("birdies", "high");
+  const mostOver = bestBy("doubles", "high");
+  const carried = bestBy("counted", "high");
+  const mostHoles = bestBy("holes", "high");
+
+  const cards = [
+    { cap: "Best " + basis, who: lowScore.name, val: fmtToPar(lowScore.bucket.toPar) },
+    { cap: "Most birdies", who: mostBirdies.name, val: mostBirdies.bucket.birdies },
+    { cap: "Most doubles+", who: mostOver.name, val: mostOver.bucket.doubles },
+    scope.match
+      ? { cap: "Most holes won", who: bestBy("won", "high").name, val: bestBy("won", "high").bucket.won }
+      : scope.counted
+        ? { cap: "Carried the team", who: carried.name, val: carried.bucket.counted + " holes" }
+        : { cap: "Holes played", who: mostHoles.name, val: mostHoles.bucket.holes }
+  ];
+  highlights.innerHTML = cards.map(c =>
+    '<div class="hl"><div class="cap">' + esc(c.cap) + '</div>' +
+    '<div class="val">' + esc(String(c.val)) + '</div>' +
+    '<div class="who">' + esc(c.who) + "</div></div>").join("");
+
+  // ---- ranked table ----
+  const col = columns.find(c => c.key === statsSort) || columns[0];
+  rows.sort((a, b) => {
+    const d = col.best === "low"
+      ? a.bucket[col.key] - b.bucket[col.key]
+      : b.bucket[col.key] - a.bucket[col.key];
+    return d || a.bucket.toPar - b.bucket.toPar;
+  });
+
+  table.innerHTML =
+    '<table class="statgrid"><tr><th></th><th class="name">Player</th>' +
+    columns.map(c => "<th>" + c.label + "</th>").join("") + "</tr>" +
+    rows.map((r, i) =>
+      '<tr><td class="rank">' + (i + 1) + '</td><td class="name">' + esc(r.name) + "</td>" +
+      columns.map(c => {
+        const v = c.key === "toPar" ? fmtToPar(r.bucket.toPar) : r.bucket[c.key];
+        return "<td" + (c.key === statsSort ? ' class="lead"' : "") + ">" + v + "</td>";
+      }).join("") + "</tr>").join("") + "</table>";
+
+  const picked = rows.reduce((n, r) => n + r.pickedUp, 0);
+  note.innerHTML =
+    (basis === "gross"
+      ? "Gross is the score that counts on each hole, after the round's maximum. "
+      : "Net takes off the shots each player gets on each hole. ") +
+    "Dbl+ counts <b>holes</b> at double bogey or worse, not strokes dropped. " +
+    (scope.counted ? "Counted is how many holes a player's score was the one his team used &mdash; both players on a tie. " : "") +
+    (scope.match ? "Won, halved and lost count holes in each player's matches &mdash; a side's result counts for every player on it. " : "") +
+    (scope.teamBall ? "In scramble and alternate shot the pair share one score, so it counts for both partners. " : "") +
+    (picked ? picked + " picked-up hole" + (picked === 1 ? " scores" : "s score") + " the round's maximum." : "");
+}
+
+/* ---------- tabs ---------- */
+
+document.querySelectorAll("nav.tabs button").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll("nav.tabs button").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    ["home", "score", "board", "stats"].forEach(t =>
+      document.getElementById("tab-" + t).classList.toggle("hidden", t !== btn.dataset.tab));
+    if (btn.dataset.tab === "score") renderScoreTab();
+    if (btn.dataset.tab === "board") renderLeaderboard();
+    if (btn.dataset.tab === "stats") renderStatsTab();
+  });
+});
+
+document.getElementById("homeRoundSelect").addEventListener("change", renderGroupsList);
+document.getElementById("scoreRoundSelect").addEventListener("change", () => {
+  currentHole = null;
+  if (scoreView === "review") scoreView = "hole";
+  renderScorecard();
+});
+document.getElementById("scoreCardSelect").addEventListener("change", e => {
+  adminPick[document.getElementById("scoreRoundSelect").value] = e.target.value;
+  currentHole = null;
+  if (scoreView === "review") scoreView = "hole";
+  renderScorecard();
+});
+
+document.querySelectorAll(".seg button").forEach(btn => btn.addEventListener("click", () => {
+  document.querySelectorAll(".seg button").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  scoreView = btn.dataset.view;
+  renderScorecard();
+}));
+document.getElementById("boardRoundSelect").addEventListener("change", renderLeaderboard);
+document.getElementById("statsRoundSelect").addEventListener("change", renderStats);
+document.getElementById("statSort").addEventListener("change", e => { statsSort = e.target.value; renderStats(); });
+document.querySelectorAll("#statsBasis button").forEach(btn => btn.addEventListener("click", () => {
+  document.querySelectorAll("#statsBasis button").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  statsBasis = btn.dataset.basis;
+  renderStats();
+}));
+
+/* ---------- login ---------- */
+
+function findByCode(code){
+  const wanted = String(code || "").trim().toUpperCase();
+  if (!wanted) return null;
+  const hit = Object.entries(cfg.roster || {}).find(([, p]) => String(p.code || "").toUpperCase() === wanted);
+  return hit ? hit[0] : null;
+}
+
+function enterApp(){
+  document.getElementById("loginGate").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
+  renderAdminBar();
+  renderHome();
+}
+
+function trySavedLogin(){
+  const saved = localStorage.getItem(ME_KEY);
+  if (saved && cfg.roster?.[saved]) meId = saved;
+  // Covers a player who was flagged as commissioner in the roster after his phone had
+  // already saved a plain player login — not just the first-time login path above.
+  if (meId && !isAdmin && cfg.roster?.[meId]?.commissioner) unlockAdmin();
+  if (meId || isAdmin){ enterApp(); return true; }
+  return false;
+}
+
+// The commissioner works inside the player app too. A bar across the top says so, links to
+// the console, and sets which player he is if he's also playing.
+function renderAdminBar(){
+  document.getElementById("adminBar").classList.toggle("hidden", !isAdmin);
+  document.getElementById("adminUnlockBtn").classList.toggle("hidden", isAdmin);
+  if (!isAdmin) return;
+  const sel = document.getElementById("adminPlayAs");
+  const players = Object.entries(cfg.roster || {})
+    .sort((a, b) => String(a[1].name || "").localeCompare(String(b[1].name || "")));
+  sel.innerHTML = '<option value="">Not playing</option>' +
+    players.map(([id, p]) => '<option value="' + id + '"' + (id === meId ? " selected" : "") + ">" + esc(p.name) + "</option>").join("");
+}
+
+// Shared with the console, so moving between the two never asks for the code again.
+function unlockAdmin(){
+  isAdmin = true;
+  try {
+    localStorage.setItem(ADMIN_KEY, "1");
+    sessionStorage.setItem("covidcup_admin_ok", "1");
+  } catch (e){}
+}
+
+document.getElementById("codeSubmit").addEventListener("click", () => {
+  const entered = document.getElementById("codeInput").value;
+
+  // A console code logs in here as the commissioner: every card open and editable, and the
+  // console one tap away in the bar across the top.
+  if (isAdminCode(entered)){
+    unlockAdmin();
+    enterApp();
+    return;
+  }
+
+  const id = findByCode(entered);
+  if (!id){ document.getElementById("codeError").style.display = "block"; return; }
+  meId = id;
+  localStorage.setItem(ME_KEY, id);
+  // A player flagged as the commissioner in the roster gets both from his own one code —
+  // no separate console PIN to remember. `unlockAdmin` persists the same as any other
+  // commissioner login, so this only has to run once.
+  if (cfg.roster?.[id]?.commissioner) unlockAdmin();
+  enterApp();
+});
+document.getElementById("codeInput").addEventListener("keydown", e => {
+  if (e.key === "Enter") document.getElementById("codeSubmit").click();
+});
+
+document.getElementById("adminPlayAs").addEventListener("change", e => {
+  meId = e.target.value || null;
+  if (meId) localStorage.setItem(ME_KEY, meId); else localStorage.removeItem(ME_KEY);
+  currentHole = null;
+  afterData();
+});
+
+document.getElementById("adminExit").addEventListener("click", () => {
+  try {
+    localStorage.removeItem(ADMIN_KEY);
+    sessionStorage.removeItem("covidcup_admin_ok");
+  } catch (e){}
+  location.reload();
+});
+
+// A player's phone can be switched into commissioner mode from the footer.
+document.getElementById("adminUnlockBtn").addEventListener("click", () => {
+  document.getElementById("adminUnlock").classList.toggle("hidden");
+  document.getElementById("adminCodeInput").focus();
+});
+
+function tryAdminCode(){
+  const input = document.getElementById("adminCodeInput");
+  if (!isAdminCode(input.value)){
+    document.getElementById("adminCodeErr").classList.remove("hidden");
+    return;
+  }
+  unlockAdmin();
+  input.value = "";
+  document.getElementById("adminUnlock").classList.add("hidden");
+  document.getElementById("adminCodeErr").classList.add("hidden");
+  currentHole = null;
+  afterData();
+}
+document.getElementById("adminCodeGo").addEventListener("click", tryAdminCode);
+document.getElementById("adminCodeInput").addEventListener("keydown", e => { if (e.key === "Enter") tryAdminCode(); });
+
+
+/* ---------- data wiring ---------- */
+
+function afterData(){
+  if (!loaded){
+    loaded = true;
+    document.getElementById("codeWait").textContent =
+      Object.keys(cfg.roster || {}).length ? "" : "Event isn't set up yet — check back shortly.";
+    trySavedLogin();
+  }
+  if (!document.getElementById("app").classList.contains("hidden")){
+    renderAdminBar();
+    renderHome();
+    if (!document.getElementById("tab-score").classList.contains("hidden")) renderScorecard();
+    if (!document.getElementById("tab-board").classList.contains("hidden")) renderLeaderboard();
+    if (!document.getElementById("tab-stats").classList.contains("hidden")) renderStatsTab();
+  }
+}
+
+if (FIREBASE_CONFIGURED){
+  const app = initializeApp(FIREBASE_CONFIG);
+  db = getDatabase(app);
+  onValue(ref(db, DB_PATH), snap => {
+    cfg = snap.val() || { event: {}, courses: {}, roster: {}, rounds: {}, groups: {} };
+    afterData();
+  });
+  onValue(ref(db, SCORES_PATH), snap => {
+    scores = snap.val() || {};
+    afterData();
+  });
+  onValue(ref(db, ATTEST_PATH), snap => {
+    attests = snap.val() || {};
+    afterData();
+  }, err => console.warn("Card submissions need the updated database rules:", err.message));
+} else {
+  try { cfg = JSON.parse(localStorage.getItem("covidcup_admin_draft") || "null") || cfg; } catch (e){}
+  try { scores = JSON.parse(localStorage.getItem("covidcup_scores_draft") || "null") || {}; } catch (e){}
+  try { attests = JSON.parse(localStorage.getItem("covidcup_attest_draft") || "null") || {}; } catch (e){}
+  afterData();
+}
+
+(async () => {
+  try {
+    const res = await fetch(`version.txt?cb=${Date.now()}`, { cache: "no-store" });
+    document.getElementById("versionFooter").textContent = "v" + (await res.text()).trim();
+  } catch (e){}
+})();
+</script>
+</body>
+</html>
