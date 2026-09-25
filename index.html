@@ -146,12 +146,13 @@ table.lboard td.mstatus{font-size:19px;white-space:nowrap;}
   background:var(--accent-dim);border:1px solid var(--accent);border-radius:10px;padding:10px 12px;font-size:14px;color:var(--text);}
 .attest-banner.done{background:#e6f1e8;border-color:#2e6a3b;color:#1f4a29;}
 .attest-banner button{background:var(--navy);color:var(--surface);border:none;border-radius:6px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;}
-.hole-joke{margin:10px 0;padding:9px 12px;border-radius:8px;font-size:13px;font-weight:700;
-  display:flex;align-items:center;gap:10px;text-align:left;}
-.hole-joke.good{background:var(--accent-dim);border:1px solid var(--accent);color:var(--accent);}
-.hole-joke.bad{background:#f7e3e2;border:1px solid var(--danger);color:var(--danger);}
-.hole-joke img{width:44px;height:44px;border-radius:50%;object-fit:cover;flex:0 0 auto;border:2px solid currentColor;}
-.hole-joke span{flex:1;}
+/* hole-joke popup — stays up until the player taps the screen, not on a timer */
+.hole-joke-box{border-top:6px solid var(--accent);}
+.hole-joke-box.bad{border-top-color:var(--danger);}
+.hole-joke-box img{width:100%;max-height:42vh;object-fit:cover;border-radius:8px;margin-top:4px;display:block;}
+.hole-joke-box p:first-of-type{font-size:18px;font-weight:700;margin:14px 0 2px;}
+.hole-joke-box.bad p:first-of-type{color:var(--danger);}
+.hole-joke-box:not(.bad) p:first-of-type{color:var(--accent);}
 /* weekend tab */
 .groom-photo{width:140px;height:140px;object-fit:cover;border-radius:50%;border:3px solid var(--accent);}
 .groom-bio{font-size:15px;line-height:1.6;text-align:left;margin-top:10px;}
@@ -397,6 +398,13 @@ footer{text-align:center;color:var(--dim);font-size:11px;padding:16px;}
     <div id="cardModalBody"></div>
   </div>
 </div>
+<div id="holeJokeModal" class="modal hidden" role="dialog" aria-modal="true">
+  <div class="modal-box hole-joke-box" style="max-width:360px;text-align:center;">
+    <img id="holeJokeModalImg" alt="" hidden>
+    <p id="holeJokeModalText"></p>
+    <p style="font-size:12px;color:var(--dim);margin:12px 0 0;">Tap anywhere to keep playing</p>
+  </div>
+</div>
 <div id="kaiModal" class="modal hidden" role="dialog" aria-modal="true">
   <div class="modal-box" style="max-width:380px;text-align:center;">
     <button class="modal-x" id="kaiModalClose" aria-label="Close">&times;</button>
@@ -534,27 +542,54 @@ function holeJokeFor(fieldKey, good){
 }
 // cell is the raw {v,x} just written for this box; f/hole/c give par, strokes and max rule
 // the same way the scorecard itself already works them out.
+// A popup, not a timed banner — it covers the screen and stays up until the player taps
+// anywhere, so a joke worth reading doesn't vanish before it's seen. At most one dismiss
+// listener is ever armed (dismissHoleJokeListener tracks it) so back-to-back jokes can't
+// stack up multiple listeners waiting on the same modal.
+let dismissHoleJokeListener = null;
+function armHoleJokeDismiss(){
+  const modal = document.getElementById("holeJokeModal");
+  if (dismissHoleJokeListener) document.removeEventListener("pointerdown", dismissHoleJokeListener, true);
+  // Deferred a tick so the very tap/keystroke that triggered this popup — still bubbling —
+  // can't immediately dismiss it again.
+  setTimeout(() => {
+    dismissHoleJokeListener = () => {
+      modal.classList.add("hidden");
+      dismissHoleJokeListener = null;
+    };
+    document.addEventListener("pointerdown", dismissHoleJokeListener, { once: true, capture: true });
+  }, 0);
+}
 function showHoleJoke(c, f, hole, cell){
-  const banner = document.getElementById("holeJoke");
-  if (!banner) return;
   const shots = c.gross ? 0 : strokesOnHole(f.ph, hole.si, c.holeCount);
   const res = scoreCell(cell, hole.par, shots, c.maxRule, c.maxPlus);
-  if (!res){ banner.classList.add("hidden"); return; }
+  if (!res) return;
   const toPar = res.net - (+hole.par || 0);
-  if (toPar <= -1 || toPar >= 1){
-    const { text, img } = holeJokeFor(f.key, toPar <= -1);
-    banner.className = "hole-joke " + (toPar <= -1 ? "good" : "bad");
-    const imgEl = document.getElementById("holeJokeImg");
-    if (img){ imgEl.src = img; imgEl.hidden = false; } else { imgEl.hidden = true; imgEl.src = ""; }
-    document.getElementById("holeJokeText").textContent = text;
-  } else {
-    banner.classList.add("hidden");
-    return;
-  }
-  banner.classList.remove("hidden");
+  if (toPar > -1 && toPar < 1) return; // par — no joke, every hole would get noisy
+  const good = toPar <= -1;
+  const { text, img } = holeJokeFor(f.key, good);
+  const modal = document.getElementById("holeJokeModal");
+  modal.querySelector(".hole-joke-box").classList.toggle("bad", !good);
+  const imgEl = document.getElementById("holeJokeModalImg");
+  if (img){ imgEl.src = img; imgEl.hidden = false; } else { imgEl.hidden = true; imgEl.src = ""; }
+  document.getElementById("holeJokeModalText").textContent = text;
+  modal.classList.remove("hidden");
+  armHoleJokeDismiss();
 }
 function hideHoleJoke(){
-  document.getElementById("holeJoke")?.classList.add("hidden");
+  document.getElementById("holeJokeModal")?.classList.add("hidden");
+  if (dismissHoleJokeListener){
+    document.removeEventListener("pointerdown", dismissHoleJokeListener, true);
+    dismissHoleJokeListener = null;
+  }
+}
+// Guards against showing the same value's joke twice — the "settled" input check and the
+// blur handler can both fire for the same finished score.
+function maybeShowHoleJoke(inputEl, c, f, hole, raw){
+  if (inputEl.dataset.jokeShownFor === raw) return;
+  inputEl.dataset.jokeShownFor = raw;
+  const n = Math.max(1, Math.min(15, Math.floor(+raw) || 1));
+  showHoleJoke(c, f, hole, { v: n, x: false });
 }
 
 let db = null;
@@ -1119,10 +1154,6 @@ function renderHoleView(body, c){
       '<span class="meta">Par ' + hole.par + " &middot; stroke index " + hole.si + "</span></div>" +
     contestBadges(c, hole.number) +
     entries +
-    '<div id="holeJoke" class="hole-joke hidden">' +
-      '<img id="holeJokeImg" alt="" hidden>' +
-      '<span id="holeJokeText"></span>' +
-    '</div>' +
     totalsHtml(c) +
     (ahead
       ? '<p class="gate-hint">Looking ahead &mdash; finish hole ' + openHole + " before scoring this one.</p>"
@@ -1154,6 +1185,7 @@ function renderHoleView(body, c){
         queueScoreWrite(c.roundId, f.unitId, hole.number, f.key, { v: null, x: false });
         refreshRunningTotal(c);
         hideHoleJoke();
+        input.dataset.jokeShownFor = "";
         return;
       }
       const n = Math.max(1, Math.min(15, Math.floor(+input.value) || 1));
@@ -1162,12 +1194,21 @@ function renderHoleView(body, c){
       const cell = { v: n, x: false };
       queueScoreWrite(c.roundId, f.unitId, hole.number, f.key, cell);
       refreshRunningTotal(c);
-      showHoleJoke(c, f, hole, cell);
 
       // Move to the next box once the number cannot get any more specific â€” a lone 1
-      // could still become 10 through 15, anything else could not.
+      // could still become 10 through 15, anything else could not. Only pop the joke once
+      // the number's settled, not on every keystroke, or a two-digit score would flash two
+      // different popups on the way to being typed.
       const raw = input.value;
-      if (raw.length >= 2 || (raw.length === 1 && raw !== "1")) inputs[pos + 1]?.focus();
+      if (raw.length >= 2 || (raw.length === 1 && raw !== "1")){
+        maybeShowHoleJoke(input, c, f, hole, raw);
+        inputs[pos + 1]?.focus();
+      }
+    });
+    input?.addEventListener("blur", () => {
+      // Covers a lone "1" (a hole-in-one) and anything else that never hit the "settled"
+      // check above because the player tapped away instead of typing a second digit.
+      if (input.value !== "") maybeShowHoleJoke(input, c, f, hole, input.value);
     });
 
     row.querySelector("[data-pickup]")?.addEventListener("click", () => {
@@ -1545,14 +1586,14 @@ function rollingBestBallSectionHtml(base, roundId){
       unitScores[pid] = scores?.[roundId]?.["p-" + pid] || {};
       ctxs[pid] = { memberIds: [pid], playerPhs: base.playerPhs, holeCount: base.holeCount, maxRule: base.maxRule, maxPlus: base.maxPlus };
     });
-    const { perHole, total } = rollingBestBallTotals(base.round.format, holes, unitScores, ctxs, bestCount);
+    const { perHole, toPar } = rollingBestBallTotals(base.round.format, holes, unitScores, ctxs, bestCount);
     const thru = perHole.filter(h => h.score != null).length;
-    return { gid, memberIds, name: teams[gid].name, total, thru };
+    return { gid, memberIds, name: teams[gid].name, toPar, thru };
   });
 
   if (!standing.some(s => s.thru > 0)) return "";
 
-  standing.sort((a, b) => a.total - b.total || b.thru - a.thru);
+  standing.sort((a, b) => a.toPar - b.toPar || b.thru - a.thru);
 
   // Not tappable like the other leaderboard rows above â€” a rolling best ball "team" is a
   // scoring bucket with no card or tee time of its own (its players each have their own,
@@ -1561,7 +1602,7 @@ function rollingBestBallSectionHtml(base, roundId){
     standing.map(s =>
       "<tr>" +
         nameCell(s.memberIds, s.name) +
-        '<td class="num tot">' + (s.thru ? s.total : "&ndash;") + "</td>" +
+        numCell(s.thru ? s.toPar : null, "tot") +
         '<td class="thru">' + (s.thru === holes.length ? "F" : (s.thru || "&ndash;")) + "</td></tr>").join("") +
     "</table>";
 

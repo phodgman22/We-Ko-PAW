@@ -202,14 +202,39 @@ every other team format:
   for who won a hole, so it waits for everyone), a running total is fine to revise upward as
   more scores land — that's what a live leaderboard total already does everywhere else in
   this app.
+- **`par`/`toPar`** on the same return object exist so the team standings read relative to
+  par, same as every other leaderboard row in the app, instead of a raw stroke total that
+  meant nothing on its own. `par` is the sum, hole by hole, of `counted.length * hole.par` —
+  not `bestCount * hole.par` — so a hole where fewer than `bestCount` players have posted
+  still gets a fair, matching par baseline instead of making the team look artificially far
+  under par mid-round.
 - The player app's `rollingBestBallSectionHtml()` renders team standings underneath the
   round's normal per-player leaderboard (`renderRoundBoard`, stroke play only — this format
   isn't wired into match play's board, though nothing stops a round from being set to both;
-  it would just score individual match play with no team roll-up shown). Rows aren't
+  it would just score individual match play with no team roll-up shown), sorted and displayed
+  by `toPar` via the same `numCell()`/`fmtToPar()` the main leaderboard uses. Rows aren't
   tappable — a team here has no single card or tee time to open, unlike every other
   leaderboard row in the app.
 - Any number of teams works, not just two — `rollingBestBallTotals()` and the standings
   table don't assume exactly two sides.
+
+**Hole-joke popup.** After any birdie-or-better or bogey-or-worse score (nothing on par —
+every hole would get noisy), a full-screen popup shows a one-liner and, for the groom and his
+brothers, a matching photo — `showHoleJoke()` in index.html, joke pools and `holeJokeFor()`
+right above it. It's a genuine `.modal` overlay, not a timed banner: it stays up until the
+player taps *anywhere* (`armHoleJokeDismiss()` arms a single `document`-level `pointerdown`
+listener in capture phase, deferred one tick via `setTimeout(…, 0)` so the very tap that
+triggered the popup can't immediately close it again). Only one dismiss listener is ever
+armed at a time (`dismissHoleJokeListener` tracks it), so back-to-back jokes can't stack
+listeners. It only fires once a score is "settled" (the same digit-count heuristic that
+decides when to auto-advance focus to the next box) or on blur — never on every keystroke,
+or a two-digit score would flash two different popups on the way to being typed —
+`maybeShowHoleJoke()` also dedupes by the input's current value (`dataset.jokeShownFor`) so
+the settle-check and the blur handler can't both pop it for the same score. The joke content
+itself (Ryan/Hunter/Cameron-specific pools, general fallback pool, and the photo pairing to
+`assets/gallery/*` and `assets/kai.jpg`) is event flavor specific to this wedding, not
+template architecture — don't carry the actual joke text forward when reusing this pattern
+for a future event, just the popup mechanism.
 
 ## Event style
 

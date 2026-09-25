@@ -30,6 +30,8 @@ eq("hole 1: lowest two are a(4)+b(5)", r1.perHole[0], { hole: 1, counted: ["a", 
 eq("hole 2: lowest two are c(3)+b(4)", r1.perHole[1], { hole: 2, counted: ["c", "b"], score: 7 });
 eq("hole 3: a, b and c tie at 5 — d(4) plus one of the 5s", r1.perHole[2].score, 9);
 eq("total across all three holes", r1.total, 9 + 7 + 9);
+eq("par: 2 counted every hole on a par 4 course = 2*4*3", r1.par, 24);
+eq("toPar follows total minus that par", r1.toPar, (9 + 7 + 9) - 24);
 
 console.log("\nrollingBestBallTotals — a hole nobody's posted yet doesn't count, but doesn't block later holes");
 const scores2 = {
@@ -41,6 +43,8 @@ eq("hole 1 counts both (only two on the team)", r2.perHole[0], { hole: 1, counte
 eq("hole 2: nobody's posted — unresolved, not zero", r2.perHole[1], { hole: 2, counted: [], score: null });
 eq("hole 3 still resolves on its own", r2.perHole[2], { hole: 3, counted: ["a", "b"], score: 11 });
 eq("total skips the null hole entirely", r2.total, 9 + 11);
+eq("par skips the unresolved hole too — 2*4 + 0 + 2*4", r2.par, 16);
+eq("toPar reflects the same skip", r2.toPar, (9 + 11) - 16);
 
 console.log("\nrollingBestBallTotals — fewer players posted than bestCount: counts what's there, not zero-padded");
 const scores3 = {
@@ -50,11 +54,14 @@ const scores3 = {
 };
 const r3 = S.rollingBestBallTotals(format, holes.slice(0, 1), scores3, { a: ctxs.a, b: ctxs.b, c: ctxs.c }, 4);
 eq("only two of four have posted — both count, nothing invented for the other two", r3.perHole[0], { hole: 1, counted: ["a", "b"], score: 11 });
+eq("par scales down to how many actually counted (2, not the bestCount of 4)", r3.par, 8);
+eq("toPar mid-round is still meaningful, not thrown off by the missing player", r3.toPar, 11 - 8);
 
 console.log("\nrollingBestBallTotals — bestCount larger than the whole team just counts everyone");
 const r4 = S.rollingBestBallTotals(format, holes.slice(0, 1), scores1, ctxs, 99);
 eq("all four count when bestCount exceeds team size", r4.perHole[0].counted.sort(), ["a", "b", "c", "d"]);
 eq("score is the sum of all four", r4.perHole[0].score, 4 + 5 + 6 + 7);
+eq("par counts all four players too, since bestCount exceeded the team", r4.par, 16);
 
 console.log("\nrollingBestBallTotals — no bestCount (0/undefined) means count everyone, same as an oversized bestCount");
 const r5a = S.rollingBestBallTotals(format, holes.slice(0, 1), scores1, ctxs, 0);

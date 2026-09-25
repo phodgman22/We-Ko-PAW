@@ -431,13 +431,18 @@ export function skinsForRound(format, holes, unitScores, ctxs, { carryOver = tru
  *             total simply firms up as more of the team finishes, the same way any running
  *             total does. Not a number (0, unset) means "count everyone who's posted."
  *
- * Returns { perHole: [{hole, counted:[playerId,...], score}], total }. `score` is null on a
- * hole nobody on the team has posted yet; `counted` lists whose scores made the cut.
+ * Returns { perHole: [{hole, counted:[playerId,...], score}], total, par, toPar }. `score` is
+ * null on a hole nobody on the team has posted yet; `counted` lists whose scores made the cut.
+ * `par` is the sum, hole by hole, of `counted.length * hole.par` — the par-equivalent for
+ * however many scores actually went into that hole's total, so the team's standing reads as a
+ * relative-to-par number the same way every other leaderboard row does, and stays meaningful
+ * even mid-round when some holes have fewer than bestCount scores in.
  */
 export function rollingBestBallTotals(format, holes, unitScores, ctxs, bestCount){
   const playerIds = Object.keys(unitScores || {});
   const perHole = [];
   let total = 0;
+  let par = 0;
 
   for (const h of (holes || [])){
     const results = playerIds
@@ -452,9 +457,10 @@ export function rollingBestBallTotals(format, holes, unitScores, ctxs, bestCount
     const score = counted.reduce((sum, r) => sum + r.res.net, 0);
     perHole.push({ hole: h.number, counted: counted.map(r => r.pid), score });
     total += score;
+    par += n * (+h.par || 0);
   }
 
-  return { perHole, total };
+  return { perHole, total, par, toPar: total - par };
 }
 
 /**
